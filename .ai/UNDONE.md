@@ -20,8 +20,8 @@
 | 3.2 | LangChain Integration | ✅ Done | ✅ Done | ✅ Done |
 | 4.1 | Permission System | ✅ Done | ✅ Done | ✅ Done |
 | 4.2 | Hooks System | ✅ Done | ✅ Done | ✅ Done |
-| 5.1 | Session Management | ✅ Done | ⬜ Not Started | ⬜ Not Started |
-| 5.2 | Context Management | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 5.1 | Session Management | ✅ Done | ✅ Done | ✅ Done |
+| 5.2 | Context Management | ✅ Done | ✅ Done | ✅ Done |
 | 6.1 | Slash Commands | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 6.2 | Operating Modes | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 7.1 | Subagents System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
@@ -131,11 +131,58 @@ Phase 4.2 implementation complete in `src/opencode/hooks/`:
 - HookConfig - Configuration loading/saving (global + project) (`hooks/config.py`)
 - HOOK_TEMPLATES - Example hooks (log_all, notify_session_start, git_auto_commit, block_sudo) (`hooks/config.py`)
 
+Phase 5.1 implementation complete in `src/opencode/sessions/`:
+- Session data models (`sessions/models.py`)
+  - Session dataclass - Core session with messages, tool history, tokens, metadata
+  - SessionMessage - Messages with to_llm_message()/from_llm_message() conversion
+  - ToolInvocation - Tool call records with timing and success status
+- Session storage (`sessions/storage.py`)
+  - SessionStorage - File-based JSON persistence with atomic writes
+  - Backup creation before overwrite, recovery support
+  - XDG Base Directory compliance (~/.local/share/opencode/sessions/)
+  - Automatic backup rotation (max 100, 7 days age limit)
+- Session index (`sessions/index.py`)
+  - SessionIndex - Fast session listing without loading full files
+  - SessionSummary - Lightweight session metadata for listings
+  - In-memory index backed by index.json with auto-rebuild on corruption
+- Session manager (`sessions/manager.py`)
+  - SessionManager - Singleton with thread-safe instance management
+  - create(), resume(), save(), close(), delete() lifecycle methods
+  - Auto-save with configurable interval (asyncio task)
+  - Hook system integration (session:start, session:end, session:message, session:save)
+
+Phase 5.2 implementation complete in `src/opencode/context/`:
+- Token counting (`context/tokens.py`)
+  - TokenCounter - Abstract base class for token counting
+  - TiktokenCounter - tiktoken-based accurate counting with fallback
+  - ApproximateCounter - Word-based approximation for unknown models
+  - CachingCounter - LRU cache wrapper for performance
+  - get_counter() - Factory function for model-appropriate counters
+- Context limits (`context/limits.py`)
+  - ContextBudget - Token allocation (system, conversation, tools, response)
+  - ContextLimits - Model-specific context window limits
+  - ContextTracker - Current usage monitoring and overflow detection
+  - MODEL_LIMITS - Known limits for Claude, GPT, Llama, Mistral models
+- Truncation strategies (`context/strategies.py`)
+  - TruncationStrategy - Abstract base for truncation strategies
+  - SlidingWindowStrategy - Keep N most recent messages
+  - TokenBudgetStrategy - Remove oldest to fit token budget
+  - SmartTruncationStrategy - Preserve first and last, add marker
+  - SelectiveTruncationStrategy - Filter by role or marked messages
+  - CompositeStrategy - Chain multiple strategies
+- Context compaction (`context/compaction.py`)
+  - ContextCompactor - LLM-based summarization of old messages
+  - ToolResultCompactor - Truncate large tool outputs
+- Context manager (`context/manager.py`)
+  - TruncationMode - Enum for truncation mode selection
+  - ContextManager - Central coordinator for context management
+  - Auto-truncation, compact_if_needed(), get_stats()
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 tests complete in `tests/`:
-- 1247 tests passing (1112 previous + 135 new Hooks System tests)
-- 95% code coverage for hooks package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 tests complete in `tests/`:
+- 1584 tests passing (1433 previous + 151 new Context Management tests)
+- 97% code coverage for context package
 - mypy strict mode passing
 - ruff linting passing
 
@@ -143,9 +190,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 tests complete i
 
 ## Next Steps
 
-### Immediate Priority: Phase 5.1 Implementation (Session Management)
+### Immediate Priority: Phase 6.1 Implementation (Slash Commands)
 
-Before starting Phase 5.1:
+Before starting Phase 6.1:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -156,14 +203,16 @@ Before starting Phase 5.1:
 8. [x] Phase 3.2 complete (LangChain Integration)
 9. [x] Phase 4.1 complete (Permission System)
 10. [x] Phase 4.2 complete (Hooks System)
-11. [ ] Read `.ai/phase/5.1/` planning documents
-12. [ ] Understand session management requirements
+11. [x] Phase 5.1 complete (Session Management)
+12. [x] Phase 5.2 complete (Context Management)
+13. [ ] Read `.ai/phase/6.1/` planning documents
+14. [ ] Understand slash commands requirements
 
-Phase 5.1 will implement:
-1. [ ] Session models and state
-2. [ ] Session storage (SQLite)
-3. [ ] Session lifecycle management
-4. [ ] Message history tracking
+Phase 6.1 will implement:
+1. [ ] Slash command parsing and registration
+2. [ ] Built-in commands (/help, /clear, /session, etc.)
+3. [ ] Custom command loading from files
+4. [ ] Command argument handling
 
 ### Implementation Order
 
@@ -217,6 +266,8 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-04 | Phase 5.2 implementation complete (1584 tests) |
+| 2025-12-04 | Phase 5.1 implementation complete (1433 tests) |
 | 2025-12-03 | Phase 4.2 implementation complete (1247 tests) |
 | 2025-12-03 | Phase 4.1 implementation complete (1112 tests) |
 | 2025-12-03 | Phase 3.2 implementation complete (941 tests) |

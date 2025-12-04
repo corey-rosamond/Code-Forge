@@ -10,7 +10,8 @@ A Claude Code alternative providing access to 400+ AI models via OpenRouter API 
 - **Permission System**: Granular control with glob patterns, regex, and rule hierarchies
 - **Hooks System**: Execute custom shell commands on lifecycle events
 - **Interactive REPL**: Rich terminal UI with themes and status bar
-- **Session Management**: Persistent conversations with SQLite storage (coming soon)
+- **Session Management**: Persistent conversations with JSON storage and auto-save
+- **Context Management**: Token counting, truncation strategies, and context compaction
 
 ## Installation
 
@@ -54,8 +55,10 @@ OpenCode/
 │   ├── llm/                # OpenRouter client, streaming
 │   ├── langchain/          # LangChain integration, agent
 │   ├── permissions/        # Permission checker, rules, prompts
-│   └── hooks/              # Event hooks, executor
-├── tests/                  # Test suite (1247 tests)
+│   ├── hooks/              # Event hooks, executor
+│   ├── sessions/           # Session management and persistence
+│   └── context/            # Context management and token counting
+├── tests/                  # Test suite (1584 tests)
 └── .ai/                    # AI planning documentation
 ```
 
@@ -187,6 +190,163 @@ for result in results:
         print(f"Blocked by hook: {result.hook.event_pattern}")
 ```
 
+## Session Management
+
+```python
+from opencode.sessions import SessionManager, Session
+
+# Get singleton manager instance
+manager = SessionManager.get_instance()
+
+# Create a new session
+session = manager.create(
+    title="My Session",
+    model="anthropic/claude-3-5-sonnet",
+    tags=["python", "api"],
+)
+
+# Add messages
+manager.add_message("user", "Hello!")
+manager.add_message("assistant", "Hi there!")
+
+# Record tool calls
+manager.record_tool_call(
+    tool_name="bash",
+    arguments={"command": "ls"},
+    result={"output": "file.py"},
+    duration=0.05,
+)
+
+# Update token usage
+manager.update_usage(prompt_tokens=100, completion_tokens=50)
+
+# Save and close
+manager.close()
+
+# Later, resume the session
+resumed = manager.resume(session.id)
+
+# Or resume the most recent session
+latest = manager.resume_latest()
+
+# List sessions
+summaries = manager.list_sessions(limit=10, tags=["python"])
+```
+
+### Session Lifecycle Hooks
+
+```python
+# Register hooks for session events
+manager.register_hook("session:start", lambda s: print(f"Started: {s.id}"))
+manager.register_hook("session:end", lambda s: print(f"Ended: {s.id}"))
+manager.register_hook("session:message", lambda s, m: print(f"Message: {m.role}"))
+manager.register_hook("session:save", lambda s: print(f"Saved: {s.id}"))
+```
+
+## Context Management
+
+```python
+from opencode.context import ContextManager, TruncationMode
+
+# Create context manager for a model
+manager = ContextManager(
+    model="anthropic/claude-3-opus",
+    mode=TruncationMode.SMART,
+    auto_truncate=True,
+)
+
+# Set system prompt
+prompt_tokens = manager.set_system_prompt("You are a helpful assistant.")
+
+# Add messages
+manager.add_message({"role": "user", "content": "Hello!"})
+manager.add_message({"role": "assistant", "content": "Hi there!"})
+
+# Check usage
+print(f"Token usage: {manager.token_usage}")
+print(f"Usage: {manager.usage_percentage:.1f}%")
+print(f"Available: {manager.available_tokens}")
+print(f"Near limit: {manager.is_near_limit}")
+
+# Get messages for LLM request (includes system prompt)
+messages = manager.get_context_for_request()
+
+# Get statistics
+stats = manager.get_stats()
+
+# Reset context
+manager.reset()
+```
+
+### Truncation Modes
+
+| Mode | Description |
+|------|-------------|
+| `SLIDING_WINDOW` | Keep N most recent messages |
+| `TOKEN_BUDGET` | Remove oldest messages to fit budget |
+| `SMART` | Preserve first and last messages, remove middle |
+| `SUMMARIZE` | Use LLM to summarize old messages |
+
+### Token Counting
+
+```python
+from opencode.context import get_counter, TiktokenCounter, ApproximateCounter
+
+# Get appropriate counter for model
+counter = get_counter("claude-3-opus")
+
+# Count tokens in text
+tokens = counter.count("Hello, world!")
+
+# Count tokens in messages
+messages = [
+    {"role": "user", "content": "Hello"},
+    {"role": "assistant", "content": "Hi!"},
+]
+total = counter.count_messages(messages)
+
+# Direct counter usage
+tiktoken = TiktokenCounter(model="gpt-4")
+approx = ApproximateCounter(tokens_per_word=1.3)
+```
+
+### Truncation Strategies
+
+```python
+from opencode.context import (
+    SlidingWindowStrategy,
+    TokenBudgetStrategy,
+    SmartTruncationStrategy,
+    CompositeStrategy,
+)
+
+# Sliding window (keep last N messages)
+sliding = SlidingWindowStrategy(window_size=20, preserve_system=True)
+truncated = sliding.truncate(messages, target_tokens, counter)
+
+# Token budget (fit within token limit)
+budget = TokenBudgetStrategy(preserve_system=True)
+truncated = budget.truncate(messages, target_tokens, counter)
+
+# Smart truncation (keep first and last messages)
+smart = SmartTruncationStrategy(
+    preserve_first=2,
+    preserve_last=10,
+    preserve_system=True,
+)
+truncated = smart.truncate(messages, target_tokens, counter)
+
+# Composite (chain strategies)
+composite = CompositeStrategy([smart, budget])
+truncated = composite.truncate(messages, target_tokens, counter)
+```
+
+### Storage
+
+Sessions are stored as JSON files in:
+- Default: `~/.local/share/opencode/sessions/`
+- Project-local: `.opencode/sessions/`
+
 ## Configuration
 
 Configuration is loaded from multiple sources with precedence:
@@ -274,8 +434,8 @@ All code must pass:
 | 3.2 | LangChain Integration | Complete |
 | 4.1 | Permission System | Complete |
 | 4.2 | Hooks System | Complete |
-| 5.1 | Session Management | Planned |
-| 5.2 | Context Management | Planned |
+| 5.1 | Session Management | Complete |
+| 5.2 | Context Management | Complete |
 | 6.1 | Slash Commands | Planned |
 | 6.2 | Operating Modes | Planned |
 | 7.1 | Subagents System | Planned |

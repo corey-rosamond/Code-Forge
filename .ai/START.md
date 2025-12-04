@@ -11,19 +11,19 @@
 - LangChain 1.0 integration for agent orchestration
 - Full CLI experience with tools, permissions, sessions, and extensibility
 
-The project has 22 phases with complete planning documentation. Phases 1.1-1.3, 2.1-2.3, 3.1-3.2, 4.1-4.2 are complete.
+The project has 22 phases with complete planning documentation. Phases 1.1-1.3, 2.1-2.3, 3.1-3.2, 4.1-4.2, 5.1-5.2 are complete.
 
 ---
 
 ## Current Phase
 
 ```
-CURRENT_PHASE: 5.1
+CURRENT_PHASE: 6.1
 ```
 
-**Phase Name:** Session Management
+**Phase Name:** Slash Commands
 
-**Phase Directory:** `.ai/phase/5.1/`
+**Phase Directory:** `.ai/phase/6.1/`
 
 ---
 
@@ -38,7 +38,7 @@ Execute these steps in order every time you begin work on this project:
 
 ### Step 2: Read Current Phase Documentation
 
-Read all files in the current phase directory (`.ai/phase/5.1/`):
+Read all files in the current phase directory (`.ai/phase/6.1/`):
 
 1. `PLAN.md` - Architectural design and implementation details
 2. `COMPLETION_CRITERIA.md` - What "done" means for this phase
@@ -172,13 +172,33 @@ Update `.ai/UNDONE.md`:
 
 ### When a Phase is Completed
 
-1. Update `.ai/UNDONE.md`:
-   - Mark Implementation as "Done"
-   - Mark Testing as "Done"
+**CRITICAL: Do this IMMEDIATELY after all tests pass and quality gates are verified. Do NOT wait to be asked. This is a mandatory part of phase completion.**
 
-2. Update this file (`.ai/START.md`):
-   - Change `CURRENT_PHASE` to the next phase
-   - Update "Phase Name" and "Phase Directory"
+Perform these updates in order:
+
+1. **Update `.ai/UNDONE.md`:**
+   - Mark Implementation as "Done" in the phase table
+   - Mark Testing as "Done" in the phase table
+   - Add implementation details to "What Exists" section
+   - Update test count
+   - Update "Next Steps" to point to the next phase
+   - Add entry to "Version History" table
+
+2. **Update this file (`.ai/START.md`):**
+   - Change `CURRENT_PHASE` to the next phase number
+   - Update "Phase Name" to the next phase name
+   - Update "Phase Directory" to `.ai/phase/[next]/`
+   - Update the completed phases list in "Project Context"
+   - Update the phase directory reference in "Step 2"
+
+3. **Update project `README.md`:**
+   - Update feature descriptions if applicable
+   - Update project structure if new packages added
+   - Update test count
+   - Add documentation section for new functionality
+   - Update roadmap table to show phase as Complete
+
+**A phase is NOT complete until all three files are updated.**
 
 ### Phase Progression
 
