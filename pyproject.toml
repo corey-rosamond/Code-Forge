@@ -109,6 +109,17 @@ ignore = [
     "ARG002",   # Callback interfaces require unused args for compatibility
     "PLR0915",  # Agent methods are complex by nature
 ]
+"src/opencode/commands/*.py" = [
+    "RUF012",   # ClassVar annotations not needed - class attrs are intended design
+    "ARG002",   # Command execute() methods have standardized signatures
+    "SIM102",   # Nested ifs sometimes clearer for validation chains
+]
+"src/opencode/commands/builtin/*.py" = [
+    "RUF012",   # ClassVar annotations not needed - class attrs are intended design
+    "ARG002",   # Command execute() methods have standardized signatures
+    "SIM105",   # contextlib.suppress less clear than try/except/pass
+    "PLW2901", # Loop variable reassignment intentional for truncation
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["opencode"]

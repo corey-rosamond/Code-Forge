@@ -2,7 +2,7 @@
 
 **Project:** OpenCode - Claude Code Alternative
 **Target:** Production-ready CLI using OpenRouter API and LangChain 1.0
-**Last Updated:** 2025-12-03
+**Last Updated:** 2025-12-05
 
 ---
 
@@ -22,7 +22,7 @@
 | 4.2 | Hooks System | ✅ Done | ✅ Done | ✅ Done |
 | 5.1 | Session Management | ✅ Done | ✅ Done | ✅ Done |
 | 5.2 | Context Management | ✅ Done | ✅ Done | ✅ Done |
-| 6.1 | Slash Commands | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 6.1 | Slash Commands | ✅ Done | ✅ Done | ✅ Done |
 | 6.2 | Operating Modes | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 7.1 | Subagents System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 7.2 | Skills System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
@@ -178,11 +178,39 @@ Phase 5.2 implementation complete in `src/opencode/context/`:
   - ContextManager - Central coordinator for context management
   - Auto-truncation, compact_if_needed(), get_stats()
 
+Phase 6.1 implementation complete in `src/opencode/commands/`:
+- Command parsing (`commands/parser.py`)
+  - ParsedCommand - Dataclass for parsed command with args, kwargs, flags
+  - CommandParser - Parses /command input, handles quoted strings
+  - Levenshtein distance for command suggestions
+- Command base (`commands/base.py`)
+  - ArgumentType - Enum for argument types (string, integer, boolean, choice, path)
+  - CommandArgument - Argument definition with validation
+  - CommandResult - Execution result with success, output, error, data
+  - CommandCategory - Enum for command categories
+  - Command - ABC for command implementations with execute(), validate(), get_help()
+  - SubcommandHandler - Base for commands with subcommands
+- Command registry (`commands/registry.py`)
+  - CommandRegistry - Thread-safe singleton for command registration
+  - register(), unregister(), resolve() by name or alias
+  - search(), list_commands(), get_categories()
+- Command executor (`commands/executor.py`)
+  - CommandContext - Execution context with session_manager, context_manager, config, etc.
+  - CommandExecutor - Parses, validates, executes commands
+  - register_builtin_commands() - Registers all built-in commands
+- Built-in commands (`commands/builtin/`):
+  - help_commands.py: /help, /commands (list and search commands)
+  - session_commands.py: /session with subcommands (list, new, resume, delete, title, tag, untag)
+  - context_commands.py: /context with subcommands (compact, reset, mode)
+  - control_commands.py: /clear, /exit, /reset, /stop
+  - config_commands.py: /config with subcommands (get, set), /model
+  - debug_commands.py: /debug, /tokens, /history, /tools
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 tests complete in `tests/`:
-- 1584 tests passing (1433 previous + 151 new Context Management tests)
-- 97% code coverage for context package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 tests complete in `tests/`:
+- 1795 tests passing (1584 previous + 211 new Slash Commands tests)
+- 90% code coverage for commands package
 - mypy strict mode passing
 - ruff linting passing
 
@@ -190,9 +218,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 test
 
 ## Next Steps
 
-### Immediate Priority: Phase 6.1 Implementation (Slash Commands)
+### Immediate Priority: Phase 6.2 Implementation (Operating Modes)
 
-Before starting Phase 6.1:
+Before starting Phase 6.2:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -205,14 +233,15 @@ Before starting Phase 6.1:
 10. [x] Phase 4.2 complete (Hooks System)
 11. [x] Phase 5.1 complete (Session Management)
 12. [x] Phase 5.2 complete (Context Management)
-13. [ ] Read `.ai/phase/6.1/` planning documents
-14. [ ] Understand slash commands requirements
+13. [x] Phase 6.1 complete (Slash Commands)
+14. [ ] Read `.ai/phase/6.2/` planning documents
+15. [ ] Understand operating modes requirements
 
-Phase 6.1 will implement:
-1. [ ] Slash command parsing and registration
-2. [ ] Built-in commands (/help, /clear, /session, etc.)
-3. [ ] Custom command loading from files
-4. [ ] Command argument handling
+Phase 6.2 will implement:
+1. [ ] Plan mode for step-by-step planning
+2. [ ] Compact mode for context optimization
+3. [ ] Mode-aware tool behavior
+4. [ ] Mode transition commands
 
 ### Implementation Order
 
@@ -266,6 +295,7 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-05 | Phase 6.1 implementation complete (1795 tests) |
 | 2025-12-04 | Phase 5.2 implementation complete (1584 tests) |
 | 2025-12-04 | Phase 5.1 implementation complete (1433 tests) |
 | 2025-12-03 | Phase 4.2 implementation complete (1247 tests) |

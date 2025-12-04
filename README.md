@@ -12,6 +12,7 @@ A Claude Code alternative providing access to 400+ AI models via OpenRouter API 
 - **Interactive REPL**: Rich terminal UI with themes and status bar
 - **Session Management**: Persistent conversations with JSON storage and auto-save
 - **Context Management**: Token counting, truncation strategies, and context compaction
+- **Slash Commands**: Extensible command system with built-in commands for session, context, config, and debugging
 
 ## Installation
 
@@ -57,8 +58,9 @@ OpenCode/
 │   ├── permissions/        # Permission checker, rules, prompts
 │   ├── hooks/              # Event hooks, executor
 │   ├── sessions/           # Session management and persistence
-│   └── context/            # Context management and token counting
-├── tests/                  # Test suite (1584 tests)
+│   ├── context/            # Context management and token counting
+│   └── commands/           # Slash command system
+├── tests/                  # Test suite (1795 tests)
 └── .ai/                    # AI planning documentation
 ```
 
@@ -347,6 +349,87 @@ Sessions are stored as JSON files in:
 - Default: `~/.local/share/opencode/sessions/`
 - Project-local: `.opencode/sessions/`
 
+## Slash Commands
+
+OpenCode provides an extensible slash command system for quick actions within the REPL.
+
+### Built-in Commands
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/help` | `/h`, `/?` | Show help for commands |
+| `/commands` | | List all available commands |
+| `/session` | `/s`, `/sess` | Session management (list, new, resume, delete, title, tag) |
+| `/context` | `/ctx`, `/c` | Context management (compact, reset, mode) |
+| `/config` | `/cfg` | Configuration management (get, set) |
+| `/model` | | Change or show current model |
+| `/clear` | `/cls` | Clear the screen |
+| `/exit` | `/quit`, `/q` | Exit the REPL |
+| `/reset` | | Reset conversation context |
+| `/stop` | | Stop current operation |
+| `/debug` | `/dbg` | Toggle debug mode |
+| `/tokens` | | Show token usage |
+| `/history` | | Show message history |
+| `/tools` | | List available tools |
+
+### Usage Examples
+
+```bash
+# Get help on a command
+/help session
+
+# List recent sessions
+/session list
+
+# Resume a session by ID
+/session resume abc123
+
+# Create a new titled session
+/session new --title "API Refactoring"
+
+# Compact conversation context
+/context compact
+
+# Change truncation mode
+/context mode smart
+
+# View/set configuration
+/config get llm.model
+/config set llm.temperature 0.8
+
+# Check token usage
+/tokens
+
+# Toggle debug output
+/debug
+```
+
+### Programmatic Usage
+
+```python
+from opencode.commands import CommandRegistry, CommandExecutor, CommandContext
+
+# Get command registry
+registry = CommandRegistry.get_instance()
+
+# List all commands
+for cmd in registry.list_commands():
+    print(f"/{cmd.name}: {cmd.description}")
+
+# Search commands
+results = registry.search("session")
+
+# Execute a command
+executor = CommandExecutor(registry)
+context = CommandContext(session_manager=manager, config=config)
+result = await executor.execute("/session list", context)
+
+if result.success:
+    print(result.output)
+else:
+    print(f"Error: {result.error}")
+```
+
 ## Configuration
 
 Configuration is loaded from multiple sources with precedence:
@@ -436,7 +519,7 @@ All code must pass:
 | 4.2 | Hooks System | Complete |
 | 5.1 | Session Management | Complete |
 | 5.2 | Context Management | Complete |
-| 6.1 | Slash Commands | Planned |
+| 6.1 | Slash Commands | Complete |
 | 6.2 | Operating Modes | Planned |
 | 7.1 | Subagents System | Planned |
 | 7.2 | Skills System | Planned |
