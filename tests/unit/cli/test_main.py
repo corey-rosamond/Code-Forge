@@ -1,0 +1,179 @@
+"""Tests for CLI entry point."""
+
+from __future__ import annotations
+
+import subprocess
+import sys
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+from opencode import __version__
+from opencode.cli.main import main, print_help
+
+
+class TestMainFunction:
+    """Tests for main() function."""
+
+    def test_version_flag(self) -> None:
+        """--version should print version and return 0."""
+        with patch.object(sys, "argv", ["opencode", "--version"]):
+            with patch("builtins.print") as mock_print:
+                exit_code = main()
+        assert exit_code == 0
+        mock_print.assert_called_once()
+        assert __version__ in mock_print.call_args[0][0]
+
+    def test_version_short_flag(self) -> None:
+        """-v should print version and return 0."""
+        with patch.object(sys, "argv", ["opencode", "-v"]):
+            with patch("builtins.print") as mock_print:
+                exit_code = main()
+        assert exit_code == 0
+        assert __version__ in mock_print.call_args[0][0]
+
+    def test_help_flag(self) -> None:
+        """--help should print help and return 0."""
+        with patch.object(sys, "argv", ["opencode", "--help"]):
+            with patch("builtins.print") as mock_print:
+                exit_code = main()
+        assert exit_code == 0
+        # Help should contain usage info
+        output = mock_print.call_args[0][0]
+        assert "Usage:" in output
+        assert "Options:" in output
+
+    def test_help_short_flag(self) -> None:
+        """-h should print help and return 0."""
+        with patch.object(sys, "argv", ["opencode", "-h"]):
+            with patch("builtins.print") as mock_print:
+                exit_code = main()
+        assert exit_code == 0
+
+    def test_no_arguments_starts_repl(self) -> None:
+        """Running without arguments should start the REPL."""
+        mock_repl = MagicMock()
+        mock_repl.run = AsyncMock(return_value=0)
+
+        with patch.object(sys, "argv", ["opencode"]):
+            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+                with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
+                    exit_code = main()
+
+        assert exit_code == 0
+        mock_loader.assert_called_once()
+        mock_repl.run.assert_called_once()
+
+    def test_config_load_error(self) -> None:
+        """Config load error should return exit code 1."""
+        with patch.object(sys, "argv", ["opencode"]):
+            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+                mock_loader.return_value.load_all.side_effect = Exception("Config error")
+                with patch("builtins.print"):
+                    exit_code = main()
+
+        assert exit_code == 1
+
+    def test_repl_error(self) -> None:
+        """REPL error should return exit code 1."""
+        mock_repl = MagicMock()
+        mock_repl.run = AsyncMock(side_effect=Exception("REPL error"))
+
+        with patch.object(sys, "argv", ["opencode"]):
+            with patch("opencode.cli.main.ConfigLoader"):
+                with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
+                    with patch("builtins.print"):
+                        exit_code = main()
+
+        assert exit_code == 1
+
+    def test_keyboard_interrupt(self) -> None:
+        """KeyboardInterrupt should return exit code 130."""
+        mock_repl = MagicMock()
+        mock_repl.run = AsyncMock(side_effect=KeyboardInterrupt())
+
+        with patch.object(sys, "argv", ["opencode"]):
+            with patch("opencode.cli.main.ConfigLoader"):
+                with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
+                    with patch("builtins.print"):
+                        exit_code = main()
+
+        assert exit_code == 130
+
+    def test_unknown_flag(self) -> None:
+        """Unknown flags should return error code 1."""
+        with patch.object(sys, "argv", ["opencode", "--invalid-flag"]):
+            with patch("builtins.print"):
+                exit_code = main()
+        assert exit_code == 1
+
+    def test_unknown_flag_error_message(self) -> None:
+        """Unknown flags should print error to stderr."""
+        with patch.object(sys, "argv", ["opencode", "--unknown"]):
+            with patch("builtins.print") as mock_print:
+                exit_code = main()
+
+        # Find the stderr call
+        stderr_calls = [
+            call for call in mock_print.call_args_list
+            if call.kwargs.get("file") == sys.stderr
+        ]
+        assert len(stderr_calls) > 0
+        error_msg = str(stderr_calls[0])
+        assert "--unknown" in error_msg
+
+
+class TestPrintHelp:
+    """Tests for print_help() function."""
+
+    def test_help_contains_usage(self) -> None:
+        """Help should contain usage information."""
+        with patch("builtins.print") as mock_print:
+            print_help()
+        output = mock_print.call_args[0][0]
+        assert "Usage:" in output
+
+    def test_help_contains_options(self) -> None:
+        """Help should list available options."""
+        with patch("builtins.print") as mock_print:
+            print_help()
+        output = mock_print.call_args[0][0]
+        assert "--version" in output
+        assert "--help" in output
+        assert "--continue" in output
+        assert "--resume" in output
+        assert "--print" in output
+
+    def test_help_contains_short_flags(self) -> None:
+        """Help should list short flags."""
+        with patch("builtins.print") as mock_print:
+            print_help()
+        output = mock_print.call_args[0][0]
+        assert "-v" in output
+        assert "-h" in output
+        assert "-p" in output
+
+
+class TestCLIIntegration:
+    """Integration tests for CLI as subprocess."""
+
+    @pytest.mark.skipif(
+        sys.platform == "win32",
+        reason="Subprocess tests may behave differently on Windows",
+    )
+    def test_module_execution(self) -> None:
+        """python -m opencode --version should work."""
+        import os
+
+        env = os.environ.copy()
+        # PYTHONPATH should point to src directory for src layout
+        env["PYTHONPATH"] = "/home/corey/OpenCode/src"
+        result = subprocess.run(
+            [sys.executable, "-m", "opencode", "--version"],
+            capture_output=True,
+            text=True,
+            cwd="/home/corey/OpenCode",
+            env=env,
+        )
+        assert result.returncode == 0
+        assert __version__ in result.stdout
