@@ -24,7 +24,7 @@
 | 5.2 | Context Management | ✅ Done | ✅ Done | ✅ Done |
 | 6.1 | Slash Commands | ✅ Done | ✅ Done | ✅ Done |
 | 6.2 | Operating Modes | ✅ Done | ✅ Done | ✅ Done |
-| 7.1 | Subagents System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 7.1 | Subagents System | ✅ Done | ✅ Done | ✅ Done |
 | 7.2 | Skills System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 8.1 | MCP Protocol Support | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 8.2 | Web Tools | ✅ Done | ⬜ Not Started | ⬜ Not Started |
@@ -248,11 +248,42 @@ Phase 6.2 implementation complete in `src/opencode/modes/`:
 - Package exports (`modes/__init__.py`)
   - setup_modes() - Register all default modes with manager
 
+Phase 7.1 implementation complete in `src/opencode/agents/`:
+- Agent base classes (`agents/base.py`)
+  - AgentState - Enum for lifecycle states (PENDING, RUNNING, COMPLETED, FAILED, CANCELLED)
+  - ResourceLimits - Token, time, tool call, iteration limits
+  - ResourceUsage - Usage tracking with exceeds() check
+  - AgentConfig - Agent configuration with type, prompt, tools, limits
+  - AgentContext - Execution context with parent messages, working dir, metadata
+  - Agent - Abstract base class for all agents
+- Agent results (`agents/result.py`)
+  - AgentResult - Success/failure result with factory methods (ok, fail, cancelled, timeout)
+  - AggregatedResult - Combine results from parallel agents
+- Agent types (`agents/types.py`)
+  - AgentTypeDefinition - Type definitions with prompts, tools, limits
+  - AgentTypeRegistry - Thread-safe singleton for type management
+  - Built-in types: EXPLORE_AGENT, PLAN_AGENT, CODE_REVIEW_AGENT, GENERAL_AGENT
+- Agent executor (`agents/executor.py`)
+  - AgentExecutor - LLM interaction loop with tool execution
+  - Resource limit checking during execution
+  - LangChain message conversion
+- Agent manager (`agents/manager.py`)
+  - AgentManager - Singleton for agent lifecycle
+  - spawn(), spawn_parallel() with semaphore-based concurrency
+  - wait(), wait_all(), cancel(), cancel_all()
+  - Stats tracking and cleanup
+- Built-in agents (`agents/builtin/`)
+  - ExploreAgent - Codebase exploration and search
+  - PlanAgent - Implementation planning
+  - CodeReviewAgent - Code review and suggestions
+  - GeneralAgent - General purpose tasks
+  - Factory function create_agent() and registry
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 tests complete in `tests/`:
-- 2035 tests passing (1795 previous + 240 new Operating Modes tests)
-- 97% code coverage for modes package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 tests complete in `tests/`:
+- 2206 tests passing (2035 previous + 171 new Agents tests)
+- 95% code coverage for agents package
 - mypy strict mode passing
 - ruff linting passing
 
@@ -260,9 +291,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.
 
 ## Next Steps
 
-### Immediate Priority: Phase 7.1 Implementation (Subagents System)
+### Immediate Priority: Phase 7.2 Implementation (Skills System)
 
-Before starting Phase 7.1:
+Before starting Phase 7.2:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -277,14 +308,15 @@ Before starting Phase 7.1:
 12. [x] Phase 5.2 complete (Context Management)
 13. [x] Phase 6.1 complete (Slash Commands)
 14. [x] Phase 6.2 complete (Operating Modes)
-15. [ ] Read `.ai/phase/7.1/` planning documents
-16. [ ] Understand subagents requirements
+15. [x] Phase 7.1 complete (Subagents System)
+16. [ ] Read `.ai/phase/7.2/` planning documents
+17. [ ] Understand skills requirements
 
-Phase 7.1 will implement:
-1. [ ] Agent spawning and management
-2. [ ] Inter-agent communication
-3. [ ] Task delegation patterns
-4. [ ] Agent lifecycle management
+Phase 7.2 will implement:
+1. [ ] Skill definitions and discovery
+2. [ ] Skill loading and invocation
+3. [ ] Skill configuration and customization
+4. [ ] Integration with agent system
 
 ### Implementation Order
 
@@ -338,6 +370,7 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-05 | Phase 7.1 implementation complete (2206 tests) |
 | 2025-12-05 | Phase 6.2 implementation complete (2035 tests) |
 | 2025-12-05 | Phase 6.1 implementation complete (1795 tests) |
 | 2025-12-04 | Phase 5.2 implementation complete (1584 tests) |
