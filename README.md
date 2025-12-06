@@ -14,6 +14,8 @@ A Claude Code alternative providing access to 400+ AI models via OpenRouter API 
 - **Context Management**: Token counting, truncation strategies, and context compaction
 - **Slash Commands**: Extensible command system with built-in commands for session, context, config, and debugging
 - **Operating Modes**: Plan, Thinking, and Headless modes for structured task execution
+- **Subagents System**: Spawn autonomous agents for complex, multi-step tasks
+- **Skills System**: Domain-specific capabilities via reusable skill bundles
 
 ## Installation
 
@@ -61,8 +63,10 @@ OpenCode/
 │   ├── sessions/           # Session management and persistence
 │   ├── context/            # Context management and token counting
 │   ├── commands/           # Slash command system
-│   └── modes/              # Operating modes (Plan, Thinking, Headless)
-├── tests/                  # Test suite (2035 tests)
+│   ├── modes/              # Operating modes (Plan, Thinking, Headless)
+│   ├── agents/             # Subagents system
+│   └── skills/             # Skills system
+├── tests/                  # Test suite (2393 tests)
 └── .ai/                    # AI planning documentation
 ```
 
@@ -642,8 +646,8 @@ All code must pass:
 | 5.2 | Context Management | Complete |
 | 6.1 | Slash Commands | Complete |
 | 6.2 | Operating Modes | Complete |
-| 7.1 | Subagents System | Planned |
-| 7.2 | Skills System | Planned |
+| 7.1 | Subagents System | Complete |
+| 7.2 | Skills System | Complete |
 | 8.1 | MCP Protocol Support | Planned |
 | 8.2 | Web Tools | Planned |
 | 9.1 | Git Integration | Planned |

@@ -25,7 +25,7 @@
 | 6.1 | Slash Commands | ✅ Done | ✅ Done | ✅ Done |
 | 6.2 | Operating Modes | ✅ Done | ✅ Done | ✅ Done |
 | 7.1 | Subagents System | ✅ Done | ✅ Done | ✅ Done |
-| 7.2 | Skills System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 7.2 | Skills System | ✅ Done | ✅ Done | ✅ Done |
 | 8.1 | MCP Protocol Support | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 8.2 | Web Tools | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 9.1 | Git Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
@@ -279,11 +279,50 @@ Phase 7.1 implementation complete in `src/opencode/agents/`:
   - GeneralAgent - General purpose tasks
   - Factory function create_agent() and registry
 
+Phase 7.2 implementation complete in `src/opencode/skills/`:
+- Skill base classes (`skills/base.py`)
+  - SkillConfig - Configuration option with type validation (string, int, bool, choice)
+  - SkillMetadata - Name, description, author, version, tags, aliases, examples
+  - SkillDefinition - Complete skill definition with prompt, tools, config
+  - Skill - Runtime skill with activation/deactivation, variable substitution
+- Skill parser (`skills/parser.py`)
+  - SkillParser - Parse YAML and Markdown skill files
+  - ParseResult - Result with definition, errors, warnings
+  - YAML frontmatter extraction for Markdown files
+  - Validation for required fields, config types
+- Skill loader (`skills/loader.py`)
+  - SkillLoader - File-based skill discovery
+  - Search paths for user (~/.opencode/skills/) and project (.opencode/skills/)
+  - Hot reload support
+  - Error callbacks for load failures
+- Skill registry (`skills/registry.py`)
+  - SkillRegistry - Thread-safe singleton for skill management
+  - register(), unregister(), get() by name or alias
+  - list_skills(), search(), get_tags()
+  - activate(), deactivate() with config validation
+  - on_activate(), on_deactivate() callbacks
+  - load_skills(), reload_skill(), reload_all()
+- Built-in skills (`skills/builtin/`)
+  - PDF skill - PDF document analysis
+  - Excel skill - Spreadsheet and CSV handling (aliases: xlsx, csv)
+  - Database skill - SQL and database operations (alias: db)
+  - API skill - REST/GraphQL API testing
+  - Testing skill - Unit/integration test writing (alias: test)
+  - get_builtin_skills(), register_builtin_skills()
+- Skill commands (`skills/commands.py`)
+  - SkillCommand - /skill command with subcommands
+  - /skill list [--tag <tag>] - List available skills
+  - /skill <name> - Activate skill
+  - /skill off - Deactivate skill
+  - /skill info <name> - Show skill details
+  - /skill search <query> - Search skills
+  - /skill reload - Reload all skills
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 tests complete in `tests/`:
-- 2206 tests passing (2035 previous + 171 new Agents tests)
-- 95% code coverage for agents package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 tests complete in `tests/`:
+- 2393 tests passing (2206 previous + 187 new Skills tests)
+- 93% code coverage for skills package
 - mypy strict mode passing
 - ruff linting passing
 
@@ -291,9 +330,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.
 
 ## Next Steps
 
-### Immediate Priority: Phase 7.2 Implementation (Skills System)
+### Immediate Priority: Phase 8.1 Implementation (MCP Protocol Support)
 
-Before starting Phase 7.2:
+Before starting Phase 8.1:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -309,14 +348,15 @@ Before starting Phase 7.2:
 13. [x] Phase 6.1 complete (Slash Commands)
 14. [x] Phase 6.2 complete (Operating Modes)
 15. [x] Phase 7.1 complete (Subagents System)
-16. [ ] Read `.ai/phase/7.2/` planning documents
-17. [ ] Understand skills requirements
+16. [x] Phase 7.2 complete (Skills System)
+17. [ ] Read `.ai/phase/8.1/` planning documents
+18. [ ] Understand MCP protocol requirements
 
-Phase 7.2 will implement:
-1. [ ] Skill definitions and discovery
-2. [ ] Skill loading and invocation
-3. [ ] Skill configuration and customization
-4. [ ] Integration with agent system
+Phase 8.1 will implement:
+1. [ ] MCP protocol client
+2. [ ] MCP server discovery and connection
+3. [ ] Tool bridge from MCP to OpenCode
+4. [ ] MCP configuration and management
 
 ### Implementation Order
 
@@ -370,6 +410,7 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-06 | Phase 7.2 implementation complete (2393 tests) |
 | 2025-12-05 | Phase 7.1 implementation complete (2206 tests) |
 | 2025-12-05 | Phase 6.2 implementation complete (2035 tests) |
 | 2025-12-05 | Phase 6.1 implementation complete (1795 tests) |
