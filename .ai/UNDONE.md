@@ -27,7 +27,7 @@
 | 7.1 | Subagents System | ✅ Done | ✅ Done | ✅ Done |
 | 7.2 | Skills System | ✅ Done | ✅ Done | ✅ Done |
 | 8.1 | MCP Protocol Support | ✅ Done | ✅ Done | ✅ Done |
-| 8.2 | Web Tools | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 8.2 | Web Tools | ✅ Done | ✅ Done | ✅ Done |
 | 9.1 | Git Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 9.2 | GitHub Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 10.1 | Plugin System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
@@ -360,11 +360,51 @@ Phase 8.1 implementation complete in `src/opencode/mcp/`:
   - get_all_tools(), get_all_resources(), get_all_prompts()
   - reload_config() - Hot reload configuration
 
+Phase 8.2 implementation complete in `src/opencode/web/`:
+- Web types (`web/types.py`)
+  - SearchResult - Individual search result with title, url, snippet, date, metadata
+  - SearchResponse - Search results with query, provider, total_results, search_time
+  - FetchResponse - URL fetch result with content, headers, status, encoding
+  - FetchOptions - Fetch configuration (timeout, max_size, user_agent, etc.)
+  - ParsedContent - Parsed HTML with title, text, links, images, metadata
+- Web configuration (`web/config.py`)
+  - SearchProviderConfig - Provider config with name, API key
+  - SearchConfig - Default provider, cache settings
+  - FetchConfig - Timeout, max_size, user_agent defaults
+  - CacheConfig - TTL, max_size, persist options
+  - WebConfig - Combined config with from_dict() factory
+- Search providers (`web/search/`)
+  - SearchProvider - Abstract base class for search providers
+  - SearchError - Exception for search failures
+  - filter_results() - Domain allow/block list filtering
+  - DuckDuckGoProvider - No API key required, uses duckduckgo-search
+  - GoogleSearchProvider - Google Custom Search API with API key
+  - BraveSearchProvider - Brave Search API with API key
+- URL fetching (`web/fetch/`)
+  - URLFetcher - Async URL fetcher with aiohttp
+  - FetchError - Exception for fetch failures
+  - HTTP to HTTPS upgrade, content size limits, timeout handling
+  - fetch_multiple() - Concurrent fetching with semaphore
+  - HTMLParser - BeautifulSoup-based HTML parsing
+  - parse() - Extract title, text, links, images, metadata
+  - to_text() - Convert HTML to plain text (removes scripts, nav, footer)
+  - to_markdown() - Convert HTML to Markdown with html2text
+  - extract_main_content() - Extract main/article content
+- Web caching (`web/cache.py`)
+  - WebCache - Thread-safe LRU cache for fetch responses
+  - TTL-based expiration, max size eviction
+  - generate_key() - SHA256-based cache keys
+  - Optional file persistence with pickle serialization
+- Web tools (`web/tools.py`)
+  - WebSearchTool - Search tool with provider selection, domain filtering
+  - WebFetchTool - Fetch tool with caching, format options (markdown, text, raw)
+  - Content truncation for large responses
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 + 8.1 tests complete in `tests/`:
-- 2673 tests passing (2393 previous + 280 new MCP tests)
-- 93% code coverage for mcp package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 + 8.1 + 8.2 tests complete in `tests/`:
+- 2789 tests passing (2673 previous + 116 new Web tests)
+- 97% code coverage for web package
 - mypy strict mode passing
 - ruff linting passing
 
@@ -372,9 +412,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.
 
 ## Next Steps
 
-### Immediate Priority: Phase 8.2 Implementation (Web Tools)
+### Immediate Priority: Phase 9.1 Implementation (Git Integration)
 
-Before starting Phase 8.2:
+Before starting Phase 9.1:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -392,14 +432,15 @@ Before starting Phase 8.2:
 15. [x] Phase 7.1 complete (Subagents System)
 16. [x] Phase 7.2 complete (Skills System)
 17. [x] Phase 8.1 complete (MCP Protocol Support)
-18. [ ] Read `.ai/phase/8.2/` planning documents
-19. [ ] Understand web tools requirements
+18. [x] Phase 8.2 complete (Web Tools)
+19. [ ] Read `.ai/phase/9.1/` planning documents
+20. [ ] Understand git integration requirements
 
-Phase 8.2 will implement:
-1. [ ] WebFetch tool - Fetch and process web content
-2. [ ] WebSearch tool - Web search integration
-3. [ ] HTML to markdown conversion
-4. [ ] Content caching and rate limiting
+Phase 9.1 will implement:
+1. [ ] Git repository detection and status
+2. [ ] Commit, branch, and merge operations
+3. [ ] Diff viewing and staging
+4. [ ] Git history and log commands
 
 ### Implementation Order
 
@@ -453,6 +494,7 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-06 | Phase 8.2 implementation complete (2789 tests) |
 | 2025-12-06 | Phase 8.1 implementation complete (2673 tests) |
 | 2025-12-06 | Phase 7.2 implementation complete (2393 tests) |
 | 2025-12-05 | Phase 7.1 implementation complete (2206 tests) |
