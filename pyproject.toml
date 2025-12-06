@@ -120,6 +120,13 @@ ignore = [
     "SIM105",   # contextlib.suppress less clear than try/except/pass
     "PLW2901", # Loop variable reassignment intentional for truncation
 ]
+"src/opencode/mcp/*.py" = [
+    "TC001",    # Type checking imports - these need runtime access
+    "SIM105",   # contextlib.suppress less clear than try/except/pass for async
+    "RUF022",   # __all__ sorting - grouped by category for readability
+    "PTH123",   # Path.open() - yaml.safe_load works fine with open()
+    "RUF006",   # Task reference storage - cleanup handled by disconnect
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["opencode"]

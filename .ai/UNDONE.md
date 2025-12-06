@@ -26,7 +26,7 @@
 | 6.2 | Operating Modes | ✅ Done | ✅ Done | ✅ Done |
 | 7.1 | Subagents System | ✅ Done | ✅ Done | ✅ Done |
 | 7.2 | Skills System | ✅ Done | ✅ Done | ✅ Done |
-| 8.1 | MCP Protocol Support | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 8.1 | MCP Protocol Support | ✅ Done | ✅ Done | ✅ Done |
 | 8.2 | Web Tools | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 9.1 | Git Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 9.2 | GitHub Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
@@ -318,11 +318,53 @@ Phase 7.2 implementation complete in `src/opencode/skills/`:
   - /skill search <query> - Search skills
   - /skill reload - Reload all skills
 
+Phase 8.1 implementation complete in `src/opencode/mcp/`:
+- MCP protocol types (`mcp/protocol.py`)
+  - MCPRequest, MCPResponse, MCPNotification - JSON-RPC 2.0 messages
+  - MCPError - Error with code, message, data
+  - MCPTool, MCPResource, MCPPrompt - MCP capability types
+  - MCPCapabilities, MCPServerInfo - Server metadata
+  - MCPResourceTemplate, MCPPromptArgument, MCPPromptMessage
+  - parse_message() - Factory for parsing incoming messages
+- Transport abstraction (`mcp/transport/base.py`)
+  - MCPTransport - Abstract base class for transports
+  - connect(), disconnect(), send(), receive(), is_connected
+- Stdio transport (`mcp/transport/stdio.py`)
+  - StdioTransport - Subprocess-based transport for local MCP servers
+  - Spawns process with command/args/env/cwd
+  - Line-buffered JSON-RPC over stdin/stdout
+- HTTP/SSE transport (`mcp/transport/http.py`)
+  - HTTPTransport - HTTP transport for remote MCP servers
+  - POST for requests, Server-Sent Events for notifications
+  - aiohttp-based async implementation
+- MCP client (`mcp/client.py`)
+  - MCPClient - Full MCP protocol client
+  - connect() with initialization handshake
+  - list_tools(), call_tool() - Tool operations
+  - list_resources(), read_resource() - Resource operations
+  - list_prompts(), get_prompt() - Prompt operations
+  - MCPClientError - Client error with JSON-RPC code
+- Tool integration (`mcp/tools.py`)
+  - MCPToolAdapter - Adapts MCP tools to OpenCode tool system
+  - MCPToolRegistry - Registry for MCP tools with namespacing
+  - Tool names: mcp__{server}__{tool} format
+- Configuration (`mcp/config.py`)
+  - MCPServerConfig - Server configuration (transport, command/url, env)
+  - MCPSettings - Global MCP settings (timeout, auto_connect)
+  - MCPConfig - Full configuration with servers and settings
+  - MCPConfigLoader - Load from ~/.opencode/mcp.yaml and .opencode/mcp.yaml
+- Connection manager (`mcp/manager.py`)
+  - MCPManager - Singleton for managing MCP connections
+  - connect(), disconnect(), reconnect() - Connection lifecycle
+  - connect_all() - Auto-connect enabled servers
+  - get_all_tools(), get_all_resources(), get_all_prompts()
+  - reload_config() - Hot reload configuration
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 tests complete in `tests/`:
-- 2393 tests passing (2206 previous + 187 new Skills tests)
-- 93% code coverage for skills package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 + 8.1 tests complete in `tests/`:
+- 2673 tests passing (2393 previous + 280 new MCP tests)
+- 93% code coverage for mcp package
 - mypy strict mode passing
 - ruff linting passing
 
@@ -330,9 +372,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.
 
 ## Next Steps
 
-### Immediate Priority: Phase 8.1 Implementation (MCP Protocol Support)
+### Immediate Priority: Phase 8.2 Implementation (Web Tools)
 
-Before starting Phase 8.1:
+Before starting Phase 8.2:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -349,14 +391,15 @@ Before starting Phase 8.1:
 14. [x] Phase 6.2 complete (Operating Modes)
 15. [x] Phase 7.1 complete (Subagents System)
 16. [x] Phase 7.2 complete (Skills System)
-17. [ ] Read `.ai/phase/8.1/` planning documents
-18. [ ] Understand MCP protocol requirements
+17. [x] Phase 8.1 complete (MCP Protocol Support)
+18. [ ] Read `.ai/phase/8.2/` planning documents
+19. [ ] Understand web tools requirements
 
-Phase 8.1 will implement:
-1. [ ] MCP protocol client
-2. [ ] MCP server discovery and connection
-3. [ ] Tool bridge from MCP to OpenCode
-4. [ ] MCP configuration and management
+Phase 8.2 will implement:
+1. [ ] WebFetch tool - Fetch and process web content
+2. [ ] WebSearch tool - Web search integration
+3. [ ] HTML to markdown conversion
+4. [ ] Content caching and rate limiting
 
 ### Implementation Order
 
@@ -410,6 +453,7 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-06 | Phase 8.1 implementation complete (2673 tests) |
 | 2025-12-06 | Phase 7.2 implementation complete (2393 tests) |
 | 2025-12-05 | Phase 7.1 implementation complete (2206 tests) |
 | 2025-12-05 | Phase 6.2 implementation complete (2035 tests) |
