@@ -72,9 +72,8 @@ Usage:
                 "The shell may have been cleaned up or the ID is incorrect."
             )
 
-        # Read any pending output
-        if shell.is_running:
-            await shell.read_output()
+        # Read any pending output (always try, even if process completed)
+        await shell.read_output()
 
         # Get new output
         output = shell.get_new_output()

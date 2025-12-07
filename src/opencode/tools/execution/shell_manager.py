@@ -77,6 +77,8 @@ class ShellProcess:
     async def read_output(self) -> bool:
         """Read available output from process streams.
 
+        Reads all currently available data from stdout and stderr.
+
         Returns:
             True if any data was read.
         """
@@ -85,33 +87,43 @@ class ShellProcess:
 
         read_any = False
 
-        # Read stdout
+        # Read all available stdout
         if self.process.stdout:
-            try:
-                data = await asyncio.wait_for(
-                    self.process.stdout.read(4096), timeout=0.05
-                )
-                if data:
-                    self.stdout_buffer += data.decode("utf-8", errors="replace")
-                    read_any = True
-            except TimeoutError:
-                pass
-            except Exception:
-                pass
+            while True:
+                try:
+                    data = await asyncio.wait_for(
+                        self.process.stdout.read(4096), timeout=0.05
+                    )
+                    if data:
+                        self.stdout_buffer += data.decode("utf-8", errors="replace")
+                        read_any = True
+                    else:
+                        # Empty data means EOF
+                        break
+                except TimeoutError:
+                    # No more data available right now
+                    break
+                except Exception:
+                    break
 
-        # Read stderr
+        # Read all available stderr
         if self.process.stderr:
-            try:
-                data = await asyncio.wait_for(
-                    self.process.stderr.read(4096), timeout=0.05
-                )
-                if data:
-                    self.stderr_buffer += data.decode("utf-8", errors="replace")
-                    read_any = True
-            except TimeoutError:
-                pass
-            except Exception:
-                pass
+            while True:
+                try:
+                    data = await asyncio.wait_for(
+                        self.process.stderr.read(4096), timeout=0.05
+                    )
+                    if data:
+                        self.stderr_buffer += data.decode("utf-8", errors="replace")
+                        read_any = True
+                    else:
+                        # Empty data means EOF
+                        break
+                except TimeoutError:
+                    # No more data available right now
+                    break
+                except Exception:
+                    break
 
         return read_any
 
