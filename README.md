@@ -16,6 +16,10 @@ A Claude Code alternative providing access to 400+ AI models via OpenRouter API 
 - **Operating Modes**: Plan, Thinking, and Headless modes for structured task execution
 - **Subagents System**: Spawn autonomous agents for complex, multi-step tasks
 - **Skills System**: Domain-specific capabilities via reusable skill bundles
+- **MCP Protocol Support**: Connect to Model Context Protocol servers for extended capabilities
+- **Web Tools**: Search and fetch web content with caching and format conversion
+- **Git Integration**: Repository operations, status, history, diff, and safety guards
+- **GitHub Integration**: Issues, pull requests, reviews, actions, and repository management
 
 ## Installation
 
@@ -65,8 +69,12 @@ OpenCode/
 │   ├── commands/           # Slash command system
 │   ├── modes/              # Operating modes (Plan, Thinking, Headless)
 │   ├── agents/             # Subagents system
-│   └── skills/             # Skills system
-├── tests/                  # Test suite (2393 tests)
+│   ├── skills/             # Skills system
+│   ├── mcp/                # MCP protocol support
+│   ├── web/                # Web tools (search, fetch)
+│   ├── git/                # Git integration
+│   └── github/             # GitHub integration
+├── tests/                  # Test suite (3164 tests)
 └── .ai/                    # AI planning documentation
 ```
 
@@ -648,10 +656,10 @@ All code must pass:
 | 6.2 | Operating Modes | Complete |
 | 7.1 | Subagents System | Complete |
 | 7.2 | Skills System | Complete |
-| 8.1 | MCP Protocol Support | Planned |
-| 8.2 | Web Tools | Planned |
-| 9.1 | Git Integration | Planned |
-| 9.2 | GitHub Integration | Planned |
+| 8.1 | MCP Protocol Support | Complete |
+| 8.2 | Web Tools | Complete |
+| 9.1 | Git Integration | Complete |
+| 9.2 | GitHub Integration | Complete |
 | 10.1 | Plugin System | Planned |
 | 10.2 | Polish & Integration | Planned |
 

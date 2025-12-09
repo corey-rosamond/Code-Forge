@@ -2,7 +2,7 @@
 
 **Project:** OpenCode - Claude Code Alternative
 **Target:** Production-ready CLI using OpenRouter API and LangChain 1.0
-**Last Updated:** 2025-12-05
+**Last Updated:** 2025-12-09
 
 ---
 
@@ -28,8 +28,8 @@
 | 7.2 | Skills System | ✅ Done | ✅ Done | ✅ Done |
 | 8.1 | MCP Protocol Support | ✅ Done | ✅ Done | ✅ Done |
 | 8.2 | Web Tools | ✅ Done | ✅ Done | ✅ Done |
-| 9.1 | Git Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
-| 9.2 | GitHub Integration | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 9.1 | Git Integration | ✅ Done | ✅ Done | ✅ Done |
+| 9.2 | GitHub Integration | ✅ Done | ✅ Done | ✅ Done |
 | 10.1 | Plugin System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 | 10.2 | Polish and Integration Testing | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 
@@ -400,11 +400,126 @@ Phase 8.2 implementation complete in `src/opencode/web/`:
   - WebFetchTool - Fetch tool with caching, format options (markdown, text, raw)
   - Content truncation for large responses
 
+Phase 9.1 implementation complete in `src/opencode/git/`:
+- Repository interface (`git/repository.py`)
+  - GitRepository - Core repository interface with path detection
+  - GitRemote - Remote repository information (name, url, fetch/push URLs)
+  - GitBranch - Branch information (name, current, tracking, ahead/behind, commit)
+  - GitCommit - Commit information (hash, author, date, message, parent_hashes)
+  - RepositoryInfo - Combined repository state
+  - GitError - Exception with returncode and stderr
+  - Async run_git() and sync _run_git_sync() for property access
+  - Caching for is_git_repo, current_branch, is_dirty with invalidate_cache()
+- Status operations (`git/status.py`)
+  - FileStatus - Single file status (path, status code, staged, original_path)
+  - GitStatus - Complete status (branch, tracking, ahead/behind, staged/unstaged/untracked/conflicts)
+  - GitStatusTool - Parse git status --porcelain=v2 output
+  - Support for type 1 (changed) and type 2 (rename/copy) entries
+  - to_string() for human-readable output
+- History operations (`git/history.py`)
+  - LogEntry - Extended commit info with files changed, stats
+  - GitHistory - Log, search, and commit details
+  - get_log() - Paginated log with author/date/path filters
+  - get_commit() - Single commit details
+  - search_commits() - Search by message, author, content
+  - get_file_history() - History for specific file
+- Diff operations (`git/diff.py`)
+  - DiffFile - Single file diff (path, status, additions, deletions, content)
+  - GitDiff - Complete diff result with files and stats
+  - GitDiffTool - Diff working tree, commits, branches
+  - get_stat(), get_name_only(), get_name_status() helpers
+  - _parse_stat(), _parse_diff_content() parsers
+- Safety guards (`git/safety.py`)
+  - SafetyCheck - Result with safe, reason, warnings
+  - GitSafety - Safety checks for dangerous operations
+  - check_amend() - Verify HEAD not pushed
+  - check_force_push() - Block force push to protected branches
+  - check_branch_delete() - Prevent deleting current/protected branches
+  - check_hard_reset() - Warn about uncommitted changes
+  - check_checkout() - Detect conflicting changes
+  - check_rebase(), check_merge() - Pre-operation validation
+  - validate_commit_message() - Format validation
+  - PROTECTED_BRANCHES - main, master, develop, production, release
+- Git operations (`git/operations.py`)
+  - GitOperations - High-level git operations with safety
+  - UnsafeOperationError - Exception for blocked operations
+  - stage(), unstage(), commit(), amend() - Staging and commits
+  - create_branch(), checkout(), delete_branch() - Branch management
+  - merge(), rebase(), cherry_pick() - Merge operations
+  - stash_push(), stash_pop(), stash_list() - Stash management
+  - create_tag(), delete_tag(), list_tags() - Tag operations
+  - reset_soft(), reset_hard() - Reset operations
+  - clean() - Remove untracked files
+  - All operations integrate with GitSafety checks
+- LLM context (`git/context.py`)
+  - GitContext - Context provider for LLM system prompts
+  - get_context_summary() - Brief repository state
+  - get_detailed_context() - Full repository info with status
+  - get_status_summary() - Short status line
+  - format_for_commit() - Staged changes for commit message generation
+  - format_for_review() - Repository state for code review
+  - get_branch_for_prompt() - Branch info for prompts
+- Package exports (`git/__init__.py`)
+  - All public classes exported with sorted __all__
+
+Phase 9.2 implementation complete in `src/opencode/github/`:
+- Authentication (`github/auth.py`)
+  - GitHubAuth - Authentication data (token, username, scopes, rate limits)
+  - GitHubAuthenticator - Token validation, env var support (GITHUB_TOKEN, GH_TOKEN)
+  - GitHubAuthError - Authentication error exception
+  - Rate limit tracking with reset time
+- GitHub API client (`github/client.py`)
+  - GitHubClient - Async HTTP client with aiohttp
+  - GET, POST, PATCH, PUT, DELETE methods
+  - Pagination support with configurable per_page and max_pages
+  - Rate limit handling with exponential backoff
+  - Error hierarchy: GitHubAPIError, GitHubRateLimitError, GitHubNotFoundError
+  - Automatic retry with jitter for transient failures
+- Repository operations (`github/repository.py`)
+  - GitHubRepository - Repository info (owner, name, description, stats)
+  - GitHubBranch - Branch info (name, commit_sha, protected)
+  - GitHubTag - Tag info with zipball/tarball URLs
+  - RepositoryService - Get repo, list/get branches, list tags
+  - get_readme(), get_content() - File content retrieval
+  - parse_remote_url() - Parse HTTPS/SSH GitHub URLs
+- Issue operations (`github/issues.py`)
+  - GitHubUser - User info (login, id, avatar, type)
+  - GitHubLabel - Label with name, color, description
+  - GitHubMilestone - Milestone with state, due date
+  - GitHubIssue - Full issue with author, assignees, labels
+  - GitHubComment - Issue/PR comments
+  - IssueService - CRUD operations, comments, labels
+  - List with filters (state, labels, assignee, milestone)
+- Pull request operations (`github/pull_requests.py`)
+  - GitHubPullRequest - PR with head/base refs, merge status, stats
+  - GitHubReview - Review with state (APPROVED, CHANGES_REQUESTED)
+  - GitHubReviewComment - Review comments with diff context
+  - GitHubCheckRun - CI check status
+  - GitHubPRFile - Changed file with patch content
+  - PullRequestService - Full PR workflow
+  - Create, update, merge (merge/squash/rebase)
+  - Reviews, review comments, requested reviewers
+  - Diff, files, commits, checks, combined status
+- GitHub Actions (`github/actions.py`)
+  - Workflow - Workflow definition (id, name, path, state)
+  - WorkflowRun - Run with status, conclusion, timing
+  - WorkflowJob - Job with steps and status
+  - ActionsService - List workflows, runs, jobs
+  - Get run logs, rerun, rerun failed, cancel
+- LLM context (`github/context.py`)
+  - GitHubContext - Context for LLM prompts
+  - get_context_summary() - Repository summary
+  - format_issue() - Issue details for LLM
+  - format_pr() - PR details for LLM
+  - format_issue_list(), format_pr_list() - List formatting
+- Package exports (`github/__init__.py`)
+  - All public classes exported
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 + 8.1 + 8.2 tests complete in `tests/`:
-- 2789 tests passing (2673 previous + 116 new Web tests)
-- 97% code coverage for web package
+Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 + 8.1 + 8.2 + 9.1 + 9.2 tests complete in `tests/`:
+- 3164 tests passing (3013 previous + 151 new GitHub tests)
+- 92% code coverage for github package (90% required)
 - mypy strict mode passing
 - ruff linting passing
 
@@ -412,9 +527,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.
 
 ## Next Steps
 
-### Immediate Priority: Phase 9.1 Implementation (Git Integration)
+### Immediate Priority: Phase 10.1 Implementation (Plugin System)
 
-Before starting Phase 9.1:
+Before starting Phase 10.1:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -433,14 +548,16 @@ Before starting Phase 9.1:
 16. [x] Phase 7.2 complete (Skills System)
 17. [x] Phase 8.1 complete (MCP Protocol Support)
 18. [x] Phase 8.2 complete (Web Tools)
-19. [ ] Read `.ai/phase/9.1/` planning documents
-20. [ ] Understand git integration requirements
+19. [x] Phase 9.1 complete (Git Integration)
+20. [x] Phase 9.2 complete (GitHub Integration)
+21. [ ] Read `.ai/phase/10.1/` planning documents
+22. [ ] Understand plugin system requirements
 
-Phase 9.1 will implement:
-1. [ ] Git repository detection and status
-2. [ ] Commit, branch, and merge operations
-3. [ ] Diff viewing and staging
-4. [ ] Git history and log commands
+Phase 10.1 will implement:
+1. [ ] Plugin discovery and loading
+2. [ ] Plugin lifecycle management
+3. [ ] Extension points (tools, commands, skills)
+4. [ ] Plugin configuration and dependencies
 
 ### Implementation Order
 
@@ -494,6 +611,8 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-09 | Phase 9.2 implementation complete (3164 tests) |
+| 2025-12-08 | Phase 9.1 implementation complete (3013 tests) |
 | 2025-12-06 | Phase 8.2 implementation complete (2789 tests) |
 | 2025-12-06 | Phase 8.1 implementation complete (2673 tests) |
 | 2025-12-06 | Phase 7.2 implementation complete (2393 tests) |
