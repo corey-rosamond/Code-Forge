@@ -30,7 +30,7 @@
 | 8.2 | Web Tools | ✅ Done | ✅ Done | ✅ Done |
 | 9.1 | Git Integration | ✅ Done | ✅ Done | ✅ Done |
 | 9.2 | GitHub Integration | ✅ Done | ✅ Done | ✅ Done |
-| 10.1 | Plugin System | ✅ Done | ⬜ Not Started | ⬜ Not Started |
+| 10.1 | Plugin System | ✅ Done | ✅ Done | ✅ Done |
 | 10.2 | Polish and Integration Testing | ✅ Done | ⬜ Not Started | ⬜ Not Started |
 
 ---
@@ -515,11 +515,54 @@ Phase 9.2 implementation complete in `src/opencode/github/`:
 - Package exports (`github/__init__.py`)
   - All public classes exported
 
+Phase 10.1 implementation complete in `src/opencode/plugins/`:
+- Plugin exceptions (`plugins/exceptions.py`)
+  - PluginError - Base exception with plugin_id attribute
+  - PluginNotFoundError, PluginLoadError, PluginManifestError
+  - PluginDependencyError, PluginConfigError, PluginLifecycleError
+- Plugin base classes (`plugins/base.py`)
+  - PluginMetadata - Name, version, description, author, keywords, etc.
+  - PluginCapabilities - Tools, commands, hooks, subagents, skills, system_access
+  - PluginContext - Plugin runtime context with data_dir, config, logger
+  - Plugin - Abstract base class with lifecycle hooks and registration methods
+- Plugin manifest parsing (`plugins/manifest.py`)
+  - PluginManifest - Full plugin manifest with from_yaml(), from_pyproject()
+  - ManifestParser - Find, parse, validate plugin manifests
+  - Support for plugin.yaml, plugin.yml, pyproject.toml
+  - Semver version validation, entry point format validation
+- Plugin discovery (`plugins/discovery.py`)
+  - DiscoveredPlugin - Discovered plugin with path, manifest, source
+  - PluginDiscovery - Discover from user/project/extra/package sources
+  - Entry point support for package-based plugins
+- Plugin configuration (`plugins/config.py`)
+  - PluginConfig - Plugin system configuration (enabled, dirs, disabled list)
+  - PluginConfigManager - Per-plugin config, data dirs, JSON schema validation
+- Plugin loader (`plugins/loader.py`)
+  - LoadedPlugin - Loaded plugin with instance, manifest, context, state
+  - PluginLoader - Load plugins, create contexts, unload with cleanup
+  - sys.path management for plugin imports
+- Plugin registry (`plugins/registry.py`)
+  - PluginRegistry - Thread-safe registry for plugin contributions
+  - Namespaced registration (tools: plugin_id__tool, commands: plugin_id:command)
+  - Priority-sorted hooks, unregister_plugin() cleanup
+- Plugin manager (`plugins/manager.py`)
+  - PluginManager - Lifecycle management coordinator
+  - discover_and_load() - Auto-discover and load all plugins
+  - enable(), disable(), reload() - Runtime plugin control
+  - Thread-safe with RLock, circular reload detection
+- Plugin commands (`plugins/commands.py`)
+  - PluginListCommand - /plugins list - List all plugins
+  - PluginInfoCommand - /plugins info <name> - Show plugin details
+  - PluginEnableCommand - /plugins enable <name> - Enable plugin
+  - PluginDisableCommand - /plugins disable <name> - Disable plugin
+  - PluginReloadCommand - /plugins reload <name> - Reload plugin
+  - PluginsCommand - SubcommandHandler for /plugins command
+
 ### Tests
 
-Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.1 + 6.2 + 7.1 + 7.2 + 8.1 + 8.2 + 9.1 + 9.2 tests complete in `tests/`:
-- 3164 tests passing (3013 previous + 151 new GitHub tests)
-- 92% code coverage for github package (90% required)
+Phase 1.1 through 10.1 tests complete in `tests/`:
+- 3344 tests passing (3164 previous + 180 new plugin tests)
+- 95% code coverage for plugins package (90% required)
 - mypy strict mode passing
 - ruff linting passing
 
@@ -527,9 +570,9 @@ Phase 1.1 + 1.2 + 1.3 + 2.1 + 2.2 + 2.3 + 3.1 + 3.2 + 4.1 + 4.2 + 5.1 + 5.2 + 6.
 
 ## Next Steps
 
-### Immediate Priority: Phase 10.1 Implementation (Plugin System)
+### Immediate Priority: Phase 10.2 Implementation (Polish and Integration Testing)
 
-Before starting Phase 10.1:
+All implementation phases complete:
 1. [x] Phase 1.1 complete (Core Foundation)
 2. [x] Phase 1.2 complete (Configuration System)
 3. [x] Phase 1.3 complete (Basic REPL Shell)
@@ -550,14 +593,13 @@ Before starting Phase 10.1:
 18. [x] Phase 8.2 complete (Web Tools)
 19. [x] Phase 9.1 complete (Git Integration)
 20. [x] Phase 9.2 complete (GitHub Integration)
-21. [ ] Read `.ai/phase/10.1/` planning documents
-22. [ ] Understand plugin system requirements
+21. [x] Phase 10.1 complete (Plugin System)
 
-Phase 10.1 will implement:
-1. [ ] Plugin discovery and loading
-2. [ ] Plugin lifecycle management
-3. [ ] Extension points (tools, commands, skills)
-4. [ ] Plugin configuration and dependencies
+Phase 10.2 will implement:
+1. [ ] Integration testing across all components
+2. [ ] Performance optimization
+3. [ ] Documentation and examples
+4. [ ] Final polish and bug fixes
 
 ### Implementation Order
 
@@ -611,6 +653,7 @@ Phase 10.2 (Polish & Testing) - Requires all above
 
 | Date | Changes |
 |------|---------|
+| 2025-12-09 | Phase 10.1 implementation complete (3344 tests) |
 | 2025-12-09 | Phase 9.2 implementation complete (3164 tests) |
 | 2025-12-08 | Phase 9.1 implementation complete (3013 tests) |
 | 2025-12-06 | Phase 8.2 implementation complete (2789 tests) |

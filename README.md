@@ -20,6 +20,7 @@ A Claude Code alternative providing access to 400+ AI models via OpenRouter API 
 - **Web Tools**: Search and fetch web content with caching and format conversion
 - **Git Integration**: Repository operations, status, history, diff, and safety guards
 - **GitHub Integration**: Issues, pull requests, reviews, actions, and repository management
+- **Plugin System**: Extensible architecture with plugin discovery, loading, and lifecycle management
 
 ## Installation
 
@@ -73,8 +74,9 @@ OpenCode/
 │   ├── mcp/                # MCP protocol support
 │   ├── web/                # Web tools (search, fetch)
 │   ├── git/                # Git integration
-│   └── github/             # GitHub integration
-├── tests/                  # Test suite (3164 tests)
+│   ├── github/             # GitHub integration
+│   └── plugins/            # Plugin system
+├── tests/                  # Test suite (3344 tests)
 └── .ai/                    # AI planning documentation
 ```
 
@@ -660,7 +662,7 @@ All code must pass:
 | 8.2 | Web Tools | Complete |
 | 9.1 | Git Integration | Complete |
 | 9.2 | GitHub Integration | Complete |
-| 10.1 | Plugin System | Planned |
+| 10.1 | Plugin System | Complete |
 | 10.2 | Polish & Integration | Planned |
 
 ## License

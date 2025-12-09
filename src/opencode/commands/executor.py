@@ -14,6 +14,7 @@ from .registry import CommandRegistry
 if TYPE_CHECKING:
     from opencode.config.models import OpenCodeConfig
     from opencode.context.manager import ContextManager
+    from opencode.plugins.manager import PluginManager
     from opencode.sessions.manager import SessionManager
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,7 @@ class CommandContext:
         config: Application configuration.
         llm: LLM client instance.
         repl: REPL instance.
+        plugin_manager: Plugin management instance.
         output: Function for writing output to user.
     """
 
@@ -40,6 +42,7 @@ class CommandContext:
     config: OpenCodeConfig | None = None
     llm: Any = None  # OpenRouterLLM
     repl: Any = None  # REPL instance
+    plugin_manager: PluginManager | None = None
     output: Callable[[str], None] = field(default_factory=lambda: print)
 
     def print(self, text: str) -> None:
@@ -166,6 +169,7 @@ def register_builtin_commands(registry: CommandRegistry | None = None) -> None:
         help_commands,
         session_commands,
     )
+    from opencode.plugins import commands as plugin_commands
 
     if registry is None:
         registry = CommandRegistry.get_instance()
@@ -178,6 +182,7 @@ def register_builtin_commands(registry: CommandRegistry | None = None) -> None:
         control_commands,
         config_commands,
         debug_commands,
+        plugin_commands,
     ]:
         for command in module.get_commands():
             try:
