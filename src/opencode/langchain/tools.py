@@ -126,24 +126,14 @@ class LangChainToolAdapter(LangChainBaseTool):
             Tool result as string
         """
         from opencode.tools.base import ExecutionContext
-        from opencode.tools.executor import ToolExecutor
-
-        # Get or create executor
-        executor = self.executor
-        if executor is None:
-            executor = ToolExecutor()
 
         # Get or create context
         context = self.context
         if context is None:
             context = ExecutionContext(working_dir=str(Path.cwd()))
 
-        # Execute through OpenCode
-        result = await executor.execute(
-            self.opencode_tool,
-            kwargs,
-            context,
-        )
+        # Execute tool directly (not through executor to avoid naming issues)
+        result = await self.opencode_tool.execute(context, **kwargs)
 
         # Format result
         if result.success:

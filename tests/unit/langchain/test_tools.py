@@ -123,19 +123,14 @@ class TestLangChainToolAdapter:
                 ToolParameter(name="input", type="string", description="Input", required=True),
             ]
 
+            async def execute(self, context, **kwargs):
+                return ToolResult(success=True, output="Received: test")
+
         tool = MockTool()
-
-        # Create a mock executor
-        mock_executor = MagicMock()
-        mock_executor.execute = AsyncMock(
-            return_value=ToolResult(success=True, output="Received: test")
-        )
-
         mock_context = ExecutionContext(working_dir="/tmp")
 
         adapter = LangChainToolAdapter(
             opencode_tool=tool,
-            executor=mock_executor,
             context=mock_context,
         )
 
@@ -146,7 +141,6 @@ class TestLangChainToolAdapter:
     @pytest.mark.asyncio
     async def test_arun_error(self) -> None:
         """Test async execution returns error message."""
-        from unittest.mock import AsyncMock, MagicMock
 
         class MockTool:
             name = "mock_tool"
@@ -154,19 +148,14 @@ class TestLangChainToolAdapter:
             category = ToolCategory.FILE
             parameters: list[ToolParameter] = []
 
+            async def execute(self, context, **kwargs):
+                return ToolResult(success=False, error="Something went wrong")
+
         tool = MockTool()
-
-        # Create a mock executor that returns an error
-        mock_executor = MagicMock()
-        mock_executor.execute = AsyncMock(
-            return_value=ToolResult(success=False, error="Something went wrong")
-        )
-
         mock_context = ExecutionContext(working_dir="/tmp")
 
         adapter = LangChainToolAdapter(
             opencode_tool=tool,
-            executor=mock_executor,
             context=mock_context,
         )
 
@@ -365,7 +354,6 @@ class TestLangChainToolAdapterSync:
 
     def test_run_sync(self) -> None:
         """Test synchronous _run method."""
-        from unittest.mock import AsyncMock, MagicMock
 
         class MockTool:
             name = "mock_tool"
@@ -375,19 +363,14 @@ class TestLangChainToolAdapterSync:
                 ToolParameter(name="input", type="string", description="Input", required=True),
             ]
 
+            async def execute(self, context, **kwargs):
+                return ToolResult(success=True, output="Sync result")
+
         tool = MockTool()
-
-        # Create a mock executor
-        mock_executor = MagicMock()
-        mock_executor.execute = AsyncMock(
-            return_value=ToolResult(success=True, output="Sync result")
-        )
-
         mock_context = ExecutionContext(working_dir="/tmp")
 
         adapter = LangChainToolAdapter(
             opencode_tool=tool,
-            executor=mock_executor,
             context=mock_context,
         )
 

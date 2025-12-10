@@ -93,6 +93,7 @@ async def run_with_agent(repl: OpenCodeREPL, config: OpenCodeConfig, api_key: st
     from opencode.commands import CommandExecutor, CommandContext, register_builtin_commands
     from opencode.langchain.llm import OpenRouterLLM
     from opencode.langchain.agent import OpenCodeAgent
+    from opencode.langchain.tools import adapt_tools_for_langchain
     from opencode.llm import OpenRouterClient
     from opencode.tools import ToolRegistry, register_all_tools
     from opencode.sessions import SessionManager
@@ -115,8 +116,10 @@ async def run_with_agent(repl: OpenCodeREPL, config: OpenCodeConfig, api_key: st
     repl._status.set_model(config.model.default)
     repl._status.set_tokens(0, model_context)
 
-    # Create agent with tools
-    tools = [tool_registry.get(name) for name in tool_registry.list_names()]
+    # Create agent with tools (wrapped for LangChain compatibility)
+    raw_tools = [tool_registry.get(name) for name in tool_registry.list_names()]
+    raw_tools = [t for t in raw_tools if t is not None]
+    tools = adapt_tools_for_langchain(raw_tools)
     agent = OpenCodeAgent(
         llm=llm,
         tools=tools,

@@ -609,21 +609,18 @@ class TestOpenCodeAgentRunEdgeCases:
             ]
         )
 
-        # Create mock OpenCode tool
+        # Create mock OpenCode tool with execute method
         class MockOpenCodeTool:
             name = "adapter_tool"
             description = "A test tool"
             category = "file"
             parameters = []
 
-        mock_executor = MagicMock()
-        mock_executor.execute = AsyncMock(
-            return_value=ToolResult(success=True, output="Adapter result")
-        )
+            async def execute(self, context, **kwargs):
+                return ToolResult(success=True, output="Adapter result")
 
         adapter = LangChainToolAdapter(
             opencode_tool=MockOpenCodeTool(),
-            executor=mock_executor,
             context=ExecutionContext(working_dir="/tmp"),
         )
 
