@@ -26,8 +26,8 @@ class TestModelConfig:
     def test_default_values(self) -> None:
         """Test default values are set correctly."""
         config = ModelConfig()
-        assert config.default == "gpt-5"
-        assert "claude-4" in config.fallback
+        assert config.default == "anthropic/claude-3.5-sonnet"
+        assert "openai/gpt-4o" in config.fallback
         assert config.max_tokens == 8192
         assert config.temperature == 1.0
         assert config.routing_variant is None
@@ -310,7 +310,7 @@ class TestOpenCodeConfig:
     def test_default_values(self) -> None:
         """Test default root config values."""
         config = OpenCodeConfig()
-        assert config.model.default == "gpt-5"
+        assert config.model.default == "anthropic/claude-3.5-sonnet"
         assert config.display.theme == "dark"
         assert config.api_key is None
 

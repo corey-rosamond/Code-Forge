@@ -421,11 +421,12 @@ class TestConfigCommands:
         from opencode.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
-        mock_config.llm.model = "claude-3-opus"
+        mock_llm = MagicMock()
+        mock_llm.model = "claude-3-opus"
 
         cmd = ModelCommand()
         parsed = ParsedCommand(name="model", args=[])
-        context = CommandContext(config=mock_config)
+        context = CommandContext(config=mock_config, llm=mock_llm)
 
         result = await cmd.execute(parsed, context)
         assert result.success is True
@@ -437,15 +438,16 @@ class TestConfigCommands:
         from opencode.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
-        mock_config.llm = MagicMock()
+        mock_llm = MagicMock()
+        mock_llm.model = "original-model"
 
         cmd = ModelCommand()
         parsed = ParsedCommand(name="model", args=["gpt-4"])
-        context = CommandContext(config=mock_config)
+        context = CommandContext(config=mock_config, llm=mock_llm)
 
         result = await cmd.execute(parsed, context)
         assert result.success is True
-        assert mock_config.llm.model == "gpt-4"
+        assert mock_llm.model == "gpt-4"
 
 
 class TestDebugCommands:
@@ -1205,7 +1207,7 @@ class TestModelCommand:
 
     @pytest.mark.asyncio
     async def test_model_no_config(self) -> None:
-        """Test /model fails without config."""
+        """Test /model shows no model configured without config."""
         from opencode.commands.builtin.config_commands import ModelCommand
 
         cmd = ModelCommand()
@@ -1213,24 +1215,24 @@ class TestModelCommand:
         context = CommandContext(config=None)
 
         result = await cmd.execute(parsed, context)
-        assert result.success is False
-        assert "not available" in result.error.lower()
+        assert result.success is True
+        assert "No model configured" in result.output
 
     @pytest.mark.asyncio
     async def test_model_show_none(self) -> None:
-        """Test /model shows no model configured."""
+        """Test /model shows no model configured when model.default is None."""
         from opencode.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
-        mock_config.llm = None
+        mock_config.model.default = None
 
         cmd = ModelCommand()
         parsed = ParsedCommand(name="model", args=[])
-        context = CommandContext(config=mock_config)
+        context = CommandContext(config=mock_config, llm=None)
 
         result = await cmd.execute(parsed, context)
         assert result.success is True
-        assert "No model" in result.output
+        assert "No model configured" in result.output
 
     @pytest.mark.asyncio
     async def test_model_set_no_llm(self) -> None:

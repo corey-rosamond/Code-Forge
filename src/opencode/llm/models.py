@@ -161,7 +161,7 @@ class CompletionRequest:
 
     model: str
     messages: list[Message]
-    tools: list[ToolDefinition] | None = None
+    tools: list[ToolDefinition | dict[str, Any]] | None = None
     tool_choice: str | dict[str, Any] | None = None
     temperature: float = 1.0
     max_tokens: int | None = None
@@ -184,7 +184,9 @@ class CompletionRequest:
         }
 
         if self.tools:
-            payload["tools"] = [t.to_dict() for t in self.tools]
+            payload["tools"] = [
+                t.to_dict() if hasattr(t, "to_dict") else t for t in self.tools
+            ]
         if self.tool_choice:
             payload["tool_choice"] = self.tool_choice
         if self.max_tokens:

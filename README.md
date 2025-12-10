@@ -2,6 +2,22 @@
 
 A Claude Code alternative providing access to 400+ AI models via OpenRouter API with LangChain 1.0 integration for agent orchestration.
 
+## Quick Start
+
+```bash
+# Install
+git clone git@github.com:corey-rosamond/OpenCode.git
+cd OpenCode
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .
+
+# Set your API key
+export OPENROUTER_API_KEY=your-key-here
+
+# Run
+opencode
+```
+
 ## Features
 
 - **Multi-Model Access**: Connect to 400+ AI models through OpenRouter API
@@ -62,7 +78,7 @@ OpenCode/
 │   │   ├── file/           # Read, Write, Edit, Glob, Grep tools
 │   │   └── execution/      # Bash, BashOutput, KillShell tools
 │   ├── llm/                # OpenRouter client, streaming
-│   ├── langchain/          # LangChain integration, agent
+│   ├── langchain/          # LangChain integration, agent, prompts
 │   ├── permissions/        # Permission checker, rules, prompts
 │   ├── hooks/              # Event hooks, executor
 │   ├── sessions/           # Session management and persistence
@@ -76,7 +92,7 @@ OpenCode/
 │   ├── git/                # Git integration
 │   ├── github/             # GitHub integration
 │   └── plugins/            # Plugin system
-├── tests/                  # Test suite (3344 tests)
+├── tests/                  # Test suite (3400+ tests)
 └── .ai/                    # AI planning documentation
 ```
 
@@ -663,7 +679,7 @@ All code must pass:
 | 9.1 | Git Integration | Complete |
 | 9.2 | GitHub Integration | Complete |
 | 10.1 | Plugin System | Complete |
-| 10.2 | Polish & Integration | Planned |
+| 10.2 | Polish & Integration | Complete |
 
 ## License
 

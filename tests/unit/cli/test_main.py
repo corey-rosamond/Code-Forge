@@ -53,16 +53,21 @@ class TestMainFunction:
     def test_no_arguments_starts_repl(self) -> None:
         """Running without arguments should start the REPL."""
         mock_repl = MagicMock()
-        mock_repl.run = AsyncMock(return_value=0)
+        mock_config = MagicMock()
+        mock_config.model.default = "anthropic/claude-3.5-sonnet"
+        mock_config.get_api_key.return_value = "test-api-key"
 
         with patch.object(sys, "argv", ["opencode"]):
             with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+                mock_loader.return_value.load_all.return_value = mock_config
                 with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
-                    exit_code = main()
+                    with patch("opencode.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
+                        mock_run.return_value = 0
+                        exit_code = main()
 
         assert exit_code == 0
         mock_loader.assert_called_once()
-        mock_repl.run.assert_called_once()
+        mock_run.assert_called_once()
 
     def test_config_load_error(self) -> None:
         """Config load error should return exit code 1."""
@@ -77,26 +82,36 @@ class TestMainFunction:
     def test_repl_error(self) -> None:
         """REPL error should return exit code 1."""
         mock_repl = MagicMock()
-        mock_repl.run = AsyncMock(side_effect=Exception("REPL error"))
+        mock_config = MagicMock()
+        mock_config.model.default = "anthropic/claude-3.5-sonnet"
+        mock_config.get_api_key.return_value = "test-api-key"
 
         with patch.object(sys, "argv", ["opencode"]):
-            with patch("opencode.cli.main.ConfigLoader"):
+            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+                mock_loader.return_value.load_all.return_value = mock_config
                 with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
-                    with patch("builtins.print"):
-                        exit_code = main()
+                    with patch("opencode.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
+                        mock_run.side_effect = Exception("REPL error")
+                        with patch("builtins.print"):
+                            exit_code = main()
 
         assert exit_code == 1
 
     def test_keyboard_interrupt(self) -> None:
         """KeyboardInterrupt should return exit code 130."""
         mock_repl = MagicMock()
-        mock_repl.run = AsyncMock(side_effect=KeyboardInterrupt())
+        mock_config = MagicMock()
+        mock_config.model.default = "anthropic/claude-3.5-sonnet"
+        mock_config.get_api_key.return_value = "test-api-key"
 
         with patch.object(sys, "argv", ["opencode"]):
-            with patch("opencode.cli.main.ConfigLoader"):
+            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+                mock_loader.return_value.load_all.return_value = mock_config
                 with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
-                    with patch("builtins.print"):
-                        exit_code = main()
+                    with patch("opencode.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
+                        mock_run.side_effect = KeyboardInterrupt()
+                        with patch("builtins.print"):
+                            exit_code = main()
 
         assert exit_code == 130
 

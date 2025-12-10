@@ -197,15 +197,12 @@ class ModelCommand(Command):
 
         if model_name:
             # Set new model
-            if context.config is None:
-                return CommandResult.fail("Configuration not available")
+            if context.llm is None:
+                return CommandResult.fail("LLM not available")
 
             try:
-                # Try to set via llm config
-                if hasattr(context.config, "llm") and context.config.llm:
-                    context.config.llm.model = model_name
-                else:
-                    return CommandResult.fail("LLM configuration not available")
+                # Set model on the LLM instance
+                context.llm.model = model_name
 
                 # Update context limits if context manager is available
                 if context.context_manager:
@@ -219,21 +216,35 @@ class ModelCommand(Command):
             except Exception as e:
                 return CommandResult.fail(f"Failed to set model: {e}")
         else:
-            # Show current model
-            if context.config is None:
-                return CommandResult.fail("Configuration not available")
+            # Show current model and available aliases
+            from opencode.llm.routing import MODEL_ALIASES
 
-            try:
-                model = None
-                if hasattr(context.config, "llm") and context.config.llm:
-                    model = getattr(context.config.llm, "model", None)
+            model = None
 
-                if model:
-                    return CommandResult.ok(f"Current model: {model}")
-                else:
-                    return CommandResult.ok("No model configured")
-            except Exception as e:
-                return CommandResult.fail(f"Failed to get model: {e}")
+            # Try to get model from LLM instance
+            if context.llm is not None:
+                model = getattr(context.llm, "model", None)
+
+            # Fallback to config
+            if model is None and context.config is not None:
+                model = getattr(context.config.model, "default", None)
+
+            lines = []
+            if model:
+                lines.append(f"Current model: {model}")
+            else:
+                lines.append("No model configured")
+
+            lines.append("")
+            lines.append("Available model aliases:")
+            for alias, full_name in sorted(MODEL_ALIASES.items()):
+                marker = " *" if full_name == model else ""
+                lines.append(f"  {alias:20} -> {full_name}{marker}")
+
+            lines.append("")
+            lines.append("Usage: /model <name>  (use alias or full model ID)")
+
+            return CommandResult.ok("\n".join(lines))
 
 
 def get_commands() -> list[Command]:

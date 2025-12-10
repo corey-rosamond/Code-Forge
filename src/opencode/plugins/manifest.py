@@ -88,7 +88,7 @@ class PluginManifest:
             import tomllib
         except ImportError:
             try:
-                import tomli as tomllib  # type: ignore[import-not-found,no-redef]
+                import tomli as tomllib  # type: ignore[no-redef]
             except ImportError as ie:
                 raise PluginManifestError(
                     "tomllib/tomli not available for pyproject.toml parsing"

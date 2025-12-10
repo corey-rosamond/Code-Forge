@@ -161,6 +161,8 @@ def register_builtin_commands(registry: CommandRegistry | None = None) -> None:
     Args:
         registry: Registry to use. Uses singleton if None.
     """
+    from opencode.plugins import commands as plugin_commands
+
     from .builtin import (
         config_commands,
         context_commands,
@@ -169,7 +171,6 @@ def register_builtin_commands(registry: CommandRegistry | None = None) -> None:
         help_commands,
         session_commands,
     )
-    from opencode.plugins import commands as plugin_commands
 
     if registry is None:
         registry = CommandRegistry.get_instance()

@@ -7,11 +7,13 @@ output rendering, and the core REPL loop.
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.document import Document
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
@@ -31,6 +33,66 @@ if TYPE_CHECKING:
 logger = get_logger("repl")
 
 
+class CommandCompleter(Completer):
+    """Provides tab completion for commands and their arguments."""
+
+    def __init__(self) -> None:
+        """Initialize completer with command data."""
+        self._commands: list[str] = []
+        self._model_aliases: dict[str, str] = {}
+        self._load_completions()
+
+    def _load_completions(self) -> None:
+        """Load completion data from registries."""
+        try:
+            from opencode.commands.registry import CommandRegistry
+            from opencode.llm.routing import MODEL_ALIASES
+
+            registry = CommandRegistry.get_instance()
+            self._commands = ["/" + name for name in registry.list_names()]
+            self._model_aliases = MODEL_ALIASES
+        except Exception:
+            # Silently fail if registries aren't available yet
+            pass
+
+    def get_completions(
+        self, document: Document, complete_event: Any
+    ) -> Iterator[Completion]:
+        """Get completions for the current input.
+
+        Args:
+            document: Current document state.
+            complete_event: Completion event info.
+
+        Yields:
+            Completion objects for matching items.
+        """
+        text = document.text_before_cursor
+        _ = document.get_word_before_cursor()  # Available for future use
+
+        # Reload completions if empty (lazy load)
+        if not self._commands:
+            self._load_completions()
+
+        # Complete commands
+        if text.startswith("/") and " " not in text:
+            for cmd in self._commands:
+                if cmd.startswith(text):
+                    yield Completion(cmd, start_position=-len(text))
+
+        # Complete model names for /model command
+        elif text.startswith("/model "):
+            prefix = text[7:]  # After "/model "
+            # Complete aliases
+            for alias in sorted(self._model_aliases.keys()):
+                if alias.startswith(prefix):
+                    yield Completion(alias, start_position=-len(prefix))
+            # Complete full model IDs
+            for full_id in sorted(set(self._model_aliases.values())):
+                if full_id.startswith(prefix):
+                    yield Completion(full_id, start_position=-len(prefix))
+
+
 class InputHandler:
     """Handles user input with history and key bindings.
 
@@ -43,6 +105,7 @@ class InputHandler:
         history_path: Path,
         style: Style | None = None,
         vim_mode: bool = False,
+        completer: Completer | None = None,
     ) -> None:
         """Initialize input handler.
 
@@ -50,6 +113,7 @@ class InputHandler:
             history_path: Path to history file.
             style: prompt_toolkit style.
             vim_mode: Enable vim key bindings.
+            completer: Tab completion provider.
         """
         self._history_path = history_path
         self._ensure_history_dir()
@@ -57,6 +121,7 @@ class InputHandler:
         self._bindings = self._create_bindings()
         self._style = style
         self._vim_mode = vim_mode
+        self._completer = completer
         self._session: PromptSession[str] | None = None
 
     def _ensure_history_dir(self) -> None:
@@ -92,6 +157,8 @@ class InputHandler:
                 enable_history_search=True,
                 style=self._style,
                 vi_mode=self._vim_mode,
+                completer=self._completer,
+                complete_while_typing=False,  # Only complete on Tab
             )
         return self._session
 
@@ -254,10 +321,14 @@ class OpenCodeREPL:
         # Create prompt_toolkit style from theme
         pt_style = Style.from_dict(self._theme.to_prompt_toolkit_style())
 
+        # Create completer for tab completion
+        completer = CommandCompleter()
+
         self._input = InputHandler(
             history_path=self._get_history_path(),
             style=pt_style,
             vim_mode=config.display.vim_mode,
+            completer=completer,
         )
         self._output = OutputRenderer(self._console, self._theme)
         self._running = False

@@ -218,7 +218,7 @@ Usage:
             )
 
         try:
-            import pypdf  # type: ignore[import-not-found]
+            import pypdf
 
             reader = pypdf.PdfReader(file_path)
             pages = []

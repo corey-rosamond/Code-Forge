@@ -187,8 +187,14 @@ class OpenCodeAgent:
                     stopped_reason = "timeout"
                     break
 
-                # Track usage if available
-                # (usage tracked via callbacks in practice)
+                # Track usage from response metadata
+                if hasattr(response, "response_metadata"):
+                    usage_data = response.response_metadata.get("usage", {})
+                    total_usage.prompt_tokens += usage_data.get("prompt_tokens", 0)
+                    total_usage.completion_tokens += usage_data.get(
+                        "completion_tokens", 0
+                    )
+                    total_usage.total_tokens += usage_data.get("total_tokens", 0)
 
                 # Check for tool calls
                 if isinstance(response, AIMessage) and response.tool_calls:

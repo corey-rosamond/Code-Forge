@@ -49,8 +49,8 @@ class ModelConfig(BaseModel):
 
     model_config = ConfigDict(validate_assignment=True)
 
-    default: str = "gpt-5"
-    fallback: list[str] = Field(default_factory=lambda: ["claude-4", "gemini-2.5-pro"])
+    default: str = "anthropic/claude-3.5-sonnet"
+    fallback: list[str] = Field(default_factory=lambda: ["openai/gpt-4o", "google/gemini-pro"])
     max_tokens: int = Field(default=8192, ge=1, le=200000)
     temperature: float = Field(default=1.0, ge=0.0, le=2.0)
     routing_variant: RoutingVariant | None = None

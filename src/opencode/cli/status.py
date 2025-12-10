@@ -25,7 +25,7 @@ class StatusBar:
         visible: Whether status bar is visible.
     """
 
-    model: str = "gpt-5"
+    model: str = ""
     tokens_used: int = 0
     tokens_max: int = 128000
     mode: str = "Normal"

@@ -56,6 +56,7 @@ from opencode.langchain.messages import (
     opencode_messages_to_langchain,
     opencode_to_langchain,
 )
+from opencode.langchain.prompts import get_minimal_prompt, get_system_prompt
 from opencode.langchain.tools import (
     LangChainToolAdapter,
     OpenCodeToolAdapter,
@@ -64,6 +65,8 @@ from opencode.langchain.tools import (
 )
 
 __all__ = [
+    "get_minimal_prompt",
+    "get_system_prompt",
     "AgentEvent",
     "AgentEventType",
     "AgentResult",

@@ -1,26 +1,38 @@
 [project]
 name = "opencode"
-version = "0.1.0"
-description = "AI-powered CLI development assistant"
+version = "1.0.0"
+description = "AI-powered CLI development assistant with OpenRouter API and LangChain"
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.10,<4.0"
+requires-python = ">=3.11,<4.0"
 authors = [{ name = "OpenCode Contributors" }]
-keywords = ["ai", "cli", "development", "assistant", "openrouter", "langchain"]
+maintainers = [{ name = "OpenCode Team" }]
+keywords = [
+    "ai",
+    "cli",
+    "development",
+    "assistant",
+    "openrouter",
+    "langchain",
+    "code-assistant",
+    "llm",
+    "automation",
+]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Text Processing",
     "Typing :: Typed",
 ]
-
 dependencies = [
     "pydantic>=2.5,<3.0",
     "rich>=13.7,<14.0",
@@ -32,7 +44,19 @@ dependencies = [
     "langchain-core>=0.1,<1.0",
     "pyyaml>=6.0,<7.0",
     "watchdog>=3.0,<5.0",
+    "tiktoken>=0.5,<1.0",
+    "aiofiles>=23.0,<25.0",
+    "beautifulsoup4>=4.12,<5.0",
+    "html2text>=2024.2,<2025.0",
+    "duckduckgo-search>=4.0,<6.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/corey-rosamond/OpenCode"
+Documentation = "https://github.com/corey-rosamond/OpenCode#readme"
+Repository = "https://github.com/corey-rosamond/OpenCode.git"
+Issues = "https://github.com/corey-rosamond/OpenCode/issues"
+Changelog = "https://github.com/corey-rosamond/OpenCode/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
@@ -108,6 +132,7 @@ ignore = [
     "TC002",    # LangChain needs runtime imports for proper class inheritance
     "ARG002",   # Callback interfaces require unused args for compatibility
     "PLR0915",  # Agent methods are complex by nature
+    "E501",     # Line length - prompts.py has intentionally long prompt text
 ]
 "src/opencode/commands/*.py" = [
     "RUF012",   # ClassVar annotations not needed - class attrs are intended design

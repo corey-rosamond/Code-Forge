@@ -25,7 +25,7 @@ class TestStatusBar:
     def test_default_values(self) -> None:
         """Test default status bar values."""
         status = StatusBar()
-        assert status.model == "gpt-5"
+        assert status.model == ""
         assert status.tokens_used == 0
         assert status.tokens_max == 128000
         assert status.mode == "Normal"
