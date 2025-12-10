@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import fnmatch
 import glob as glob_module
 import os
@@ -38,9 +39,26 @@ class GlobTool(BaseTool):
         ".ruff_cache",
         "*.pyc",
         "*.pyo",
+        # Windows-specific excludes
+        "AppData",
+        "Application Data",
+        "Local Settings",
+        ".cache",
+        ".npm",
+        ".cargo",
+        ".rustup",
+        "OneDrive",
+        # IDE/editor caches
+        ".idea",
+        ".vscode",
+        ".vs",
+        # Package managers
+        ".yarn",
+        ".pnpm",
     }
 
     MAX_RESULTS: ClassVar[int] = 1000
+    TIMEOUT_SECONDS: ClassVar[float] = 30.0  # Timeout for glob operations
 
     @property
     def name(self) -> str:
@@ -96,17 +114,32 @@ Usage:
             else:
                 full_pattern = os.path.join(base_path, pattern)
 
-            # Find matching files
-            matches = glob_module.glob(full_pattern, recursive=True)
+            # Run glob in a thread with timeout to avoid blocking
+            def do_glob() -> list[str]:
+                matches = glob_module.glob(full_pattern, recursive=True)
+                # Filter to files only
+                files = [f for f in matches if os.path.isfile(f)]
+                # Exclude common patterns
+                return self._filter_excludes(files)
 
-            # Filter to files only
-            files = [f for f in matches if os.path.isfile(f)]
-
-            # Exclude common patterns
-            files = self._filter_excludes(files)
+            try:
+                loop = asyncio.get_event_loop()
+                files = await asyncio.wait_for(
+                    loop.run_in_executor(None, do_glob),
+                    timeout=self.TIMEOUT_SECONDS,
+                )
+            except asyncio.TimeoutError:
+                return ToolResult.fail(
+                    f"Search timed out after {self.TIMEOUT_SECONDS}s. "
+                    f"Try a more specific pattern or search in a subdirectory."
+                )
 
             # Sort by modification time (newest first)
-            files.sort(key=lambda f: os.path.getmtime(f), reverse=True)
+            try:
+                files.sort(key=lambda f: os.path.getmtime(f), reverse=True)
+            except OSError:
+                # If we can't get mtime for some files, just use default order
+                pass
 
             # Limit results
             truncated = len(files) > self.MAX_RESULTS

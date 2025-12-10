@@ -307,3 +307,94 @@ class TestStatusBarObserverInterface:
         status = StatusBar()
         # Should not raise
         observer.on_status_changed(status)
+
+
+class TestStatusBarThinking:
+    """Tests for thinking mode functionality."""
+
+    def test_default_thinking_disabled(self) -> None:
+        """Test that thinking is disabled by default."""
+        status = StatusBar()
+        assert status.thinking_enabled is False
+
+    def test_set_thinking_enabled(self) -> None:
+        """Test setting thinking mode."""
+        status = StatusBar()
+        status.set_thinking(True)
+        assert status.thinking_enabled is True
+
+    def test_set_thinking_disabled(self) -> None:
+        """Test disabling thinking mode."""
+        status = StatusBar(thinking_enabled=True)
+        status.set_thinking(False)
+        assert status.thinking_enabled is False
+
+    def test_set_thinking_notifies(self) -> None:
+        """Test that set_thinking notifies observers."""
+        status = StatusBar()
+        observer = MockObserver()
+        status.add_observer(observer)
+        status.set_thinking(True)
+        assert observer.call_count == 1
+
+    def test_set_thinking_no_notify_if_same(self) -> None:
+        """Test that set_thinking doesn't notify if unchanged."""
+        status = StatusBar(thinking_enabled=True)
+        observer = MockObserver()
+        status.add_observer(observer)
+        status.set_thinking(True)
+        assert observer.call_count == 0
+
+    def test_toggle_thinking_from_off(self) -> None:
+        """Test toggling thinking from off to on."""
+        status = StatusBar()
+        result = status.toggle_thinking()
+        assert result is True
+        assert status.thinking_enabled is True
+
+    def test_toggle_thinking_from_on(self) -> None:
+        """Test toggling thinking from on to off."""
+        status = StatusBar(thinking_enabled=True)
+        result = status.toggle_thinking()
+        assert result is False
+        assert status.thinking_enabled is False
+
+    def test_toggle_thinking_notifies(self) -> None:
+        """Test that toggle_thinking notifies observers."""
+        status = StatusBar()
+        observer = MockObserver()
+        status.add_observer(observer)
+        status.toggle_thinking()
+        assert observer.call_count == 1
+
+    def test_format_prompt_toolkit_with_thinking_off(self) -> None:
+        """Test format includes thinking state when off."""
+        status = StatusBar(model="gpt-4", thinking_enabled=False)
+        result = status.format_for_prompt_toolkit()
+        assert "Thinking: Off" in result
+
+    def test_format_prompt_toolkit_with_thinking_on(self) -> None:
+        """Test format includes thinking state when on."""
+        status = StatusBar(model="gpt-4", thinking_enabled=True)
+        result = status.format_for_prompt_toolkit()
+        assert "Thinking: On" in result
+
+    def test_format_input_hints(self) -> None:
+        """Test input hints format."""
+        status = StatusBar()
+        result = status.format_input_hints()
+        assert "Tab autocomplete" in result
+        assert "Shift+Tab thinking" in result
+        assert "? help" in result
+
+    def test_format_input_hints_thinking_off(self) -> None:
+        """Test input hints show thinking state off."""
+        status = StatusBar(thinking_enabled=False)
+        result = status.format_input_hints()
+        assert "(off)" in result
+
+    def test_format_input_hints_thinking_on(self) -> None:
+        """Test input hints show thinking state on."""
+        status = StatusBar(thinking_enabled=True)
+        result = status.format_input_hints()
+        assert "(on)" in result

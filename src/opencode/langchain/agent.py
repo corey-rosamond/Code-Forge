@@ -317,6 +317,8 @@ class OpenCodeAgent:
         start_time = time.time()
         tool_call_records: list[ToolCallRecord] = []
         iterations = 0
+        total_prompt_tokens = 0
+        total_completion_tokens = 0
 
         # Add user message
         self.memory.add_message(Message.user(input))
@@ -341,13 +343,14 @@ class OpenCodeAgent:
 
                 # Stream LLM response
                 messages = self.memory.to_langchain_messages()
-                full_response = None
                 accumulated_content = ""
+                tool_call_chunks: list[dict] = []
 
                 async for chunk in self._bound_llm.astream(
                     messages,
                     config={"callbacks": callbacks} if callbacks else None,
                 ):
+                    # Accumulate content
                     if hasattr(chunk, "content") and chunk.content:
                         chunk_content = chunk.content
                         if isinstance(chunk_content, list):
@@ -360,7 +363,10 @@ class OpenCodeAgent:
                             type=AgentEventType.LLM_CHUNK,
                             data={"content": chunk_content},
                         )
-                    full_response = chunk
+
+                    # Accumulate tool call chunks
+                    if hasattr(chunk, "tool_call_chunks") and chunk.tool_call_chunks:
+                        tool_call_chunks.extend(chunk.tool_call_chunks)
 
                 # Yield LLM end event
                 yield AgentEvent(
@@ -368,77 +374,76 @@ class OpenCodeAgent:
                     data={"content": accumulated_content},
                 )
 
-                # Check for tool calls
-                if (
-                    full_response is not None
-                    and hasattr(full_response, "tool_call_chunks")
-                    and full_response.tool_call_chunks
-                ):
-                    # Reconstruct tool calls from chunks
-                    # (In streaming, tool calls come as chunks that need assembly)
-                    # For simplicity, fall back to non-streaming for tool detection
-                    response = await self._bound_llm.ainvoke(messages)
+                # Check for tool calls - use non-streaming call to get complete tool call info
+                # This is necessary because streaming tool calls come in chunks that need assembly
+                response = await self._bound_llm.ainvoke(messages)
 
-                    if isinstance(response, AIMessage) and response.tool_calls:
-                        from opencode.langchain.messages import langchain_to_opencode
+                # Track token usage from response metadata
+                if hasattr(response, "response_metadata"):
+                    usage_data = response.response_metadata.get("usage", {})
+                    total_prompt_tokens += usage_data.get("prompt_tokens", 0)
+                    total_completion_tokens += usage_data.get("completion_tokens", 0)
 
-                        self.memory.add_message(langchain_to_opencode(response))
+                if isinstance(response, AIMessage) and response.tool_calls:
+                    from opencode.langchain.messages import langchain_to_opencode
 
-                        for tool_call in response.tool_calls:
-                            tool_name = tool_call["name"]
-                            tool_args = tool_call["args"]
-                            tool_id = tool_call["id"]
+                    self.memory.add_message(langchain_to_opencode(response))
 
-                            yield AgentEvent(
-                                type=AgentEventType.TOOL_START,
-                                data={"name": tool_name, "arguments": tool_args},
-                            )
+                    for tool_call in response.tool_calls:
+                        tool_name = tool_call["name"]
+                        tool_args = tool_call["args"]
+                        tool_id = tool_call["id"]
 
-                            tool_start = time.time()
-                            tool = self._tool_map.get(tool_name)
+                        yield AgentEvent(
+                            type=AgentEventType.TOOL_START,
+                            data={"name": tool_name, "arguments": tool_args},
+                        )
 
-                            if tool:
-                                try:
-                                    if isinstance(tool, LangChainToolAdapter):
-                                        result = await tool._arun(**tool_args)
-                                    elif hasattr(tool, "ainvoke"):
-                                        result = await tool.ainvoke(tool_args)
-                                    else:
-                                        result = tool.invoke(tool_args)
-                                    success = True
-                                except Exception as e:
-                                    result = f"Error: {e}"
-                                    success = False
-                            else:
-                                result = f"Unknown tool: {tool_name}"
+                        tool_start = time.time()
+                        tool = self._tool_map.get(tool_name)
+
+                        if tool:
+                            try:
+                                if isinstance(tool, LangChainToolAdapter):
+                                    result = await tool._arun(**tool_args)
+                                elif hasattr(tool, "ainvoke"):
+                                    result = await tool.ainvoke(tool_args)
+                                else:
+                                    result = tool.invoke(tool_args)
+                                success = True
+                            except Exception as e:
+                                result = f"Error: {e}"
                                 success = False
+                        else:
+                            result = f"Unknown tool: {tool_name}"
+                            success = False
 
-                            tool_duration = time.time() - tool_start
+                        tool_duration = time.time() - tool_start
 
-                            yield AgentEvent(
-                                type=AgentEventType.TOOL_END,
-                                data={
-                                    "name": tool_name,
-                                    "result": result,
-                                    "success": success,
-                                    "duration": tool_duration,
-                                },
+                        yield AgentEvent(
+                            type=AgentEventType.TOOL_END,
+                            data={
+                                "name": tool_name,
+                                "result": result,
+                                "success": success,
+                                "duration": tool_duration,
+                            },
+                        )
+
+                        tool_call_records.append(
+                            ToolCallRecord(
+                                id=tool_id or "",
+                                name=tool_name,
+                                arguments=tool_args,
+                                result=result,
+                                success=success,
+                                duration=tool_duration,
                             )
+                        )
 
-                            tool_call_records.append(
-                                ToolCallRecord(
-                                    id=tool_id or "",
-                                    name=tool_name,
-                                    arguments=tool_args,
-                                    result=result,
-                                    success=success,
-                                    duration=tool_duration,
-                                )
-                            )
-
-                            self.memory.add_message(
-                                Message.tool_result(tool_id or "", result)
-                            )
+                        self.memory.add_message(
+                            Message.tool_result(tool_id or "", result)
+                        )
                 else:
                     # No tool calls - done
                     self.memory.add_message(Message.assistant(accumulated_content))
@@ -451,6 +456,9 @@ class OpenCodeAgent:
                     "iterations": iterations,
                     "tool_calls": len(tool_call_records),
                     "duration": time.time() - start_time,
+                    "prompt_tokens": total_prompt_tokens,
+                    "completion_tokens": total_completion_tokens,
+                    "total_tokens": total_prompt_tokens + total_completion_tokens,
                 },
             )
 

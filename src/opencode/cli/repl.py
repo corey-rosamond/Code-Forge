@@ -106,6 +106,7 @@ class InputHandler:
         style: Style | None = None,
         vim_mode: bool = False,
         completer: Completer | None = None,
+        on_thinking_toggle: Callable[[], None] | None = None,
     ) -> None:
         """Initialize input handler.
 
@@ -114,10 +115,12 @@ class InputHandler:
             style: prompt_toolkit style.
             vim_mode: Enable vim key bindings.
             completer: Tab completion provider.
+            on_thinking_toggle: Callback for thinking mode toggle.
         """
         self._history_path = history_path
         self._ensure_history_dir()
         self._history = FileHistory(str(history_path))
+        self._on_thinking_toggle = on_thinking_toggle
         self._bindings = self._create_bindings()
         self._style = style
         self._vim_mode = vim_mode
@@ -141,6 +144,15 @@ class InputHandler:
         def handle_clear(event: Any) -> None:
             """Clear screen."""
             event.app.renderer.clear()
+
+        # Shift+Tab toggles thinking mode
+        @kb.add("s-tab")
+        def handle_thinking_toggle(event: Any) -> None:
+            """Toggle extended thinking mode."""
+            if self._on_thinking_toggle:
+                self._on_thinking_toggle()
+                # Force toolbar refresh
+                event.app.invalidate()
 
         return kb
 
@@ -329,6 +341,7 @@ class OpenCodeREPL:
             style=pt_style,
             vim_mode=config.display.vim_mode,
             completer=completer,
+            on_thinking_toggle=self._toggle_thinking,
         )
         self._output = OutputRenderer(self._console, self._theme)
         self._running = False
@@ -353,10 +366,21 @@ class OpenCodeREPL:
     def _get_toolbar(self) -> str:
         """Get status bar content for bottom toolbar.
 
+        Returns two lines: input hints and status bar.
+
         Returns:
             Formatted toolbar string.
         """
-        return self._status.format_for_prompt_toolkit()
+        hints = self._status.format_input_hints()
+        status = self._status.format_for_prompt_toolkit()
+        # Combine hints and status into two-line toolbar
+        return f"{hints}\n{status}"
+
+    def _toggle_thinking(self) -> None:
+        """Toggle extended thinking mode."""
+        new_state = self._status.toggle_thinking()
+        state_text = "enabled" if new_state else "disabled"
+        # No output here - the toolbar will update automatically
 
     def _show_welcome(self) -> None:
         """Display welcome message."""
@@ -376,12 +400,19 @@ AI-powered CLI Development Assistant
         shortcuts = f"""
 [bold]Keyboard Shortcuts[/bold]
 
-[{self._theme.accent}]Esc[/{self._theme.accent}]       Cancel current input
-[{self._theme.accent}]Ctrl+C[/{self._theme.accent}]    Interrupt operation
-[{self._theme.accent}]Ctrl+D[/{self._theme.accent}]    Exit (on empty input)
-[{self._theme.accent}]Ctrl+L[/{self._theme.accent}]    Clear screen
-[{self._theme.accent}]Ctrl+R[/{self._theme.accent}]    Search history
-[{self._theme.accent}]Up/Down[/{self._theme.accent}]   Navigate history
+[{self._theme.accent}]Tab[/{self._theme.accent}]        Autocomplete commands
+[{self._theme.accent}]Shift+Tab[/{self._theme.accent}]  Toggle extended thinking
+[{self._theme.accent}]Esc[/{self._theme.accent}]        Cancel current input
+[{self._theme.accent}]Ctrl+C[/{self._theme.accent}]     Interrupt operation
+[{self._theme.accent}]Ctrl+D[/{self._theme.accent}]     Exit (on empty input)
+[{self._theme.accent}]Ctrl+L[/{self._theme.accent}]     Clear screen
+[{self._theme.accent}]Ctrl+R[/{self._theme.accent}]     Search history
+[{self._theme.accent}]Up/Down[/{self._theme.accent}]    Navigate history
+
+[bold]Quick Prefixes[/bold]
+
+[{self._theme.accent}]/[/{self._theme.accent}]  Slash command (e.g., /help, /model)
+[{self._theme.accent}]?[/{self._theme.accent}]  Show this help
 """
         self._output.print(shortcuts.strip())
 
@@ -393,6 +424,15 @@ AI-powered CLI Development Assistant
             StatusBar instance.
         """
         return self._status
+
+    @property
+    def thinking_enabled(self) -> bool:
+        """Check if extended thinking is enabled.
+
+        Returns:
+            True if thinking mode is on.
+        """
+        return self._status.thinking_enabled
 
     @property
     def output(self) -> OutputRenderer:

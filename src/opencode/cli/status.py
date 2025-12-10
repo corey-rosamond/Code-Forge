@@ -23,6 +23,7 @@ class StatusBar:
         mode: Current operating mode.
         status: Current status text.
         visible: Whether status bar is visible.
+        thinking_enabled: Whether extended thinking is enabled.
     """
 
     model: str = ""
@@ -31,6 +32,7 @@ class StatusBar:
     mode: str = "Normal"
     status: str = "Ready"
     visible: bool = True
+    thinking_enabled: bool = False
     _observers: list[StatusBarObserver] = field(default_factory=list, repr=False)
 
     def set_model(self, model: str) -> None:
@@ -87,6 +89,26 @@ class StatusBar:
         if visible != self.visible:
             self.visible = visible
             self._notify()
+
+    def set_thinking(self, enabled: bool) -> None:
+        """Set extended thinking mode.
+
+        Args:
+            enabled: Whether thinking mode is enabled.
+        """
+        if enabled != self.thinking_enabled:
+            self.thinking_enabled = enabled
+            self._notify()
+
+    def toggle_thinking(self) -> bool:
+        """Toggle extended thinking mode.
+
+        Returns:
+            New thinking mode state.
+        """
+        self.thinking_enabled = not self.thinking_enabled
+        self._notify()
+        return self.thinking_enabled
 
     def add_observer(self, observer: StatusBarObserver) -> None:
         """Add an observer to be notified of changes.
@@ -177,11 +199,25 @@ class StatusBar:
         if not self.visible:
             return ""
 
+        thinking_indicator = "Thinking: On" if self.thinking_enabled else "Thinking: Off"
+
         return (
             f" {self.model}  |  "
             f"Tokens: {self.tokens_used:,}/{self.tokens_max:,}  |  "
+            f"{thinking_indicator}  |  "
             f"{self.mode}  |  {self.status} "
         )
+
+    def format_input_hints(self) -> str:
+        """Format input hints bar for display below the prompt.
+
+        Shows keyboard hints like 'Tab accepts' and 'Shift+Tab thinking'.
+
+        Returns:
+            Input hints text.
+        """
+        thinking_state = "on" if self.thinking_enabled else "off"
+        return f"Tab autocomplete  |  Shift+Tab thinking ({thinking_state})  |  ? help"
 
 
 class StatusBarObserver:
