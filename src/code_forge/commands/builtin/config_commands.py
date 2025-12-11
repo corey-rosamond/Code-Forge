@@ -172,6 +172,29 @@ class ConfigCommand(SubcommandHandler):
         return CommandResult.ok("\n".join(lines))
 
 
+class SetupCommand(Command):
+    """Run the setup wizard to configure API keys."""
+
+    name = "setup"
+    description = "Run setup wizard to configure API keys"
+    usage = "/setup"
+    category = CommandCategory.CONFIG
+
+    async def execute(
+        self,
+        parsed: ParsedCommand,
+        context: CommandContext,
+    ) -> CommandResult:
+        """Run setup wizard."""
+        from code_forge.cli.setup import run_setup_wizard
+
+        api_key = run_setup_wizard()
+        if api_key:
+            return CommandResult.ok("Setup complete! Restart forge to apply changes.")
+        else:
+            return CommandResult.ok("Setup cancelled.")
+
+
 class ModelCommand(Command):
     """Show or set current model."""
 
@@ -252,4 +275,5 @@ def get_commands() -> list[Command]:
     return [
         ConfigCommand(),
         ModelCommand(),
+        SetupCommand(),
     ]

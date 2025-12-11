@@ -59,12 +59,13 @@ def main() -> int:
         print(f"Error: Failed to load configuration: {e}", file=sys.stderr)
         return 1
 
-    # Check for API key
+    # Check for API key - run setup wizard if not configured
     api_key = os.environ.get("OPENROUTER_API_KEY") or config.get_api_key()
     if not api_key:
-        print("Error: OPENROUTER_API_KEY environment variable not set", file=sys.stderr)
-        print("Get an API key at https://openrouter.ai/keys", file=sys.stderr)
-        return 1
+        from code_forge.cli.setup import run_setup_wizard
+        api_key = run_setup_wizard()
+        if not api_key:
+            return 1  # User cancelled setup
 
     # Start REPL
     try:
