@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 
 ## Checklist
 
-### ReadTool (src/opencode/tools/file/read.py)
+### ReadTool (src/forge/tools/file/read.py)
 - [ ] ReadTool class extends BaseTool
 - [ ] name property returns "Read"
 - [ ] category property returns ToolCategory.FILE
@@ -33,7 +33,7 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 - [ ] Handles encoding errors gracefully
 - [ ] Metadata includes: file_path, lines_read, total_lines
 
-### WriteTool (src/opencode/tools/file/write.py)
+### WriteTool (src/forge/tools/file/write.py)
 - [ ] WriteTool class extends BaseTool
 - [ ] name property returns "Write"
 - [ ] category property returns ToolCategory.FILE
@@ -46,7 +46,7 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 - [ ] Supports dry_run mode
 - [ ] Metadata includes: file_path, bytes_written, created (bool)
 
-### EditTool (src/opencode/tools/file/edit.py)
+### EditTool (src/forge/tools/file/edit.py)
 - [ ] EditTool class extends BaseTool
 - [ ] name property returns "Edit"
 - [ ] category property returns ToolCategory.FILE
@@ -61,7 +61,7 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 - [ ] Supports dry_run mode
 - [ ] Metadata includes: file_path, replacements count
 
-### GlobTool (src/opencode/tools/file/glob.py)
+### GlobTool (src/forge/tools/file/glob.py)
 - [ ] GlobTool class extends BaseTool
 - [ ] name property returns "Glob"
 - [ ] category property returns ToolCategory.FILE
@@ -75,7 +75,7 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 - [ ] Uses working_dir when path not provided
 - [ ] Metadata includes: pattern, count, truncated
 
-### GrepTool (src/opencode/tools/file/grep.py)
+### GrepTool (src/forge/tools/file/grep.py)
 - [ ] GrepTool class extends BaseTool
 - [ ] name property returns "Grep"
 - [ ] category property returns ToolCategory.FILE
@@ -94,10 +94,10 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 - [ ] Metadata includes: pattern, total_matches, returned_matches
 
 ### Package Structure
-- [ ] src/opencode/tools/file/__init__.py exists
+- [ ] src/forge/tools/file/__init__.py exists
 - [ ] __init__.py exports all tools
 - [ ] register_file_tools() function registers all tools
-- [ ] src/opencode/tools/__init__.py updated to include file tools
+- [ ] src/forge/tools/__init__.py updated to include file tools
 
 ### Tool Registration
 - [ ] All tools can be registered in ToolRegistry
@@ -126,12 +126,12 @@ All of the following criteria must be met before Phase 2.2 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/tools/file/
+ls -la src/forge/tools/file/
 # Expected: __init__.py, read.py, write.py, edit.py, glob.py, grep.py
 
 # 2. Test imports
 python -c "
-from opencode.tools.file import (
+from forge.tools.file import (
     ReadTool, WriteTool, EditTool, GlobTool, GrepTool,
     register_file_tools
 )
@@ -141,8 +141,8 @@ print('All file tool imports successful')
 # 3. Test ReadTool
 python -c "
 import asyncio
-from opencode.tools.file import ReadTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import ReadTool
+from forge.tools.base import ExecutionContext
 
 tool = ReadTool()
 ctx = ExecutionContext(working_dir='/tmp')
@@ -170,8 +170,8 @@ python -c "
 import asyncio
 import tempfile
 import os
-from opencode.tools.file import WriteTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import WriteTool
+from forge.tools.base import ExecutionContext
 
 tool = WriteTool()
 ctx = ExecutionContext(working_dir='/tmp')
@@ -193,8 +193,8 @@ python -c "
 import asyncio
 import tempfile
 import os
-from opencode.tools.file import EditTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import EditTool
+from forge.tools.base import ExecutionContext
 
 tool = EditTool()
 ctx = ExecutionContext(working_dir='/tmp')
@@ -228,8 +228,8 @@ python -c "
 import asyncio
 import tempfile
 import os
-from opencode.tools.file import GlobTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import GlobTool
+from forge.tools.base import ExecutionContext
 
 tool = GlobTool()
 
@@ -256,8 +256,8 @@ python -c "
 import asyncio
 import tempfile
 import os
-from opencode.tools.file import GrepTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import GrepTool
+from forge.tools.base import ExecutionContext
 
 tool = GrepTool()
 
@@ -285,8 +285,8 @@ os.unlink(path)
 
 # 8. Test tool registration
 python -c "
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.file import register_file_tools
+from forge.tools.registry import ToolRegistry
+from forge.tools.file import register_file_tools
 
 ToolRegistry.reset()
 registry = ToolRegistry()
@@ -302,7 +302,7 @@ print(f'Tool registration: OK ({registry.count()} tools)')
 
 # 9. Test schema generation
 python -c "
-from opencode.tools.file import ReadTool, GrepTool
+from forge.tools.file import ReadTool, GrepTool
 
 read_tool = ReadTool()
 grep_tool = GrepTool()
@@ -324,8 +324,8 @@ print('Schema generation: OK')
 # 10. Test error handling
 python -c "
 import asyncio
-from opencode.tools.file import ReadTool, EditTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import ReadTool, EditTool
+from forge.tools.base import ExecutionContext
 
 ctx = ExecutionContext(working_dir='/tmp')
 read_tool = ReadTool()
@@ -359,8 +359,8 @@ python -c "
 import asyncio
 import tempfile
 import os
-from opencode.tools.file import WriteTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.file import WriteTool
+from forge.tools.base import ExecutionContext
 
 tool = WriteTool()
 path = tempfile.mktemp(suffix='.txt')
@@ -374,16 +374,16 @@ print('Dry run mode: OK')
 "
 
 # 12. Run all unit tests
-pytest tests/unit/tools/file/ -v --cov=opencode.tools.file --cov-report=term-missing
+pytest tests/unit/tools/file/ -v --cov=forge.tools.file --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 13. Type checking
-mypy src/opencode/tools/file/ --strict
+mypy src/forge/tools/file/ --strict
 # Expected: No errors
 
 # 14. Linting
-ruff check src/opencode/tools/file/
+ruff check src/forge/tools/file/
 # Expected: No errors
 ```
 
@@ -405,12 +405,12 @@ ruff check src/opencode/tools/file/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/tools/file/__init__.py` | Package exports and registration |
-| `src/opencode/tools/file/read.py` | ReadTool implementation |
-| `src/opencode/tools/file/write.py` | WriteTool implementation |
-| `src/opencode/tools/file/edit.py` | EditTool implementation |
-| `src/opencode/tools/file/glob.py` | GlobTool implementation |
-| `src/opencode/tools/file/grep.py` | GrepTool implementation |
+| `src/forge/tools/file/__init__.py` | Package exports and registration |
+| `src/forge/tools/file/read.py` | ReadTool implementation |
+| `src/forge/tools/file/write.py` | WriteTool implementation |
+| `src/forge/tools/file/edit.py` | EditTool implementation |
+| `src/forge/tools/file/glob.py` | GlobTool implementation |
+| `src/forge/tools/file/grep.py` | GrepTool implementation |
 | `tests/unit/tools/file/__init__.py` | Test package |
 | `tests/unit/tools/file/test_read.py` | ReadTool tests |
 | `tests/unit/tools/file/test_write.py` | WriteTool tests |

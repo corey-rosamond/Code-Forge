@@ -206,7 +206,7 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    subgraph SessionsPkg["src/opencode/sessions/"]
+    subgraph SessionsPkg["src/forge/sessions/"]
         INIT["__init__.py"]
         MODELS["models.py<br/>Session, SessionMessage, ToolInvocation"]
         STORAGE["storage.py<br/>SessionStorage"]
@@ -214,16 +214,16 @@ flowchart TB
         MANAGER["manager.py<br/>SessionManager"]
     end
 
-    subgraph LangChainPkg["src/opencode/langchain/"]
+    subgraph LangChainPkg["src/forge/langchain/"]
         MEMORY["memory.py<br/>ConversationMemory"]
     end
 
-    subgraph HooksPkg["src/opencode/hooks/"]
+    subgraph HooksPkg["src/forge/hooks/"]
         EVENTS["events.py<br/>HookEvent"]
         EXECUTOR["executor.py<br/>fire_event"]
     end
 
-    subgraph REPLPkg["src/opencode/repl/"]
+    subgraph REPLPkg["src/forge/repl/"]
         REPL["repl.py"]
     end
 
@@ -546,7 +546,7 @@ flowchart TD
 flowchart TB
     subgraph Storage["Storage Layer"]
         direction TB
-        STORAGE_DIR["~/.local/share/src/opencode/sessions/"]
+        STORAGE_DIR["~/.local/share/src/forge/sessions/"]
 
         subgraph Files["Session Files"]
             S1["session-uuid-1.json"]

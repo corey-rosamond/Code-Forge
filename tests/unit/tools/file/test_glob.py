@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools.base import ExecutionContext
-from opencode.tools.file.glob import GlobTool
+from code_forge.tools.base import ExecutionContext
+from code_forge.tools.file.glob import GlobTool
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ class TestGlobToolProperties:
         assert "**/*.js" in glob_tool.description
 
     def test_category(self, glob_tool: GlobTool) -> None:
-        from opencode.tools.base import ToolCategory
+        from code_forge.tools.base import ToolCategory
 
         assert glob_tool.category == ToolCategory.FILE
 

@@ -162,7 +162,7 @@
 │  ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐    │
 │  │   Built-in       │     │   User Skills    │     │  Project Skills  │    │
 │  │   Skills         │     │                  │     │                  │    │
-│  │                  │     │  ~/.src/opencode/    │     │  .src/opencode/      │    │
+│  │                  │     │  ~/.src/forge/    │     │  .src/forge/      │    │
 │  │  - PDF           │     │  skills/*.yaml   │     │  skills/*.yaml   │    │
 │  │  - Excel         │     │  skills/*.md     │     │  skills/*.md     │    │
 │  │  - Database      │     │                  │     │                  │    │
@@ -489,7 +489,7 @@
 ## Package Structure Diagram
 
 ```
-src/opencode/skills/
+src/forge/skills/
 ├── __init__.py
 │   ├── Skill
 │   ├── SkillConfig

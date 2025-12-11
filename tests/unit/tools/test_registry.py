@@ -1,4 +1,4 @@
-"""Tests for opencode.tools.registry module."""
+"""Tests for code_forge.tools.registry module."""
 
 from __future__ import annotations
 
@@ -8,15 +8,15 @@ from typing import Any
 
 import pytest
 
-from opencode.core.errors import ToolError
-from opencode.tools.base import (
+from code_forge.core.errors import ToolError
+from code_forge.tools.base import (
     BaseTool,
     ExecutionContext,
     ToolCategory,
     ToolParameter,
     ToolResult,
 )
-from opencode.tools.registry import ToolRegistry
+from code_forge.tools.registry import ToolRegistry
 
 
 # =============================================================================

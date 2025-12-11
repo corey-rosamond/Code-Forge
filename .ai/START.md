@@ -1,4 +1,4 @@
-# OpenCode AI Entry Point
+# Code-Forge AI Entry Point
 
 **STOP. Read this entire file before doing anything else.**
 
@@ -6,7 +6,7 @@
 
 ## Project Context
 
-**OpenCode** is a Claude Code alternative that provides:
+**Code-Forge** is a Claude Code alternative that provides:
 - Access to 400+ AI models via OpenRouter API
 - LangChain 1.0 integration for agent orchestration
 - Full CLI experience with tools, permissions, sessions, and extensibility
@@ -70,7 +70,7 @@ Before writing any code:
 |-----------|---------|--------|
 | `.ai/phase/[X.X]/` | Phase planning documentation | Read before implementing that phase |
 | `.ai/phase/reference/` | Reference materials only | **IGNORE unless explicitly told to read** |
-| `src/opencode/` | Implementation source code | Create/modify during implementation |
+| `src/forge/` | Implementation source code | Create/modify during implementation |
 | `tests/` | Test code | Create/modify during implementation |
 
 ---
@@ -111,7 +111,7 @@ A phase is **NOT** complete when:
 - You think it should work
 
 A phase **IS** complete when:
-- Implementation code exists in `src/opencode/`
+- Implementation code exists in `src/forge/`
 - Tests exist in `tests/`
 - All tests pass
 - All COMPLETION_CRITERIA.md items are verified
@@ -125,7 +125,7 @@ A phase **IS** complete when:
 
 1. Check REQUIREMENTS.md for that phase (dependencies listed there)
 2. Verify each dependency is actually implemented:
-   - Source files exist in `src/opencode/`
+   - Source files exist in `src/forge/`
    - Tests exist in `tests/`
    - Tests pass
    - UNDONE.md shows Implementation as "Done"

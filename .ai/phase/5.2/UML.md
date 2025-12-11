@@ -245,7 +245,7 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    subgraph ContextPkg["src/opencode/context/"]
+    subgraph ContextPkg["src/forge/context/"]
         INIT["__init__.py"]
         TOKENS["tokens.py<br/>TokenCounter, TiktokenCounter"]
         LIMITS["limits.py<br/>ContextLimits, ContextTracker"]
@@ -254,11 +254,11 @@ flowchart TB
         MANAGER["manager.py<br/>ContextManager, TruncationMode"]
     end
 
-    subgraph SessionsPkg["src/opencode/sessions/"]
+    subgraph SessionsPkg["src/forge/sessions/"]
         SESSION_MGR["manager.py"]
     end
 
-    subgraph LangChainPkg["src/opencode/langchain/"]
+    subgraph LangChainPkg["src/forge/langchain/"]
         LLM["llm.py<br/>OpenRouterLLM"]
     end
 

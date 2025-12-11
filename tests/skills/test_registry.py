@@ -6,9 +6,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from opencode.skills.base import Skill, SkillConfig, SkillDefinition, SkillMetadata
-from opencode.skills.loader import SkillLoader
-from opencode.skills.registry import SkillRegistry
+from code_forge.skills.base import Skill, SkillConfig, SkillDefinition, SkillMetadata
+from code_forge.skills.loader import SkillLoader
+from code_forge.skills.registry import SkillRegistry
 
 
 def create_test_skill(
@@ -375,7 +375,7 @@ prompt: Test
 
     def test_load_skills_uses_defaults(self, registry: SkillRegistry) -> None:
         """Test that load_skills uses default paths if none provided."""
-        with patch("opencode.skills.registry.get_default_search_paths") as mock:
+        with patch("code_forge.skills.registry.get_default_search_paths") as mock:
             mock.return_value = []
             registry.load_skills()
             mock.assert_called_once()

@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import httpx
 import pytest
 
-from opencode.llm.client import OpenRouterClient
-from opencode.llm.errors import (
+from code_forge.llm.client import OpenRouterClient
+from code_forge.llm.errors import (
     AuthenticationError,
     ContentPolicyError,
     ContextLengthError,
@@ -19,7 +19,7 @@ from opencode.llm.errors import (
     ProviderError,
     RateLimitError,
 )
-from opencode.llm.models import CompletionRequest, Message
+from code_forge.llm.models import CompletionRequest, Message
 
 
 class TestOpenRouterClientInit:
@@ -29,7 +29,7 @@ class TestOpenRouterClientInit:
         client = OpenRouterClient(api_key="test-key")
         assert client.api_key == "test-key"
         assert client.base_url == "https://openrouter.ai/api/v1"
-        assert client.app_name == "OpenCode"
+        assert client.app_name == "Code-Forge"
         assert client.timeout == 120.0
         assert client.max_retries == 3
         assert client.retry_delay == 1.0

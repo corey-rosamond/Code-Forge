@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.github.auth import (
+from code_forge.github.auth import (
     GitHubAuth,
     GitHubAuthenticator,
     GitHubAuthError,

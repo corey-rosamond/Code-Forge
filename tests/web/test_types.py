@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.web.types import (
+from code_forge.web.types import (
     FetchOptions,
     FetchResponse,
     ParsedContent,

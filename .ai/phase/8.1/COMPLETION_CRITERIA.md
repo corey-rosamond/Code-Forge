@@ -294,16 +294,16 @@
 pytest tests/mcp/ -v
 
 # Run with coverage
-pytest tests/mcp/ --cov=src/opencode/mcp --cov-report=term-missing
+pytest tests/mcp/ --cov=src/forge/mcp --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/mcp/ --cov=src/opencode/mcp --cov-fail-under=90
+pytest tests/mcp/ --cov=src/forge/mcp --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/mcp/
+mypy src/forge/mcp/
 
 # Complexity check
-flake8 src/opencode/mcp/ --max-complexity=10
+flake8 src/forge/mcp/ --max-complexity=10
 ```
 
 ---

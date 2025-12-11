@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools.base import ExecutionContext
-from opencode.tools.file.read import ReadTool
+from code_forge.tools.base import ExecutionContext
+from code_forge.tools.file.read import ReadTool
 
 
 @pytest.fixture
@@ -45,7 +45,7 @@ class TestReadToolProperties:
         assert "absolute path" in read_tool.description
 
     def test_category(self, read_tool: ReadTool) -> None:
-        from opencode.tools.base import ToolCategory
+        from code_forge.tools.base import ToolCategory
 
         assert read_tool.category == ToolCategory.FILE
 

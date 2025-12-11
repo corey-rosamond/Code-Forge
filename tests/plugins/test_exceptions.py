@@ -1,7 +1,7 @@
 """Tests for plugin exceptions."""
 
 
-from opencode.plugins.exceptions import (
+from code_forge.plugins.exceptions import (
     PluginConfigError,
     PluginDependencyError,
     PluginError,

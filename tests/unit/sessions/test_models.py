@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 from typing import Any
 
-from opencode.sessions.models import (
+from code_forge.sessions.models import (
     Session,
     SessionMessage,
     ToolInvocation,

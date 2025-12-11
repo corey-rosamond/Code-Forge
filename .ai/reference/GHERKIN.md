@@ -1,4 +1,4 @@
-# OpenCode Gherkin Specifications
+# Code-Forge Gherkin Specifications
 ## Behavior-Driven Development Test Scenarios
 
 **Version:** 1.0
@@ -38,20 +38,20 @@ Feature: Interactive REPL Interface
   So that I can communicate with the AI assistant naturally
 
   Background:
-    Given OpenCode is installed and configured
+    Given Code-Forge is installed and configured
     And I have a valid OpenRouter API key
     And I am in a project directory
 
   @smoke @repl
-  Scenario: Start OpenCode REPL
-    When I run "opencode" in the terminal
-    Then I should see the OpenCode welcome message
+  Scenario: Start Code-Forge REPL
+    When I run "forge" in the terminal
+    Then I should see the Code-Forge welcome message
     And I should see the input prompt
     And the status bar should show "Ready"
 
   @repl @input
   Scenario: Submit a simple query
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     When I type "Hello, how are you?"
     And I press Enter
     Then the agent should respond with a greeting
@@ -60,7 +60,7 @@ Feature: Interactive REPL Interface
 
   @repl @multiline
   Scenario: Enter multiline input
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     When I type "Here is my code:"
     And I press Shift+Enter
     And I type "def hello():"
@@ -71,7 +71,7 @@ Feature: Interactive REPL Interface
 
   @repl @interrupt
   Scenario: Cancel ongoing generation
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And the agent is generating a response
     When I press Ctrl+C
     Then the generation should stop
@@ -80,7 +80,7 @@ Feature: Interactive REPL Interface
 
   @repl @history
   Scenario: Navigate command history
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And I have previously entered "command one"
     And I have previously entered "command two"
     When I press the Up arrow key
@@ -92,7 +92,7 @@ Feature: Interactive REPL Interface
 
   @repl @search
   Scenario: Reverse search command history
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And I have previously entered "find all Python files"
     When I press Ctrl+R
     And I type "Python"
@@ -102,7 +102,7 @@ Feature: Interactive REPL Interface
 
   @repl @paste
   Scenario: Paste image into terminal
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And I have an image in my clipboard
     When I press Ctrl+V
     Then the image should be attached to the message
@@ -112,7 +112,7 @@ Feature: Interactive REPL Interface
 
   @repl @vim
   Scenario: Enable vim mode
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     When I type "/vim" and press Enter
     Then vim mode should be enabled
     And I should see "Vim mode enabled"
@@ -123,7 +123,7 @@ Feature: Interactive REPL Interface
 
   @repl @shortcuts
   Scenario: Display keyboard shortcuts
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     When I press "?"
     Then I should see a list of available keyboard shortcuts
     And the list should include "Esc - Stop generation"
@@ -140,7 +140,7 @@ Feature: Keyboard Shortcuts
   So that I can work more efficiently
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @shortcuts @escape
   Scenario: Stop generation with Escape
@@ -167,7 +167,7 @@ Feature: Keyboard Shortcuts
   Scenario: Exit with Ctrl+D
     Given I am at an empty input prompt
     When I press Ctrl+D
-    Then OpenCode should exit gracefully
+    Then Code-Forge should exit gracefully
     And the session should be saved
 
   @shortcuts @background
@@ -204,10 +204,10 @@ Feature: Keyboard Shortcuts
 Feature: Built-in Slash Commands
   As a user
   I want to use slash commands for quick actions
-  So that I can control OpenCode efficiently
+  So that I can control Code-Forge efficiently
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @commands @help
   Scenario: Display help
@@ -266,9 +266,9 @@ Feature: Built-in Slash Commands
   @commands @init
   Scenario: Initialize project context
     Given I am in a new project directory
-    And no OPENCODE.md file exists
+    And no FORGE.md file exists
     When I type "/init" and press Enter
-    Then an OPENCODE.md file should be created
+    Then an FORGE.md file should be created
     And it should contain project analysis
     And it should include recommended settings
 
@@ -303,7 +303,7 @@ Feature: Built-in Slash Commands
   @commands @continue
   Scenario: Continue previous session
     Given I previously had a session in this directory
-    When I run "opencode --continue"
+    When I run "forge --continue"
     Then the previous session should be restored
     And I should see the conversation history
     And the context should be intact
@@ -311,7 +311,7 @@ Feature: Built-in Slash Commands
   @commands @resume
   Scenario: Resume specific session
     Given I have multiple previous sessions
-    When I run "opencode --resume"
+    When I run "forge --resume"
     Then I should see a session picker
     When I select a session
     Then that session should be restored
@@ -326,11 +326,11 @@ Feature: Custom Slash Commands
   So that I can automate repetitive tasks
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @custom-commands @create
   Scenario: Create custom command from file
-    Given I create a file ".opencode/commands/greet.md" with content:
+    Given I create a file ".forge/commands/greet.md" with content:
       """
       Say hello and introduce yourself as a helpful assistant
       """
@@ -339,7 +339,7 @@ Feature: Custom Slash Commands
 
   @custom-commands @parameters
   Scenario: Custom command with parameters
-    Given I create a file ".opencode/commands/review.md" with content:
+    Given I create a file ".forge/commands/review.md" with content:
       """
       Review the pull request at $1 and provide feedback
       """
@@ -349,8 +349,8 @@ Feature: Custom Slash Commands
 
   @custom-commands @namespace
   Scenario: Namespaced custom commands
-    Given I create ".opencode/commands/git/status.md"
-    And I create ".opencode/commands/git/diff.md"
+    Given I create ".forge/commands/git/status.md"
+    And I create ".forge/commands/git/diff.md"
     When I type "/git/status" and press Enter
     Then the git/status command should execute
     When I type "/git/diff" and press Enter
@@ -358,8 +358,8 @@ Feature: Custom Slash Commands
 
   @custom-commands @project-vs-user
   Scenario: Project commands override user commands
-    Given I have a user command "~/.opencode/commands/test.md"
-    And I have a project command ".opencode/commands/test.md"
+    Given I have a user command "~/.forge/commands/test.md"
+    And I have a project command ".forge/commands/test.md"
     When I type "/test" and press Enter
     Then the project command should execute
     And the user command should be ignored
@@ -378,7 +378,7 @@ Feature: File Operations
   So that I can get help with my code
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And I am in a project directory with source files
 
   @tools @read
@@ -452,7 +452,7 @@ Feature: Bash Command Execution
   So that I can automate development tasks
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And bash execution is permitted
 
   @tools @bash
@@ -501,7 +501,7 @@ Feature: Web Operations
   So that I can get up-to-date information
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And web operations are permitted
 
   @tools @websearch
@@ -541,7 +541,7 @@ Feature: Task Management Tools
   So that I can track work progress
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @tools @todo-write
   Scenario: Create todo list
@@ -579,7 +579,7 @@ Feature: Permission System
   So that I can ensure safe operation
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @permissions @allow
   Scenario: Allowlisted operation executes immediately
@@ -652,7 +652,7 @@ Feature: Sandboxing
   So that operations are isolated
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And sandboxing is enabled
 
   @sandbox @filesystem
@@ -690,7 +690,7 @@ Feature: Plan Mode
   So that I can review plans before execution
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @modes @plan-enter
   Scenario: Enter Plan Mode
@@ -744,7 +744,7 @@ Feature: Extended Thinking Mode
   So that the agent can reason more deeply
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @modes @thinking-toggle
   Scenario: Toggle extended thinking
@@ -785,7 +785,7 @@ Feature: Permission Mode Cycling
   So that I can control agent autonomy
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @modes @cycle
   Scenario: Cycle through permission modes
@@ -818,26 +818,26 @@ Feature: Permission Mode Cycling
 ```gherkin
 Feature: Headless Mode
   As a DevOps engineer
-  I want to run OpenCode in CI/CD pipelines
+  I want to run Code-Forge in CI/CD pipelines
   So that I can automate development tasks
 
   @modes @headless
   Scenario: Run in headless mode
-    When I run 'opencode -p "List all Python files"'
+    When I run 'forge -p "List all Python files"'
     Then the command should execute non-interactively
     And the output should be printed to stdout
     And the process should exit with code 0
 
   @modes @headless-json
   Scenario: Streaming JSON output
-    When I run 'opencode -p "Analyze code" --output-format stream-json'
+    When I run 'forge -p "Analyze code" --output-format stream-json'
     Then output should be in streaming JSON format
     And each line should be valid JSON
     And tool calls should be included in output
 
   @modes @headless-error
   Scenario: Handle errors in headless mode
-    When I run 'opencode -p "Invalid request"' and it fails
+    When I run 'forge -p "Invalid request"' and it fails
     Then the error should be printed to stderr
     And the process should exit with non-zero code
 ```
@@ -855,19 +855,19 @@ Feature: Session Persistence
   So that I can continue work across terminal sessions
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @session @save
   Scenario: Auto-save session
     Given I have an active conversation
-    When I exit OpenCode with Ctrl+D
+    When I exit Code-Forge with Ctrl+D
     Then the session should be automatically saved
-    And the session should be stored in ~/.opencode/sessions/
+    And the session should be stored in ~/.forge/sessions/
 
   @session @resume-recent
   Scenario: Resume most recent session
     Given I had a previous session in this directory
-    When I run "opencode --continue"
+    When I run "forge --continue"
     Then the most recent session should be loaded
     And I should see the previous conversation
     And context should be restored
@@ -875,7 +875,7 @@ Feature: Session Persistence
   @session @resume-picker
   Scenario: Resume with session picker
     Given I have multiple previous sessions
-    When I run "opencode --resume"
+    When I run "forge --resume"
     Then I should see a session picker
     And sessions should show date and preview
     When I select a session
@@ -938,7 +938,7 @@ Feature: Context Optimization
   So that I don't run out of context space
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @context @status
   Scenario: Check context status
@@ -983,7 +983,7 @@ Feature: Context Optimization
 ### Feature: Project Context
 
 ```gherkin
-Feature: Project Context (OPENCODE.md)
+Feature: Project Context (FORGE.md)
   As a developer
   I want persistent project context
   So that the agent understands my project
@@ -991,26 +991,26 @@ Feature: Project Context (OPENCODE.md)
   Background:
     Given I am in a project directory
 
-  @context @opencode-md
-  Scenario: Auto-load OPENCODE.md
-    Given an OPENCODE.md file exists in the project root
-    When I start OpenCode
-    Then the OPENCODE.md content should be loaded
+  @context @forge-md
+  Scenario: Auto-load FORGE.md
+    Given an FORGE.md file exists in the project root
+    When I start Code-Forge
+    Then the FORGE.md content should be loaded
     And the agent should be aware of project context
 
   @context @init
   Scenario: Initialize project context
-    Given no OPENCODE.md exists
+    Given no FORGE.md exists
     When I type "/init"
     Then the agent should analyze the project
-    And an OPENCODE.md file should be created
+    And an FORGE.md file should be created
     And it should contain project structure
     And it should contain coding standards
 
   @context @readme
   Scenario: Include README in context
     Given a README.md exists in the project
-    When I start OpenCode
+    When I start Code-Forge
     Then README content should be included in context
     And the agent should reference documentation
 ```
@@ -1028,7 +1028,7 @@ Feature: Hook System
   So that I can customize agent behavior
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @hooks @pretool
   Scenario: PreToolUse hook
@@ -1100,7 +1100,7 @@ Feature: Subagent System
   So that complex tasks can be delegated
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @subagents @explore
   Scenario: Use Explore subagent
@@ -1128,7 +1128,7 @@ Feature: Subagent System
 
   @subagents @custom
   Scenario: Create custom subagent
-    Given I create ".opencode/agents/api-expert.yaml" with:
+    Given I create ".forge/agents/api-expert.yaml" with:
       """
       name: api-expert
       description: Expert in REST API design
@@ -1160,7 +1160,7 @@ Feature: Skills System
   So that agents can acquire specialized knowledge
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @skills @load
   Scenario: Load skill dynamically
@@ -1180,7 +1180,7 @@ Feature: Skills System
 
   @skills @create
   Scenario: Create custom skill
-    Given I create ".opencode/skills/my-skill/SKILL.md"
+    Given I create ".forge/skills/my-skill/SKILL.md"
     When I type "/skills"
     Then my-skill should be listed
     And I should be able to activate it
@@ -1206,18 +1206,18 @@ Feature: MCP Protocol Integration
   So that I can extend agent capabilities
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @mcp @add-stdio
   Scenario: Add MCP server via stdio
-    When I run "opencode mcp add --transport stdio github -- npx @mcp/github"
+    When I run "forge mcp add --transport stdio github -- npx @mcp/github"
     Then the GitHub MCP server should be added
     And it should appear in /mcp list
     And its tools should be available
 
   @mcp @add-streamable-http
   Scenario: Add MCP server via Streamable HTTP
-    When I run "opencode mcp add --transport streamable-http myserver https://mcp.example.com"
+    When I run "forge mcp add --transport streamable-http myserver https://mcp.example.com"
     Then the Streamable HTTP MCP server should be added
     And OAuth 2.1 authentication should be initiated
     And connection should be established after auth
@@ -1276,7 +1276,7 @@ Feature: MCP Protocol Integration
   @mcp @project-scope
   Scenario: Project-scoped MCP configuration
     Given I have ".mcp.json" in the project root
-    When I start OpenCode in this project
+    When I start Code-Forge in this project
     Then project-specific MCP servers should connect
     And they should be available only for this project
 ```
@@ -1295,7 +1295,7 @@ Feature: OpenRouter Integration
 
   Background:
     Given I have a valid OpenRouter API key
-    And I have started the OpenCode REPL
+    And I have started the Code-Forge REPL
 
   @openrouter @models
   Scenario: List available models
@@ -1367,10 +1367,10 @@ Feature: OpenRouter Integration
 Feature: Configuration System
   As a user
   I want flexible configuration
-  So that I can customize OpenCode behavior
+  So that I can customize Code-Forge behavior
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @config @hierarchy
   Scenario: Configuration hierarchy is respected
@@ -1383,14 +1383,14 @@ Feature: Configuration System
   @config @local-override
   Scenario: Local settings override project settings
     Given project settings are version-controlled
-    And I create ".opencode/settings.local.json"
+    And I create ".forge/settings.local.json"
     When I add personal preferences to local settings
     Then local settings should override project settings
     And local settings should be gitignored
 
   @config @reload
   Scenario: Live configuration reload
-    Given I modify ".opencode/settings.json"
+    Given I modify ".forge/settings.json"
     Then the changes should be detected automatically
     And the new configuration should be applied
     And I should see "Configuration reloaded"
@@ -1398,15 +1398,15 @@ Feature: Configuration System
   @config @validate
   Scenario: Validate configuration
     Given I have an invalid configuration value
-    When OpenCode loads the configuration
+    When Code-Forge loads the configuration
     Then a validation error should be shown
     And default values should be used for invalid fields
     And I should see which fields are invalid
 
   @config @env
   Scenario: Environment variables override
-    Given I set OPENCODE_MODEL="gpt-5"
-    When I start OpenCode
+    Given I set FORGE_MODEL="gpt-5"
+    When I start Code-Forge
     Then the model should be set from environment variable
 ```
 
@@ -1423,7 +1423,7 @@ Feature: Git Integration
   So that I can manage version control efficiently
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
     And I am in a Git repository
 
   @git @status
@@ -1478,7 +1478,7 @@ Feature: Error Handling
   So that I can recover from issues
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @errors @api
   Scenario: Handle API errors
@@ -1504,8 +1504,8 @@ Feature: Error Handling
 
   @errors @recovery
   Scenario: Session recovery after crash
-    Given OpenCode crashes unexpectedly
-    When I restart OpenCode
+    Given Code-Forge crashes unexpectedly
+    When I restart Code-Forge
     Then I should be offered to recover the session
     And unsaved work should be recoverable
 
@@ -1530,7 +1530,7 @@ Feature: Security Features
   So that my data and system are protected
 
   Background:
-    Given I have started the OpenCode REPL
+    Given I have started the Code-Forge REPL
 
   @security @api-keys
   Scenario: API keys are stored securely
@@ -1609,11 +1609,11 @@ Feature: Security Features
 - `src/config.py` - Configuration file
 - `tests/test_main.py` - Test file
 - `README.md` - Project documentation
-- `OPENCODE.md` - Project context
+- `FORGE.md` - Project context
 
 ### Sample Configurations
-- `.opencode/settings.json` - Project settings
-- `~/.opencode/settings.json` - User settings
+- `.forge/settings.json` - Project settings
+- `~/.forge/settings.json` - User settings
 - `.mcp.json` - MCP configuration
 
 ### Mock Services

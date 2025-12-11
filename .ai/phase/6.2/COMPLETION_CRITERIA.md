@@ -294,21 +294,21 @@
 pytest tests/modes/ -v
 
 # Run with coverage
-pytest tests/modes/ --cov=src/opencode/modes --cov-report=term-missing
+pytest tests/modes/ --cov=src/forge/modes --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/modes/ --cov=src/opencode/modes --cov-fail-under=90
+pytest tests/modes/ --cov=src/forge/modes --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/modes/
+mypy src/forge/modes/
 
 # Complexity check
-flake8 src/opencode/modes/ --max-complexity=10
+flake8 src/forge/modes/ --max-complexity=10
 
 # Test headless mode
-echo "Hello" | opencode --headless
-opencode --headless --json "List files"
-opencode --headless --input test.txt --output result.json
+echo "Hello" | forge --headless
+forge --headless --json "List files"
+forge --headless --input test.txt --output result.json
 ```
 
 ---

@@ -4,8 +4,8 @@ import time
 
 import pytest
 
-from opencode.modes.base import ModeContext, ModeName
-from opencode.modes.thinking import (
+from code_forge.modes.base import ModeContext, ModeName
+from code_forge.modes.thinking import (
     THINKING_PATTERN,
     ThinkingConfig,
     ThinkingMode,

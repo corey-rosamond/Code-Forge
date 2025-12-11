@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from opencode.git.diff import DiffFile, GitDiff, GitDiffTool
-from opencode.git.repository import GitRepository
+from code_forge.git.diff import DiffFile, GitDiff, GitDiffTool
+from code_forge.git.repository import GitRepository
 
 
 class TestDiffFile:

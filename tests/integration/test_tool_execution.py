@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools import (
+from code_forge.tools import (
     ExecutionContext,
     ToolExecutor,
     ToolRegistry,

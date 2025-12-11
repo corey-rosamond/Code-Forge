@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.llm.models import (
+from code_forge.llm.models import (
     CompletionChoice,
     CompletionRequest,
     CompletionResponse,

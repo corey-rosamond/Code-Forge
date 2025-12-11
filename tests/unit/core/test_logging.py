@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from opencode.core.logging import get_logger, setup_logging
+from code_forge.core.logging import get_logger, setup_logging
 
 
 class TestSetupLogging:
@@ -16,20 +16,20 @@ class TestSetupLogging:
 
     def teardown_method(self) -> None:
         """Clean up logging handlers after each test."""
-        logger = logging.getLogger("OpenCode")
+        logger = logging.getLogger("Code-Forge")
         logger.handlers.clear()
         logger.setLevel(logging.WARNING)
 
     def test_setup_logging_default(self) -> None:
         """setup_logging should configure INFO level by default."""
         setup_logging()
-        logger = logging.getLogger("OpenCode")
+        logger = logging.getLogger("Code-Forge")
         assert logger.level == logging.INFO
 
     def test_setup_logging_custom_level(self) -> None:
         """setup_logging should accept custom log level."""
         setup_logging(level=logging.DEBUG)
-        logger = logging.getLogger("OpenCode")
+        logger = logging.getLogger("Code-Forge")
         assert logger.level == logging.DEBUG
 
     def test_setup_logging_with_file(self) -> None:
@@ -41,7 +41,7 @@ class TestSetupLogging:
 
         try:
             setup_logging(log_file=log_path, rich_console=False)
-            logger = logging.getLogger("OpenCode")
+            logger = logging.getLogger("Code-Forge")
 
             # Check that file handler was added
             file_handlers = [
@@ -62,7 +62,7 @@ class TestSetupLogging:
     def test_setup_logging_without_rich(self) -> None:
         """setup_logging should use StreamHandler when rich_console=False."""
         setup_logging(rich_console=False)
-        logger = logging.getLogger("OpenCode")
+        logger = logging.getLogger("Code-Forge")
 
         # Should have a StreamHandler, not RichHandler
         stream_handlers = [
@@ -76,10 +76,10 @@ class TestSetupLogging:
     def test_setup_logging_clears_existing_handlers(self) -> None:
         """setup_logging should clear existing handlers to avoid duplicates."""
         setup_logging()
-        initial_count = len(logging.getLogger("OpenCode").handlers)
+        initial_count = len(logging.getLogger("Code-Forge").handlers)
 
         setup_logging()
-        final_count = len(logging.getLogger("OpenCode").handlers)
+        final_count = len(logging.getLogger("Code-Forge").handlers)
 
         # Should not accumulate handlers
         assert final_count == initial_count
@@ -94,9 +94,9 @@ class TestGetLogger:
         assert isinstance(logger, logging.Logger)
 
     def test_get_logger_name_prefix(self) -> None:
-        """get_logger should prefix name with 'OpenCode.'."""
+        """get_logger should prefix name with 'Code-Forge.'."""
         logger = get_logger("mymodule")
-        assert logger.name == "OpenCode.mymodule"
+        assert logger.name == "Code-Forge.mymodule"
 
     def test_get_logger_different_names(self) -> None:
         """get_logger should return different loggers for different names."""

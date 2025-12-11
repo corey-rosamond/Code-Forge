@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 7.2 implements the skills system for OpenCode, providing reusable, domain-specific capabilities that can be invoked via slash commands. Skills bundle specialized prompts, tools, and behaviors for common tasks like working with specific file formats, frameworks, or workflows.
+Phase 7.2 implements the skills system for Code-Forge, providing reusable, domain-specific capabilities that can be invoked via slash commands. Skills bundle specialized prompts, tools, and behaviors for common tasks like working with specific file formats, frameworks, or workflows.
 
 ---
 
@@ -63,12 +63,12 @@ Phase 7.2 implements the skills system for OpenCode, providing reusable, domain-
 - Cannot be modified
 
 **FR-2.2:** User skills
-- Loaded from `.src/opencode/skills/`
+- Loaded from `.src/forge/skills/`
 - YAML or Markdown format
 - Hot reload support
 
 **FR-2.3:** Project skills
-- Loaded from project `.src/opencode/skills/`
+- Loaded from project `.src/forge/skills/`
 - Override user skills
 - Project-specific behaviors
 
@@ -176,7 +176,7 @@ Phase 7.2 implements the skills system for OpenCode, providing reusable, domain-
 ### Package Structure
 
 ```
-src/opencode/skills/
+src/forge/skills/
 ├── __init__.py           # Package exports
 ├── base.py               # Skill base class
 ├── loader.py             # Skill loading
@@ -194,7 +194,7 @@ src/opencode/skills/
 ### Skill File Format
 
 ```yaml
-# .src/opencode/skills/my-skill.yaml
+# .src/forge/skills/my-skill.yaml
 name: my-skill
 description: Description of what this skill does
 author: Your Name

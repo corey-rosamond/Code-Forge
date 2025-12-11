@@ -537,7 +537,7 @@
 ## Package Structure Diagram
 
 ```
-src/opencode/web/
+src/forge/web/
 ├── __init__.py
 │   ├── SearchResult
 │   ├── SearchResponse

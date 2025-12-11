@@ -10,7 +10,7 @@
 
 ```mermaid
 classDiagram
-    class OpenCodeConfig {
+    class Code-ForgeConfig {
         <<Aggregate Root>>
         +model: ModelConfig
         +permissions: PermissionConfig
@@ -99,12 +99,12 @@ classDiagram
         PROMPT
     }
 
-    OpenCodeConfig --> ModelConfig
-    OpenCodeConfig --> PermissionConfig
-    OpenCodeConfig --> HooksConfig
-    OpenCodeConfig --> MCPServerConfig
-    OpenCodeConfig --> DisplayConfig
-    OpenCodeConfig --> SessionConfig
+    Code-ForgeConfig --> ModelConfig
+    Code-ForgeConfig --> PermissionConfig
+    Code-ForgeConfig --> HooksConfig
+    Code-ForgeConfig --> MCPServerConfig
+    Code-ForgeConfig --> DisplayConfig
+    Code-ForgeConfig --> SessionConfig
     ModelConfig --> RoutingVariant
     HooksConfig --> HookConfig
     HookConfig --> HookType
@@ -133,11 +133,11 @@ classDiagram
     class ConfigLoader {
         -_user_dir: Path
         -_project_dir: Path
-        -_config: OpenCodeConfig?
+        -_config: Code-ForgeConfig?
         -_observers: List~Callable~
         -_file_watcher: Observer?
-        +config: OpenCodeConfig
-        +load_all() OpenCodeConfig
+        +config: Code-ForgeConfig
+        +load_all() Code-ForgeConfig
         +load(path) Dict
         +merge(base, override) Dict
         +validate(config) tuple
@@ -171,7 +171,7 @@ classDiagram
     IConfigSource <|.. YamlFileSource
     IConfigSource <|.. EnvironmentSource
     ConfigLoader --> IConfigSource : uses
-    ConfigLoader --> OpenCodeConfig : produces
+    ConfigLoader --> Code-ForgeConfig : produces
 ```
 
 ---
@@ -185,30 +185,30 @@ sequenceDiagram
     participant JSON as JsonFileSource
     participant YAML as YamlFileSource
     participant ENV as EnvironmentSource
-    participant Model as OpenCodeConfig
+    participant Model as Code-ForgeConfig
 
     App->>CL: load_all()
     CL->>CL: Create default config
 
     Note over CL: Load Enterprise
-    CL->>JSON: load("/etc/src/opencode/settings.json")
+    CL->>JSON: load("/etc/src/forge/settings.json")
     JSON-->>CL: enterprise config or {}
 
     Note over CL: Load User
-    CL->>JSON: load("~/.src/opencode/settings.json")
+    CL->>JSON: load("~/.src/forge/settings.json")
     alt JSON exists
         JSON-->>CL: user config
     else Try YAML
-        CL->>YAML: load("~/.src/opencode/settings.yaml")
+        CL->>YAML: load("~/.src/forge/settings.yaml")
         YAML-->>CL: user config or {}
     end
 
     Note over CL: Load Project
-    CL->>JSON: load(".src/opencode/settings.json")
+    CL->>JSON: load(".src/forge/settings.json")
     JSON-->>CL: project config or {}
 
     Note over CL: Load Local
-    CL->>JSON: load(".src/opencode/settings.local.json")
+    CL->>JSON: load(".src/forge/settings.local.json")
     JSON-->>CL: local config or {}
 
     Note over CL: Load Environment
@@ -217,9 +217,9 @@ sequenceDiagram
 
     CL->>CL: merge all configs
     CL->>Model: validate(merged)
-    Model-->>CL: OpenCodeConfig instance
+    Model-->>CL: Code-ForgeConfig instance
 
-    CL-->>App: OpenCodeConfig
+    CL-->>App: Code-ForgeConfig
 ```
 
 ---
@@ -293,10 +293,10 @@ stateDiagram-v2
 ```mermaid
 flowchart TB
     subgraph External["External Sources"]
-        ENT["/etc/src/opencode/settings.json"]
-        USER["~/.src/opencode/settings.json"]
-        PROJ[".src/opencode/settings.json"]
-        LOCAL[".src/opencode/settings.local.json"]
+        ENT["/etc/src/forge/settings.json"]
+        USER["~/.src/forge/settings.json"]
+        PROJ[".src/forge/settings.json"]
+        LOCAL[".src/forge/settings.local.json"]
         ENV["Environment Variables"]
     end
 
@@ -363,14 +363,14 @@ flowchart TD
 
 ```mermaid
 flowchart TB
-    subgraph config["opencode.config"]
+    subgraph config["forge.config"]
         INIT["__init__.py"]
         MODELS["models.py"]
         SOURCES["sources.py"]
         LOADER["loader.py"]
     end
 
-    subgraph core["opencode.core (Phase 1.1)"]
+    subgraph core["forge.core (Phase 1.1)"]
         INTERFACES["interfaces.py"]
         ERRORS["errors.py"]
         LOGGING["logging.py"]
@@ -400,19 +400,19 @@ Configuration Loading Order (Priority: Low → High)
 ═══════════════════════════════════════════════════
 
 ┌─────────────────────────────────────────────────┐
-│  6. Environment Variables (OPENCODE_*)          │ ← Highest Priority
+│  6. Environment Variables (FORGE_*)          │ ← Highest Priority
 ├─────────────────────────────────────────────────┤
 │  5. Local Overrides                             │
-│     .src/opencode/settings.local.json               │
+│     .src/forge/settings.local.json               │
 ├─────────────────────────────────────────────────┤
 │  4. Project Settings                            │
-│     .src/opencode/settings.json                     │
+│     .src/forge/settings.json                     │
 ├─────────────────────────────────────────────────┤
 │  3. User Settings                               │
-│     ~/.src/opencode/settings.json                   │
+│     ~/.src/forge/settings.json                   │
 ├─────────────────────────────────────────────────┤
 │  2. Enterprise Settings                         │
-│     /etc/src/opencode/settings.json                 │
+│     /etc/src/forge/settings.json                 │
 ├─────────────────────────────────────────────────┤
 │  1. Default Values (in code)                    │ ← Lowest Priority
 └─────────────────────────────────────────────────┘

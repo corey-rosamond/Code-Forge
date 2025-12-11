@@ -6,13 +6,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.github.repository import (
+from code_forge.github.repository import (
     GitHubRepository,
     GitHubBranch,
     GitHubTag,
     RepositoryService,
 )
-from opencode.github.client import GitHubClient
+from code_forge.github.client import GitHubClient
 
 
 class TestGitHubRepository:

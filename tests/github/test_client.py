@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 import aiohttp
 
-from opencode.github.auth import GitHubAuthenticator, GitHubAuthError
-from opencode.github.client import (
+from code_forge.github.auth import GitHubAuthenticator, GitHubAuthError
+from code_forge.github.client import (
     GitHubClient,
     GitHubAPIError,
     GitHubRateLimitError,

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opencode.context.strategies import (
+from code_forge.context.strategies import (
     CompositeStrategy,
     SelectiveTruncationStrategy,
     SlidingWindowStrategy,
@@ -13,7 +13,7 @@ from opencode.context.strategies import (
     TokenBudgetStrategy,
     TruncationStrategy,
 )
-from opencode.context.tokens import ApproximateCounter, TokenCounter
+from code_forge.context.tokens import ApproximateCounter, TokenCounter
 
 
 def make_messages(count: int, content_size: int = 10) -> list[dict[str, Any]]:

@@ -11,10 +11,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.mcp.client import MCPClient, MCPClientError
-from opencode.mcp.config import MCPConfig, MCPConfigLoader, MCPServerConfig, MCPSettings
-from opencode.mcp.manager import MCPConnection, MCPManager
-from opencode.mcp.protocol import (
+from code_forge.mcp.client import MCPClient, MCPClientError
+from code_forge.mcp.config import MCPConfig, MCPConfigLoader, MCPServerConfig, MCPSettings
+from code_forge.mcp.manager import MCPConnection, MCPManager
+from code_forge.mcp.protocol import (
     MCPCapabilities,
     MCPError,
     MCPNotification,
@@ -30,8 +30,8 @@ from opencode.mcp.protocol import (
     parse_json_message,
     parse_message,
 )
-from opencode.mcp.tools import MCPToolAdapter, MCPToolRegistry
-from opencode.mcp.transport.stdio import StdioTransport
+from code_forge.mcp.tools import MCPToolAdapter, MCPToolRegistry
+from code_forge.mcp.transport.stdio import StdioTransport
 
 
 class TestMCPManagerAdditional:
@@ -132,9 +132,9 @@ class TestMCPManagerAdditional:
         new_mock_client.list_prompts = AsyncMock(return_value=[])
         new_mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
+        with patch("code_forge.mcp.manager.StdioTransport"):
             with patch(
-                "opencode.mcp.manager.MCPClient", return_value=new_mock_client
+                "code_forge.mcp.manager.MCPClient", return_value=new_mock_client
             ):
                 conn = await manager.connect("test")
                 assert conn.client is new_mock_client
@@ -159,8 +159,8 @@ class TestMCPManagerAdditional:
         mock_client.connect = AsyncMock(side_effect=Exception("Connection failed"))
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 with pytest.raises(MCPClientError, match="Connection failed"):
                     await manager.connect("test")
 
@@ -470,7 +470,7 @@ class TestMCPClientAdditional:
     @pytest.mark.asyncio
     async def test_list_tools_with_capability(self) -> None:
         """Test list_tools when capability is supported but we mock request."""
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.transport.base import MCPTransport
 
         transport = MagicMock(spec=MCPTransport)
         transport.is_connected = True
@@ -493,7 +493,7 @@ class TestMCPClientAdditional:
     @pytest.mark.asyncio
     async def test_list_resources_with_capability(self) -> None:
         """Test list_resources when capability is supported."""
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.transport.base import MCPTransport
 
         transport = MagicMock(spec=MCPTransport)
         transport.is_connected = True
@@ -515,7 +515,7 @@ class TestMCPClientAdditional:
     @pytest.mark.asyncio
     async def test_list_prompts_with_capability(self) -> None:
         """Test list_prompts when capability is supported."""
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.transport.base import MCPTransport
 
         transport = MagicMock(spec=MCPTransport)
         transport.is_connected = True
@@ -537,7 +537,7 @@ class TestMCPClientAdditional:
     @pytest.mark.asyncio
     async def test_list_resource_templates_with_capability(self) -> None:
         """Test list_resource_templates when capability is supported."""
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.transport.base import MCPTransport
 
         transport = MagicMock(spec=MCPTransport)
         transport.is_connected = True

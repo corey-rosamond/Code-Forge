@@ -8,9 +8,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opencode.config.loader import ConfigLoader
-from opencode.config.models import OpenCodeConfig
-from opencode.core import ConfigError
+from code_forge.config.loader import ConfigLoader
+from code_forge.config.models import CodeForgeConfig
+from code_forge.core import ConfigError
 
 
 class TestConfigLoaderInit:
@@ -19,8 +19,8 @@ class TestConfigLoaderInit:
     def test_default_directories(self) -> None:
         """Test default directory paths."""
         loader = ConfigLoader()
-        assert loader.user_dir == Path.home() / ".opencode"
-        assert loader.project_dir == Path.cwd() / ".opencode"
+        assert loader.user_dir == Path.home() / ".forge"
+        assert loader.project_dir == Path.cwd() / ".forge"
 
     def test_custom_directories(self, tmp_path: Path) -> None:
         """Test custom directory paths."""
@@ -389,7 +389,7 @@ class TestConfigLoaderObservers:
         loader.reload()
 
         callback.assert_called_once()
-        assert isinstance(callback.call_args[0][0], OpenCodeConfig)
+        assert isinstance(callback.call_args[0][0], CodeForgeConfig)
 
     def test_add_observer_not_duplicated(self, tmp_path: Path) -> None:
         """Test same observer is not added twice."""
@@ -518,7 +518,7 @@ class TestConfigLoaderEnvironment:
             '{"model": {"default": "file-model"}}'
         )
 
-        monkeypatch.setenv("OPENCODE_MODEL", "env-model")
+        monkeypatch.setenv("FORGE_MODEL", "env-model")
 
         loader = ConfigLoader(
             user_dir=tmp_path / "user",
@@ -530,7 +530,7 @@ class TestConfigLoaderEnvironment:
 
     def test_env_api_key(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test API key from environment."""
-        monkeypatch.setenv("OPENCODE_API_KEY", "sk-secret-123")
+        monkeypatch.setenv("FORGE_API_KEY", "sk-secret-123")
 
         loader = ConfigLoader(
             user_dir=tmp_path / "user",
@@ -570,7 +570,7 @@ class TestConfigLoaderHierarchy:
         }))
 
         # Environment
-        monkeypatch.setenv("OPENCODE_MODEL", "env-model")
+        monkeypatch.setenv("FORGE_MODEL", "env-model")
 
         loader = ConfigLoader(user_dir=user_dir, project_dir=project_dir)
         config = loader.load_all()

@@ -22,7 +22,7 @@
 ## Step 1: Repository Interface (repository.py)
 
 ```python
-# src/opencode/git/repository.py
+# src/forge/git/repository.py
 """Git repository interface."""
 
 import asyncio
@@ -338,7 +338,7 @@ class GitRepository:
 ## Step 2: Status Operations (status.py)
 
 ```python
-# src/opencode/git/status.py
+# src/forge/git/status.py
 """Git status operations."""
 
 from dataclasses import dataclass, field
@@ -548,7 +548,7 @@ class GitStatusTool:
 ## Step 3: History Operations (history.py)
 
 ```python
-# src/opencode/git/history.py
+# src/forge/git/history.py
 """Git history and log operations."""
 
 from dataclasses import dataclass, field
@@ -758,7 +758,7 @@ class GitHistory:
 ## Step 4: Diff Operations (diff.py)
 
 ```python
-# src/opencode/git/diff.py
+# src/forge/git/diff.py
 """Git diff operations."""
 
 from dataclasses import dataclass, field
@@ -992,7 +992,7 @@ class GitDiffTool:
 ## Step 5: Safety Guards (safety.py)
 
 ```python
-# src/opencode/git/safety.py
+# src/forge/git/safety.py
 """Safety guards for Git operations."""
 
 from dataclasses import dataclass, field
@@ -1174,7 +1174,7 @@ class GitSafety:
 ## Step 6: Git Operations (operations.py)
 
 ```python
-# src/opencode/git/operations.py
+# src/forge/git/operations.py
 """Git operations with safety guards."""
 
 import logging
@@ -1391,8 +1391,8 @@ class GitOperations:
 ## Step 7: Package Exports (__init__.py)
 
 ```python
-# src/opencode/git/__init__.py
-"""Git integration for OpenCode."""
+# src/forge/git/__init__.py
+"""Git integration for Code-Forge."""
 
 from .diff import DiffFile, GitDiff, GitDiffTool
 from .history import GitHistory, LogEntry

@@ -232,19 +232,19 @@
 pytest tests/commands/ -v
 
 # Run with coverage
-pytest tests/commands/ --cov=src/opencode/commands --cov-report=term-missing
+pytest tests/commands/ --cov=src/forge/commands --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/commands/ --cov=src/opencode/commands --cov-fail-under=90
+pytest tests/commands/ --cov=src/forge/commands --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/commands/
+mypy src/forge/commands/
 
 # Complexity check
-flake8 src/opencode/commands/ --max-complexity=10
+flake8 src/forge/commands/ --max-complexity=10
 
 # Lint check
-ruff check src/opencode/commands/
+ruff check src/forge/commands/
 ```
 
 ---

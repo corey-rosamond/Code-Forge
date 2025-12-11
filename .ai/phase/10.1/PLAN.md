@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document provides the complete implementation plan for the OpenCode plugin system, enabling extensibility through third-party plugins that can add tools, commands, hooks, and other capabilities.
+This document provides the complete implementation plan for the Code-Forge plugin system, enabling extensibility through third-party plugins that can add tools, commands, hooks, and other capabilities.
 
 ---
 
@@ -86,8 +86,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
-    from opencode.tools.base import Tool
-    from opencode.commands.base import Command
+    from forge.tools.base import Tool
+    from forge.commands.base import Command
 
 
 @dataclass
@@ -102,7 +102,7 @@ class PluginMetadata:
     homepage: str | None = None
     repository: str | None = None
     keywords: list[str] = field(default_factory=list)
-    opencode_version: str | None = None
+    forge_version: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
@@ -116,7 +116,7 @@ class PluginMetadata:
             "homepage": self.homepage,
             "repository": self.repository,
             "keywords": self.keywords,
-            "opencode_version": self.opencode_version,
+            "forge_version": self.forge_version,
         }
 
 
@@ -161,7 +161,7 @@ class PluginContext:
 
 
 class Plugin(ABC):
-    """Base class for OpenCode plugins."""
+    """Base class for Code-Forge plugins."""
 
     def __init__(self):
         """Initialize plugin."""
@@ -282,9 +282,9 @@ class PluginManifest:
         except Exception as e:
             raise PluginManifestError(f"Invalid TOML: {e}")
 
-        plugin_data = data.get("tool", {}).get("opencode", {}).get("plugin")
+        plugin_data = data.get("tool", {}).get("forge", {}).get("plugin")
         if not plugin_data:
-            raise PluginManifestError("No [tool.opencode.plugin] section")
+            raise PluginManifestError("No [tool.forge.plugin] section")
 
         return cls._from_dict(plugin_data, path.parent)
 
@@ -318,7 +318,7 @@ class PluginManifest:
             homepage=data.get("homepage"),
             repository=data.get("repository"),
             keywords=data.get("keywords", []),
-            opencode_version=data.get("opencode_version"),
+            forge_version=data.get("forge_version"),
         )
 
         # Parse config schema
@@ -428,9 +428,9 @@ class DiscoveredPlugin:
 class PluginDiscovery:
     """Discover plugins from various sources."""
 
-    USER_PLUGIN_DIR = Path.home() / ".opencode" / "plugins"
-    PROJECT_PLUGIN_DIR = Path(".opencode") / "plugins"
-    ENTRY_POINT_GROUP = "opencode.plugins"
+    USER_PLUGIN_DIR = Path.home() / ".forge" / "plugins"
+    PROJECT_PLUGIN_DIR = Path(".forge") / "plugins"
+    ENTRY_POINT_GROUP = "forge.plugins"
 
     def __init__(
         self,
@@ -442,8 +442,8 @@ class PluginDiscovery:
         Initialize plugin discovery.
 
         Args:
-            user_dir: User plugin directory. Default ~/.src/opencode/plugins
-            project_dir: Project plugin directory. Default .src/opencode/plugins
+            user_dir: User plugin directory. Default ~/.src/forge/plugins
+            project_dir: Project plugin directory. Default .src/forge/plugins
             extra_paths: Additional paths to search.
         """
         self.user_dir = user_dir or self.USER_PLUGIN_DIR
@@ -635,7 +635,7 @@ class PluginConfigManager:
             data_dir: Base directory for plugin data.
         """
         self.base_config = base_config
-        self.data_dir = data_dir or Path.home() / ".opencode" / "plugin_data"
+        self.data_dir = data_dir or Path.home() / ".forge" / "plugin_data"
 
     def get_plugin_config(
         self,
@@ -880,7 +880,7 @@ class PluginLoader:
         data_dir = self.config_manager.get_plugin_data_dir(plugin_id)
 
         # Create logger for plugin
-        logger = logging.getLogger(f"opencode.plugins.{plugin_id}")
+        logger = logging.getLogger(f"forge.plugins.{plugin_id}")
 
         return PluginContext(
             plugin_id=plugin_id,
@@ -926,8 +926,8 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
-    from opencode.tools.base import Tool
-    from opencode.commands.base import Command
+    from forge.tools.base import Tool
+    from forge.commands.base import Command
 
 
 class PluginRegistry:
@@ -1401,7 +1401,7 @@ class PluginManager:
 ### 9. __init__.py - Package Exports
 
 ```python
-"""Plugin system for OpenCode."""
+"""Plugin system for Code-Forge."""
 from .base import (
     Plugin,
     PluginMetadata,
@@ -1473,7 +1473,7 @@ __all__ = [
 
 ## Example Plugin
 
-### ~/.src/opencode/plugins/hello-plugin/plugin.yaml
+### ~/.src/forge/plugins/hello-plugin/plugin.yaml
 
 ```yaml
 name: hello-plugin
@@ -1498,11 +1498,11 @@ config:
         default: "Hello"
 ```
 
-### ~/.src/opencode/plugins/hello-plugin/hello_plugin.py
+### ~/.src/forge/plugins/hello-plugin/hello_plugin.py
 
 ```python
-from opencode.plugins import Plugin, PluginMetadata, PluginCapabilities
-from opencode.tools.base import Tool
+from forge.plugins import Plugin, PluginMetadata, PluginCapabilities
+from forge.tools.base import Tool
 
 
 class HelloTool(Tool):

@@ -81,7 +81,7 @@ Phase 4.1 implements a comprehensive permission system that controls tool execut
 
 **FR-3.2:** Support multiple rule sources
 - Global rules (from settings)
-- Project rules (from .src/opencode/permissions.json)
+- Project rules (from .src/forge/permissions.json)
 - Session rules (temporary overrides)
 
 **FR-3.3:** Rule evaluation order
@@ -121,7 +121,7 @@ Phase 4.1 implements a comprehensive permission system that controls tool execut
 - Can be overridden by project settings
 
 **FR-5.2:** Project permission settings
-- Stored in `.src/opencode/permissions.json`
+- Stored in `.src/forge/permissions.json`
 - Applied only to this project
 - Takes precedence over global settings
 
@@ -197,7 +197,7 @@ Phase 4.1 implements a comprehensive permission system that controls tool execut
 ### Package Structure
 
 ```
-src/opencode/permissions/
+src/forge/permissions/
 ├── __init__.py           # Package exports
 ├── models.py             # Permission data models
 ├── rules.py              # Rule definition and matching
@@ -421,7 +421,7 @@ DEFAULT_RULES = [
 
 ### With Configuration (Phase 1.2)
 - Global rules stored in user config
-- Project rules in .opencode directory
+- Project rules in .forge directory
 - Settings control default behavior
 
 ### With Hooks (Phase 4.2)

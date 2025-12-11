@@ -7,13 +7,13 @@ from typing import Any, AsyncIterator
 
 import pytest
 
-from opencode.core.interfaces import (
+from code_forge.core.interfaces import (
     IConfigLoader,
     IModelProvider,
     ISessionRepository,
     ITool,
 )
-from opencode.core.types import (
+from code_forge.core.types import (
     CompletionRequest,
     CompletionResponse,
     Session,

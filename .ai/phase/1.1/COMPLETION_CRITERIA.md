@@ -18,19 +18,19 @@ All of the following criteria must be met before Phase 1.1 is considered complet
 - [x] `pyproject.toml` exists with correct metadata
 - [x] All dependencies listed and versioned
 - [x] Python version constraint: `>=3.10,<4.0`
-- [x] Entry point `opencode` defined in scripts section
+- [x] Entry point `forge` defined in scripts section
 
 ### Directory Structure
-- [x] `src/opencode/` package directory exists
-- [x] `src/opencode/__init__.py` with `__version__ = "0.1.0"`
-- [x] `src/opencode/__main__.py` for module execution
-- [x] `src/opencode/cli/` directory with `main.py`
-- [x] `src/opencode/core/` directory with all core modules
-- [x] `src/opencode/utils/` directory with utility modules
+- [x] `src/forge/` package directory exists
+- [x] `src/forge/__init__.py` with `__version__ = "0.1.0"`
+- [x] `src/forge/__main__.py` for module execution
+- [x] `src/forge/cli/` directory with `main.py`
+- [x] `src/forge/core/` directory with all core modules
+- [x] `src/forge/utils/` directory with utility modules
 - [x] Placeholder directories: `tools/`, `providers/`, `config/`, `session/`
 - [x] `tests/` directory with proper structure
 
-### Core Interfaces (src/opencode/core/interfaces.py)
+### Core Interfaces (src/forge/core/interfaces.py)
 - [x] `ITool` abstract base class defined
 - [x] `IModelProvider` abstract base class defined
 - [x] `IConfigLoader` abstract base class defined
@@ -38,7 +38,7 @@ All of the following criteria must be met before Phase 1.1 is considered complet
 - [x] All methods have type hints
 - [x] All methods have docstrings
 
-### Value Objects (src/opencode/core/types.py)
+### Value Objects (src/forge/core/types.py)
 - [x] `AgentId` value object
 - [x] `SessionId` value object
 - [x] `ProjectId` value object with `from_path()` class method
@@ -50,29 +50,29 @@ All of the following criteria must be met before Phase 1.1 is considered complet
 - [x] `Session` model
 - [x] `SessionSummary` model
 
-### Exception Hierarchy (src/opencode/core/errors.py)
-- [x] `OpenCodeError` base exception with cause chaining
+### Exception Hierarchy (src/forge/core/errors.py)
+- [x] `Code-ForgeError` base exception with cause chaining
 - [x] `ConfigError` subclass
 - [x] `ToolError` subclass with `tool_name` attribute
 - [x] `ProviderError` subclass with `provider` attribute
 - [x] `PermissionDeniedError` subclass with `action` and `reason`
 - [x] `SessionError` subclass
 
-### Result Type (src/opencode/utils/result.py)
+### Result Type (src/forge/utils/result.py)
 - [x] Generic `Result[T]` class
 - [x] `Result.ok()` class method
 - [x] `Result.fail()` class method
 - [x] `unwrap()` method
 - [x] `unwrap_or()` method
 
-### Logging (src/opencode/core/logging.py)
+### Logging (src/forge/core/logging.py)
 - [x] `setup_logging()` function
 - [x] `get_logger()` function
 - [x] Rich console handler support
 - [x] File handler support
 - [x] Configurable log levels
 
-### CLI Entry Point (src/opencode/cli/main.py)
+### CLI Entry Point (src/forge/cli/main.py)
 - [x] `main()` function as entry point
 - [x] `--version` / `-v` flag works
 - [x] `--help` / `-h` flag works
@@ -92,38 +92,38 @@ pip install -e ".[dev]"
 uv sync
 
 # 2. Verify CLI works
-opencode --version
-# Expected: opencode 0.1.0
+forge --version
+# Expected: forge 0.1.0
 
-opencode --help
+forge --help
 # Expected: Help text with options
 
-opencode
+forge
 # Expected: Welcome message
 
-python -m opencode --version
-# Expected: opencode 0.1.0
+python -m forge --version
+# Expected: forge 0.1.0
 
 # 3. Run tests
-pytest tests/ -v --cov=opencode --cov-report=term-missing
+pytest tests/ -v --cov=forge --cov-report=term-missing
 # Expected: All tests pass, coverage >= 90%
 
 # 4. Type checking
-mypy src/opencode/ --strict
+mypy src/forge/ --strict
 # Expected: Success, no errors
 
 # 5. Linting
-ruff check src/opencode/
+ruff check src/forge/
 # Expected: No errors
 
 # 6. Import check (no circular imports)
-python -c "from opencode.core.interfaces import ITool, IModelProvider"
+python -c "from forge.core.interfaces import ITool, IModelProvider"
 # Expected: No errors
 
-python -c "from opencode.core.types import AgentId, SessionId"
+python -c "from forge.core.types import AgentId, SessionId"
 # Expected: No errors
 
-python -c "from opencode.core.errors import OpenCodeError, ToolError"
+python -c "from forge.core.errors import Code-ForgeError, ToolError"
 # Expected: No errors
 ```
 
@@ -146,21 +146,21 @@ python -c "from opencode.core.errors import OpenCodeError, ToolError"
 | File | Purpose |
 |------|---------|
 | `pyproject.toml` | Project configuration |
-| `src/opencode/__init__.py` | Package init with version |
-| `src/opencode/__main__.py` | Module entry point |
-| `src/opencode/cli/__init__.py` | CLI package init |
-| `src/opencode/cli/main.py` | CLI entry point |
-| `src/opencode/core/__init__.py` | Core package init |
-| `src/opencode/core/interfaces.py` | Abstract base classes |
-| `src/opencode/core/types.py` | Value objects |
-| `src/opencode/core/errors.py` | Exception hierarchy |
-| `src/opencode/core/logging.py` | Logging setup |
-| `src/opencode/utils/__init__.py` | Utils package init |
-| `src/opencode/utils/result.py` | Result type |
-| `src/opencode/tools/__init__.py` | Placeholder |
-| `src/opencode/providers/__init__.py` | Placeholder |
-| `src/opencode/config/__init__.py` | Placeholder |
-| `src/opencode/session/__init__.py` | Placeholder |
+| `src/forge/__init__.py` | Package init with version |
+| `src/forge/__main__.py` | Module entry point |
+| `src/forge/cli/__init__.py` | CLI package init |
+| `src/forge/cli/main.py` | CLI entry point |
+| `src/forge/core/__init__.py` | Core package init |
+| `src/forge/core/interfaces.py` | Abstract base classes |
+| `src/forge/core/types.py` | Value objects |
+| `src/forge/core/errors.py` | Exception hierarchy |
+| `src/forge/core/logging.py` | Logging setup |
+| `src/forge/utils/__init__.py` | Utils package init |
+| `src/forge/utils/result.py` | Result type |
+| `src/forge/tools/__init__.py` | Placeholder |
+| `src/forge/providers/__init__.py` | Placeholder |
+| `src/forge/config/__init__.py` | Placeholder |
+| `src/forge/session/__init__.py` | Placeholder |
 | `tests/conftest.py` | Test configuration |
 | `tests/unit/core/test_types.py` | Type tests |
 | `tests/unit/core/test_errors.py` | Error tests |

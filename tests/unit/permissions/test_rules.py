@@ -2,11 +2,11 @@
 
 import pytest
 
-from opencode.permissions.models import (
+from code_forge.permissions.models import (
     PermissionLevel,
     PermissionRule,
 )
-from opencode.permissions.rules import (
+from code_forge.permissions.rules import (
     PatternMatcher,
     RuleSet,
 )

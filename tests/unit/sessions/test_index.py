@@ -9,9 +9,9 @@ from typing import Any
 
 import pytest
 
-from opencode.sessions.index import SessionIndex, SessionSummary
-from opencode.sessions.models import Session
-from opencode.sessions.storage import SessionStorage
+from code_forge.sessions.index import SessionIndex, SessionSummary
+from code_forge.sessions.models import Session
+from code_forge.sessions.storage import SessionStorage
 
 
 class TestSessionSummary:

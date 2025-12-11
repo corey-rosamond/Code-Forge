@@ -10,7 +10,7 @@
 
 ### Scenario: Discover plugins in user directory
 ```gherkin
-Given a plugin in ~/.src/opencode/plugins/my-plugin/
+Given a plugin in ~/.src/forge/plugins/my-plugin/
 And plugin has valid plugin.yaml manifest
 When plugin discovery runs
 Then plugin should be discovered
@@ -19,7 +19,7 @@ And source should be "user"
 
 ### Scenario: Discover plugins in project directory
 ```gherkin
-Given a plugin in .src/opencode/plugins/project-plugin/
+Given a plugin in .src/forge/plugins/project-plugin/
 And plugin has valid plugin.yaml manifest
 When plugin discovery runs
 Then plugin should be discovered
@@ -28,7 +28,7 @@ And source should be "project"
 
 ### Scenario: Discover plugins from installed packages
 ```gherkin
-Given a Python package with opencode.plugins entry point
+Given a Python package with forge.plugins entry point
 When plugin discovery runs
 Then plugin should be discovered
 And source should be "package"
@@ -44,7 +44,7 @@ And warning should be logged
 
 ### Scenario: Skip directories without manifest
 ```gherkin
-Given a directory in ~/.src/opencode/plugins/ without manifest
+Given a directory in ~/.src/forge/plugins/ without manifest
 When plugin discovery runs
 Then directory should be skipped
 ```
@@ -73,7 +73,7 @@ And entry_point should be parsed
 
 ### Scenario: Parse pyproject.toml manifest
 ```gherkin
-Given a pyproject.toml with [tool.opencode.plugin] section
+Given a pyproject.toml with [tool.forge.plugin] section
 When manifest is parsed
 Then PluginManifest should be created
 And all fields should be extracted
@@ -129,7 +129,7 @@ And context should be set
 
 ### Scenario: Load plugin adds path to sys.path
 ```gherkin
-Given a plugin in ~/.src/opencode/plugins/my-plugin/
+Given a plugin in ~/.src/forge/plugins/my-plugin/
 When plugin is loaded
 Then plugin path should be in sys.path
 And import should work
@@ -306,7 +306,7 @@ Then validation errors should be returned
 ```gherkin
 Given a plugin "my-plugin"
 When data directory is requested
-Then path should be ~/.src/opencode/plugin_data/my-plugin/
+Then path should be ~/.src/forge/plugin_data/my-plugin/
 And directory should be created if needed
 ```
 

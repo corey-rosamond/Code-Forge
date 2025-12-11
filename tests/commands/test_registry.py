@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.commands.base import Command, CommandCategory, CommandResult
-from opencode.commands.executor import CommandContext
-from opencode.commands.parser import ParsedCommand
-from opencode.commands.registry import CommandRegistry
+from code_forge.commands.base import Command, CommandCategory, CommandResult
+from code_forge.commands.executor import CommandContext
+from code_forge.commands.parser import ParsedCommand
+from code_forge.commands.registry import CommandRegistry
 
 
 class DummyCommand(Command):

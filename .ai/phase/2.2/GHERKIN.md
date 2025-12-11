@@ -551,7 +551,7 @@ And only text files should be searched
 
 ### Scenario: All file tools are registered
 ```gherkin
-Given the OpenCode application initializes
+Given the Code-Forge application initializes
 When I call register_file_tools(registry)
 Then the registry should contain "Read" tool
 And the registry should contain "Write" tool

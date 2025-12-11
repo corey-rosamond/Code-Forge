@@ -24,7 +24,7 @@
 ### Message Types
 
 ```python
-# src/opencode/mcp/protocol.py
+# src/forge/mcp/protocol.py
 """MCP protocol types and message handling."""
 
 from dataclasses import dataclass, field
@@ -324,7 +324,7 @@ def parse_message(data: dict) -> MCPRequest | MCPResponse | MCPNotification:
 ### Base Transport
 
 ```python
-# src/opencode/mcp/transport/base.py
+# src/forge/mcp/transport/base.py
 """Base transport interface for MCP."""
 
 from abc import ABC, abstractmethod
@@ -364,7 +364,7 @@ class MCPTransport(ABC):
 ### Stdio Transport
 
 ```python
-# src/opencode/mcp/transport/stdio.py
+# src/forge/mcp/transport/stdio.py
 """Stdio transport for subprocess-based MCP servers."""
 
 import asyncio
@@ -499,7 +499,7 @@ class StdioTransport(MCPTransport):
 ### HTTP/SSE Transport
 
 ```python
-# src/opencode/mcp/transport/http.py
+# src/forge/mcp/transport/http.py
 """HTTP/SSE transport for remote MCP servers."""
 
 import asyncio
@@ -619,7 +619,7 @@ class HTTPTransport(MCPTransport):
 ## Step 3: MCP Client (client.py)
 
 ```python
-# src/opencode/mcp/client.py
+# src/forge/mcp/client.py
 """MCP client implementation."""
 
 import asyncio
@@ -660,7 +660,7 @@ class MCPClient:
     def __init__(
         self,
         transport: MCPTransport,
-        client_name: str = "opencode",
+        client_name: str = "forge",
         client_version: str = "1.0.0"
     ):
         """Initialize MCP client.
@@ -896,8 +896,8 @@ class MCPClient:
 ## Step 4: Tool Adapter (tools.py)
 
 ```python
-# src/opencode/mcp/tools.py
-"""Adapter for MCP tools to OpenCode tool interface."""
+# src/forge/mcp/tools.py
+"""Adapter for MCP tools to Code-Forge tool interface."""
 
 import json
 import logging
@@ -910,7 +910,7 @@ logger = logging.getLogger(__name__)
 
 
 class MCPToolAdapter:
-    """Adapts MCP tools to OpenCode Tool interface."""
+    """Adapts MCP tools to Code-Forge Tool interface."""
 
     def __init__(self, client: MCPClient, server_name: str):
         """Initialize adapter.
@@ -1075,7 +1075,7 @@ class MCPToolRegistry:
 ## Step 5: Configuration (config.py)
 
 ```python
-# src/opencode/mcp/config.py
+# src/forge/mcp/config.py
 """MCP server configuration."""
 
 import os
@@ -1160,8 +1160,8 @@ class MCPConfig:
 class MCPConfigLoader:
     """Loads MCP configuration from files."""
 
-    DEFAULT_USER_PATH = Path.home() / ".opencode" / "mcp.yaml"
-    DEFAULT_PROJECT_PATH = Path(".opencode") / "mcp.yaml"
+    DEFAULT_USER_PATH = Path.home() / ".forge" / "mcp.yaml"
+    DEFAULT_PROJECT_PATH = Path(".forge") / "mcp.yaml"
 
     def __init__(
         self,
@@ -1171,8 +1171,8 @@ class MCPConfigLoader:
         """Initialize loader.
 
         Args:
-            user_path: Path to user config (default: ~/.src/opencode/mcp.yaml)
-            project_path: Path to project config (default: .src/opencode/mcp.yaml)
+            user_path: Path to user config (default: ~/.src/forge/mcp.yaml)
+            project_path: Path to project config (default: .src/forge/mcp.yaml)
         """
         self.user_path = user_path or self.DEFAULT_USER_PATH
         self.project_path = project_path or self.DEFAULT_PROJECT_PATH
@@ -1252,7 +1252,7 @@ class MCPConfigLoader:
 ## Step 6: Connection Manager (manager.py)
 
 ```python
-# src/opencode/mcp/manager.py
+# src/forge/mcp/manager.py
 """MCP connection manager."""
 
 import asyncio
@@ -1525,8 +1525,8 @@ class MCPManager:
 ## Step 7: Package Exports (__init__.py)
 
 ```python
-# src/opencode/mcp/__init__.py
-"""MCP (Model Context Protocol) support for OpenCode."""
+# src/forge/mcp/__init__.py
+"""MCP (Model Context Protocol) support for Code-Forge."""
 
 from .client import MCPClient, MCPClientError
 from .config import MCPConfig, MCPConfigLoader, MCPServerConfig, MCPSettings

@@ -7,12 +7,12 @@ from unittest.mock import patch, MagicMock
 import tempfile
 import os
 
-from opencode.permissions.models import (
+from code_forge.permissions.models import (
     PermissionLevel,
     PermissionRule,
 )
-from opencode.permissions.rules import RuleSet
-from opencode.permissions.config import (
+from code_forge.permissions.rules import RuleSet
+from code_forge.permissions.config import (
     PermissionConfig,
     DEFAULT_RULES,
 )
@@ -92,7 +92,7 @@ class TestPermissionConfigPaths:
         path = PermissionConfig.get_global_path()
         assert path is not None
         assert "permissions.json" in str(path)
-        assert ".config" in str(path) or "opencode" in str(path)
+        assert ".config" in str(path) or "forge" in str(path)
 
     def test_get_project_path_with_root(self):
         """Test getting project config path with root."""
@@ -175,7 +175,7 @@ class TestPermissionConfigLoadProject:
         """Test that load_project reads from file when it exists."""
         with tempfile.TemporaryDirectory() as tmpdir:
             project_root = Path(tmpdir)
-            config_dir = project_root / ".opencode"
+            config_dir = project_root / ".forge"
             config_dir.mkdir()
             config_path = config_dir / "permissions.json"
 
@@ -198,7 +198,7 @@ class TestPermissionConfigLoadProject:
         """Test that load_project handles corrupted JSON gracefully."""
         with tempfile.TemporaryDirectory() as tmpdir:
             project_root = Path(tmpdir)
-            config_dir = project_root / ".opencode"
+            config_dir = project_root / ".forge"
             config_dir.mkdir()
             config_path = config_dir / "permissions.json"
 
@@ -248,7 +248,7 @@ class TestPermissionConfigSave:
 
             PermissionConfig.save_project(project_root, rules)
 
-            config_path = project_root / ".opencode" / "permissions.json"
+            config_path = project_root / ".forge" / "permissions.json"
             assert config_path.exists()
 
             with open(config_path) as f:

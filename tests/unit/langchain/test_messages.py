@@ -11,22 +11,22 @@ from langchain_core.messages import (
     ToolMessage,
 )
 
-from opencode.langchain.messages import (
-    langchain_messages_to_opencode,
-    langchain_to_opencode,
-    opencode_messages_to_langchain,
-    opencode_to_langchain,
+from code_forge.langchain.messages import (
+    langchain_messages_to_forge,
+    langchain_to_forge,
+    forge_messages_to_langchain,
+    forge_to_langchain,
 )
-from opencode.llm.models import Message, MessageRole, ToolCall
+from code_forge.llm.models import Message, MessageRole, ToolCall
 
 
-class TestLangchainToOpencode:
-    """Tests for langchain_to_opencode conversion."""
+class TestLangchainToForge:
+    """Tests for langchain_to_forge conversion."""
 
     def test_convert_system_message(self) -> None:
         """Test SystemMessage conversion."""
         lc_msg = SystemMessage(content="You are helpful.")
-        oc_msg = langchain_to_opencode(lc_msg)
+        oc_msg = langchain_to_forge(lc_msg)
 
         assert oc_msg.role == MessageRole.SYSTEM
         assert oc_msg.content == "You are helpful."
@@ -34,7 +34,7 @@ class TestLangchainToOpencode:
     def test_convert_human_message(self) -> None:
         """Test HumanMessage conversion."""
         lc_msg = HumanMessage(content="Hello!")
-        oc_msg = langchain_to_opencode(lc_msg)
+        oc_msg = langchain_to_forge(lc_msg)
 
         assert oc_msg.role == MessageRole.USER
         assert oc_msg.content == "Hello!"
@@ -42,7 +42,7 @@ class TestLangchainToOpencode:
     def test_convert_ai_message(self) -> None:
         """Test AIMessage conversion."""
         lc_msg = AIMessage(content="Hi there!")
-        oc_msg = langchain_to_opencode(lc_msg)
+        oc_msg = langchain_to_forge(lc_msg)
 
         assert oc_msg.role == MessageRole.ASSISTANT
         assert oc_msg.content == "Hi there!"
@@ -59,7 +59,7 @@ class TestLangchainToOpencode:
                 }
             ],
         )
-        oc_msg = langchain_to_opencode(lc_msg)
+        oc_msg = langchain_to_forge(lc_msg)
 
         assert oc_msg.role == MessageRole.ASSISTANT
         assert oc_msg.tool_calls is not None
@@ -73,7 +73,7 @@ class TestLangchainToOpencode:
     def test_convert_tool_message(self) -> None:
         """Test ToolMessage conversion."""
         lc_msg = ToolMessage(content="file contents here", tool_call_id="call_123")
-        oc_msg = langchain_to_opencode(lc_msg)
+        oc_msg = langchain_to_forge(lc_msg)
 
         assert oc_msg.role == MessageRole.TOOL
         assert oc_msg.content == "file contents here"
@@ -82,7 +82,7 @@ class TestLangchainToOpencode:
     def test_convert_ai_message_empty_content(self) -> None:
         """Test AIMessage with empty content."""
         lc_msg = AIMessage(content="")
-        oc_msg = langchain_to_opencode(lc_msg)
+        oc_msg = langchain_to_forge(lc_msg)
 
         assert oc_msg.role == MessageRole.ASSISTANT
         assert oc_msg.content is None
@@ -95,16 +95,16 @@ class TestLangchainToOpencode:
 
         msg = CustomMessage(content="test")
         with pytest.raises(ValueError, match="Unsupported message type"):
-            langchain_to_opencode(msg)
+            langchain_to_forge(msg)
 
 
-class TestOpencodeToLangchain:
-    """Tests for opencode_to_langchain conversion."""
+class TestForgeToLangchain:
+    """Tests for forge_to_langchain conversion."""
 
     def test_convert_system_message(self) -> None:
         """Test SYSTEM role conversion."""
         oc_msg = Message.system("Be helpful")
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, SystemMessage)
         assert lc_msg.content == "Be helpful"
@@ -112,7 +112,7 @@ class TestOpencodeToLangchain:
     def test_convert_user_message(self) -> None:
         """Test USER role conversion."""
         oc_msg = Message.user("Hello")
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, HumanMessage)
         assert lc_msg.content == "Hello"
@@ -120,7 +120,7 @@ class TestOpencodeToLangchain:
     def test_convert_assistant_message(self) -> None:
         """Test ASSISTANT role conversion."""
         oc_msg = Message.assistant("Hi!")
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, AIMessage)
         assert lc_msg.content == "Hi!"
@@ -140,7 +140,7 @@ class TestOpencodeToLangchain:
                 )
             ],
         )
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, AIMessage)
         assert len(lc_msg.tool_calls) == 1
@@ -151,7 +151,7 @@ class TestOpencodeToLangchain:
     def test_convert_tool_message(self) -> None:
         """Test TOOL role conversion."""
         oc_msg = Message.tool_result("call_789", "result data")
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, ToolMessage)
         assert lc_msg.content == "result data"
@@ -172,7 +172,7 @@ class TestOpencodeToLangchain:
                 )
             ],
         )
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, AIMessage)
         assert len(lc_msg.tool_calls) == 1
@@ -182,14 +182,14 @@ class TestOpencodeToLangchain:
     def test_convert_empty_content(self) -> None:
         """Test that None content becomes empty string."""
         oc_msg = Message(role=MessageRole.ASSISTANT, content=None)
-        lc_msg = opencode_to_langchain(oc_msg)
+        lc_msg = forge_to_langchain(oc_msg)
 
         assert isinstance(lc_msg, AIMessage)
         assert lc_msg.content == ""
 
 
-class TestOpencodeToLangchainEdgeCases:
-    """Edge case tests for opencode_to_langchain."""
+class TestForgeToLangchainEdgeCases:
+    """Edge case tests for forge_to_langchain."""
 
     def test_convert_list_content_to_string(self) -> None:
         """Test that list content is converted to string."""
@@ -198,7 +198,7 @@ class TestOpencodeToLangchainEdgeCases:
             role=MessageRole.USER,
             content=[{"type": "text", "text": "Hello "}, {"type": "text", "text": "World"}],
         )
-        result = opencode_to_langchain(msg)
+        result = forge_to_langchain(msg)
 
         assert isinstance(result, HumanMessage)
         assert result.content == "Hello World"
@@ -212,7 +212,7 @@ class TestOpencodeToLangchainEdgeCases:
                 {"id": "call_1", "function": {"name": "test", "arguments": '{"x": 1}'}}
             ],
         )
-        result = opencode_to_langchain(msg)
+        result = forge_to_langchain(msg)
 
         assert isinstance(result, AIMessage)
         assert len(result.tool_calls) == 1
@@ -222,28 +222,28 @@ class TestOpencodeToLangchainEdgeCases:
 class TestBatchConversion:
     """Tests for batch message conversion."""
 
-    def test_langchain_messages_to_opencode(self) -> None:
-        """Test batch conversion from LangChain to OpenCode."""
+    def test_langchain_messages_to_forge(self) -> None:
+        """Test batch conversion from LangChain to Code-Forge."""
         lc_messages = [
             SystemMessage(content="Be helpful"),
             HumanMessage(content="Hello"),
             AIMessage(content="Hi there"),
         ]
-        oc_messages = langchain_messages_to_opencode(lc_messages)
+        oc_messages = langchain_messages_to_forge(lc_messages)
 
         assert len(oc_messages) == 3
         assert oc_messages[0].role == MessageRole.SYSTEM
         assert oc_messages[1].role == MessageRole.USER
         assert oc_messages[2].role == MessageRole.ASSISTANT
 
-    def test_opencode_messages_to_langchain(self) -> None:
-        """Test batch conversion from OpenCode to LangChain."""
+    def test_forge_messages_to_langchain(self) -> None:
+        """Test batch conversion from Code-Forge to LangChain."""
         oc_messages = [
             Message.system("Be helpful"),
             Message.user("Hello"),
             Message.assistant("Hi there"),
         ]
-        lc_messages = opencode_messages_to_langchain(oc_messages)
+        lc_messages = forge_messages_to_langchain(oc_messages)
 
         assert len(lc_messages) == 3
         assert isinstance(lc_messages[0], SystemMessage)
@@ -252,8 +252,8 @@ class TestBatchConversion:
 
     def test_empty_list_conversion(self) -> None:
         """Test that empty lists convert to empty lists."""
-        assert langchain_messages_to_opencode([]) == []
-        assert opencode_messages_to_langchain([]) == []
+        assert langchain_messages_to_forge([]) == []
+        assert forge_messages_to_langchain([]) == []
 
     def test_roundtrip_conversion(self) -> None:
         """Test that roundtrip conversion preserves data."""
@@ -263,9 +263,9 @@ class TestBatchConversion:
             Message.assistant("Hi!"),
         ]
 
-        # OpenCode -> LangChain -> OpenCode
-        lc_msgs = opencode_messages_to_langchain(original)
-        roundtrip = langchain_messages_to_opencode(lc_msgs)
+        # Code-Forge -> LangChain -> Code-Forge
+        lc_msgs = forge_messages_to_langchain(original)
+        roundtrip = langchain_messages_to_forge(lc_msgs)
 
         assert len(roundtrip) == len(original)
         for orig, rt in zip(original, roundtrip):

@@ -47,8 +47,8 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
-from opencode.config import opencodeConfig
-from opencode.core.logging import get_logger
+from forge.config import forgeConfig
+from forge.core.logging import get_logger
 
 logger = get_logger("repl")
 
@@ -135,7 +135,7 @@ class OutputRenderer:
 class StatusBar:
     """Status bar displayed at bottom of terminal."""
 
-    def __init__(self, config: OpenCodeConfig):
+    def __init__(self, config: Code-ForgeConfig):
         self._config = config
         self._model = config.model.default
         self._tokens_used = 0
@@ -182,10 +182,10 @@ class StatusBar:
         return f"{left}{' ' * left_pad}{center}{' ' * right_pad}{right}"
 
 
-class OpenCodeREPL:
+class Code-ForgeREPL:
     """Main REPL application."""
 
-    def __init__(self, config: OpenCodeConfig):
+    def __init__(self, config: Code-ForgeConfig):
         self._config = config
         self._console = Console(force_terminal=True)
         self._input = InputHandler(self._get_history_path())
@@ -196,7 +196,7 @@ class OpenCodeREPL:
 
     def _get_history_path(self) -> Path:
         """Get path for command history file."""
-        return Path.home() / ".opencode" / "history"
+        return Path.home() / ".forge" / "history"
 
     def _get_theme(self) -> dict[str, str]:
         """Get theme colors based on config."""
@@ -210,11 +210,11 @@ class OpenCodeREPL:
 
     def _show_welcome(self) -> None:
         """Display welcome message."""
-        from opencode import __version__
+        from forge import __version__
         import os
 
         welcome = f"""
-[bold blue]OpenCode[/bold blue] v{__version__}
+[bold blue]Code-Forge[/bold blue] v{__version__}
 AI-powered CLI Development Assistant
 
 [dim]Directory:[/dim] {os.getcwd()}
@@ -330,17 +330,17 @@ LIGHT_THEME = {
 ### CLI Main Integration
 
 ```python
-# src/opencode/cli/main.py updates
+# src/forge/cli/main.py updates
 import asyncio
-from opencode.config import ConfigLoader
-from opencode.cli.repl import opencodeREPL
+from forge.config import ConfigLoader
+from forge.cli.repl import forgeREPL
 
 def main() -> int:
-    """Main entry point for OpenCode CLI."""
+    """Main entry point for Code-Forge CLI."""
     args = sys.argv[1:]
 
     if "--version" in args or "-v" in args:
-        print(f"opencode {__version__}")
+        print(f"forge {__version__}")
         return 0
 
     if "--help" in args or "-h" in args:
@@ -352,7 +352,7 @@ def main() -> int:
     config = config_loader.load_all()
 
     # Start REPL
-    repl = OpenCodeREPL(config)
+    repl = Code-ForgeREPL(config)
     return asyncio.run(repl.run())
 ```
 
@@ -360,10 +360,10 @@ def main() -> int:
 
 ## Implementation Order
 
-1. Create `src/opencode/cli/repl.py` with core classes
-2. Create `src/opencode/cli/themes.py` with theme definitions
-3. Create `src/opencode/cli/status.py` with StatusBar
-4. Update `src/opencode/cli/main.py` to use REPL
+1. Create `src/forge/cli/repl.py` with core classes
+2. Create `src/forge/cli/themes.py` with theme definitions
+3. Create `src/forge/cli/status.py` with StatusBar
+4. Update `src/forge/cli/main.py` to use REPL
 5. Create history directory on first run
 6. Write unit tests for each component
 7. Write integration test for full REPL flow
@@ -373,10 +373,10 @@ def main() -> int:
 ## File Structure
 
 ```
-src/opencode/cli/
+src/forge/cli/
 ├── __init__.py       # Exports
 ├── main.py           # Entry point (updated)
-├── repl.py           # OpenCodeREPL, InputHandler, OutputRenderer
+├── repl.py           # Code-ForgeREPL, InputHandler, OutputRenderer
 ├── themes.py         # Theme definitions
 └── status.py         # StatusBar
 

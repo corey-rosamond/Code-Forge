@@ -1,6 +1,6 @@
 # Plugin Development Guide
 
-This guide explains how to create plugins for OpenCode.
+This guide explains how to create plugins for Code-Forge.
 
 ## Plugin Structure
 
@@ -39,8 +39,8 @@ capabilities:
 dependencies:
   - requests>=2.28.0
 
-# OpenCode version compatibility
-opencode_version: ">=1.0.0"
+# Code-Forge version compatibility
+forge_version: ">=1.0.0"
 
 # Plugin-specific configuration schema (optional)
 config_schema:
@@ -57,8 +57,8 @@ Create a class that extends `Plugin`:
 ```python
 """My plugin implementation."""
 
-from opencode.plugins import Plugin, PluginMetadata, PluginCapabilities, PluginContext
-from opencode.tools import BaseTool, ToolParameter, ToolResult, ToolCategory
+from forge.plugins import Plugin, PluginMetadata, PluginCapabilities, PluginContext
+from forge.tools import BaseTool, ToolParameter, ToolResult, ToolCategory
 
 
 class MyTool(BaseTool):
@@ -146,7 +146,7 @@ def register_tools(self) -> list[BaseTool]:
 Provide slash commands:
 
 ```python
-from opencode.commands import Command, CommandResult
+from forge.commands import Command, CommandResult
 
 class MyCommand(Command):
     @property
@@ -165,7 +165,7 @@ def register_commands(self) -> list[Command]:
 Register event hooks:
 
 ```python
-from opencode.hooks import Hook
+from forge.hooks import Hook
 
 def register_hooks(self) -> list[Hook]:
     return [
@@ -202,8 +202,8 @@ def activate(self, context: PluginContext) -> None:
 ## Installation
 
 Install plugins in:
-- User directory: `~/.opencode/plugins/my-plugin/`
-- Project directory: `.opencode/plugins/my-plugin/`
+- User directory: `~/.forge/plugins/my-plugin/`
+- Project directory: `.forge/plugins/my-plugin/`
 
 Or install via pip if published as a package.
 

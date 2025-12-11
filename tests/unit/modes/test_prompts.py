@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.modes.prompts import (
+from code_forge.modes.prompts import (
     HEADLESS_MODE_PROMPT,
     MODE_PROMPTS,
     PLAN_MODE_PROMPT,

@@ -5,31 +5,31 @@ from uuid import uuid4
 import pytest
 from langchain_core.outputs import LLMResult, Generation
 
-from opencode.langchain.callbacks import (
+from code_forge.langchain.callbacks import (
     CompositeCallback,
     LoggingCallback,
-    OpenCodeCallbackHandler,
+    CodeForgeCallbackHandler,
     StreamingCallback,
     TokenTrackingCallback,
 )
 
 
-class TestOpenCodeCallbackHandler:
+class TestCodeForgeCallbackHandler:
     """Tests for base callback handler."""
 
     def test_name_default(self) -> None:
         """Test default name."""
-        handler = OpenCodeCallbackHandler()
-        assert handler.name == "opencode"
+        handler = CodeForgeCallbackHandler()
+        assert handler.name == "forge"
 
     def test_raise_error_default(self) -> None:
         """Test default raise_error is False."""
-        handler = OpenCodeCallbackHandler()
+        handler = CodeForgeCallbackHandler()
         assert handler.raise_error is False
 
     def test_safe_call_catches_errors(self) -> None:
         """Test that _safe_call catches errors when raise_error=False."""
-        handler = OpenCodeCallbackHandler(raise_error=False)
+        handler = CodeForgeCallbackHandler(raise_error=False)
 
         def failing_func() -> None:
             raise ValueError("Test error")
@@ -39,7 +39,7 @@ class TestOpenCodeCallbackHandler:
 
     def test_safe_call_raises_errors(self) -> None:
         """Test that _safe_call raises errors when raise_error=True."""
-        handler = OpenCodeCallbackHandler(raise_error=True)
+        handler = CodeForgeCallbackHandler(raise_error=True)
 
         def failing_func() -> None:
             raise ValueError("Test error")
@@ -301,7 +301,7 @@ class TestCompositeCallback:
         """Test on_llm_start dispatch."""
         callbacks_called: list[str] = []
 
-        class TestCallback(OpenCodeCallbackHandler):
+        class TestCallback(CodeForgeCallbackHandler):
             def on_llm_start(self, *args, **kwargs) -> None:
                 callbacks_called.append(self.name)
 
@@ -322,7 +322,7 @@ class TestCompositeCallback:
         tool_starts: list[str] = []
         tool_ends: list[str] = []
 
-        class TestCallback(OpenCodeCallbackHandler):
+        class TestCallback(CodeForgeCallbackHandler):
             def on_tool_start(self, *args, **kwargs) -> None:
                 tool_starts.append(self.name)
 
@@ -364,7 +364,7 @@ class TestCompositeCallback:
         """Test on_llm_error is dispatched to all callbacks."""
         errors_received: list[str] = []
 
-        class ErrorCallback(OpenCodeCallbackHandler):
+        class ErrorCallback(CodeForgeCallbackHandler):
             def on_llm_error(self, error, *args, **kwargs) -> None:
                 errors_received.append(str(error))
 
@@ -381,7 +381,7 @@ class TestCompositeCallback:
         """Test on_llm_new_token is dispatched to all callbacks."""
         tokens_received: list[str] = []
 
-        class TokenCallback(OpenCodeCallbackHandler):
+        class TokenCallback(CodeForgeCallbackHandler):
             def on_llm_new_token(self, token, *args, **kwargs) -> None:
                 tokens_received.append(token)
 
@@ -398,7 +398,7 @@ class TestCompositeCallback:
         """Test on_tool_error is dispatched to all callbacks."""
         errors_received: list[str] = []
 
-        class ErrorCallback(OpenCodeCallbackHandler):
+        class ErrorCallback(CodeForgeCallbackHandler):
             def on_tool_error(self, error, *args, **kwargs) -> None:
                 errors_received.append(str(error))
 

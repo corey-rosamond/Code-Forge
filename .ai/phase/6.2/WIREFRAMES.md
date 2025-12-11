@@ -395,7 +395,7 @@ You:
 
 ```bash
 # Basic headless execution
-$ opencode --headless "Fix the syntax error in app.py"
+$ forge --headless "Fix the syntax error in app.py"
 
 {
   "status": "success",
@@ -406,10 +406,10 @@ $ opencode --headless "Fix the syntax error in app.py"
 }
 
 # With input file
-$ opencode --headless --input tasks.txt --output results.json
+$ forge --headless --input tasks.txt --output results.json
 
 # JSON output format
-$ opencode --headless --json "Run the test suite"
+$ forge --headless --json "Run the test suite"
 
 {
   "status": "success",
@@ -427,7 +427,7 @@ $ opencode --headless --json "Run the test suite"
 ### Headless with Safe Operations
 
 ```bash
-$ opencode --headless "Read the README and summarize it"
+$ forge --headless "Read the README and summarize it"
 
 {
   "status": "success",
@@ -440,7 +440,7 @@ $ opencode --headless "Read the README and summarize it"
 ### Headless with Unsafe Operations
 
 ```bash
-$ opencode --headless "Delete all test files"
+$ forge --headless "Delete all test files"
 
 {
   "status": "failure",
@@ -453,7 +453,7 @@ $ opencode --headless "Delete all test files"
 ### Headless Timeout
 
 ```bash
-$ opencode --headless --timeout 30 "Complex analysis task"
+$ forge --headless --timeout 30 "Complex analysis task"
 
 {
   "status": "failure",
@@ -468,9 +468,9 @@ $ opencode --headless --timeout 30 "Complex analysis task"
 ```yaml
 # GitHub Actions example
 steps:
-  - name: Run OpenCode Analysis
+  - name: Run Code-Forge Analysis
     run: |
-      opencode --headless --json \
+      forge --headless --json \
         "Review the changes in this PR for security issues" \
         > analysis.json
 
@@ -673,7 +673,7 @@ Goodbye!
 ### Mode Restored on Resume
 
 ```
-$ opencode --resume abc123
+$ forge --resume abc123
 
 Resumed session: Add Authentication Feature
 Mode restored: plan

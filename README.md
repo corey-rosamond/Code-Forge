@@ -1,21 +1,20 @@
-# OpenCode
+# Code-Forge
 
 A Claude Code alternative providing access to 400+ AI models via OpenRouter API with LangChain 1.0 integration for agent orchestration.
 
 ## Quick Start
 
 ```bash
-# Install
-git clone git@github.com:corey-rosamond/OpenCode.git
-cd OpenCode
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e .
+# Clone and install
+git clone git@github.com:corey-rosamond/Code-Forge.git
+cd Code-Forge
+./install.sh
 
 # Set your API key
 export OPENROUTER_API_KEY=your-key-here
 
 # Run
-opencode
+forge
 ```
 
 ## Features
@@ -40,10 +39,26 @@ opencode
 
 ## Installation
 
+### Automatic Installation (Recommended)
+
+```bash
+git clone git@github.com:corey-rosamond/Code-Forge.git
+cd Code-Forge
+./install.sh
+```
+
+The install script will:
+- Create a virtual environment at `~/.forge/venv`
+- Install Code-Forge and all dependencies
+- Add the `forge` command to your PATH
+- Optionally update your shell configuration
+
+### Manual Installation
+
 ```bash
 # Clone the repository
-git clone git@github.com:corey-rosamond/OpenCode.git
-cd OpenCode
+git clone git@github.com:corey-rosamond/Code-Forge.git
+cd Code-Forge
 
 # Create virtual environment
 python3 -m venv .venv
@@ -53,24 +68,46 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
+### Update
+
+```bash
+# Check for updates
+forge check-update
+
+# Update to latest version
+forge update
+```
+
+Or manually:
+```bash
+cd Code-Forge
+./update.sh
+```
+
+### Uninstall
+
+```bash
+./uninstall.sh
+```
+
 ## Usage
 
 ```bash
 # Start interactive REPL
-opencode
+forge
 
 # Show version
-opencode --version
+forge --version
 
 # Show help
-opencode --help
+forge --help
 ```
 
 ## Project Structure
 
 ```
-OpenCode/
-├── src/opencode/           # Source code
+Code-Forge/
+├── src/forge/           # Source code
 │   ├── core/               # Core interfaces, types, errors, logging
 │   ├── config/             # Configuration system
 │   ├── cli/                # REPL, themes, status bar
@@ -101,7 +138,7 @@ OpenCode/
 ### File Tools
 
 ```python
-from opencode.tools.file import ReadTool, WriteTool, EditTool, GlobTool, GrepTool
+from forge.tools.file import ReadTool, WriteTool, EditTool, GlobTool, GrepTool
 
 # Read files with offset/limit support
 read = ReadTool()
@@ -131,7 +168,7 @@ result = await grep.execute(pattern="class.*Tool", path="/src")
 ### Execution Tools
 
 ```python
-from opencode.tools.execution import BashTool, BashOutputTool, KillShellTool
+from forge.tools.execution import BashTool, BashOutputTool, KillShellTool
 
 # Execute shell commands
 bash = BashTool()
@@ -152,7 +189,7 @@ result = await kill.execute(shell_id="abc123")
 ## Permission System
 
 ```python
-from opencode.permissions import PermissionChecker, PermissionLevel
+from forge.permissions import PermissionChecker, PermissionLevel
 
 checker = PermissionChecker()
 
@@ -190,12 +227,12 @@ Execute custom shell commands in response to lifecycle events.
   "hooks": [
     {
       "event": "tool:pre_execute:bash",
-      "command": "echo \"Executing: $OPENCODE_TOOL_NAME\"",
+      "command": "echo \"Executing: $FORGE_TOOL_NAME\"",
       "timeout": 5.0
     },
     {
       "event": "session:start",
-      "command": "notify-send 'OpenCode' 'Session started'"
+      "command": "notify-send 'Code-Forge' 'Session started'"
     }
   ]
 }
@@ -204,13 +241,13 @@ Execute custom shell commands in response to lifecycle events.
 ### Programmatic Usage
 
 ```python
-from opencode.hooks import HookRegistry, HookExecutor, HookEvent, Hook, fire_event
+from forge.hooks import HookRegistry, HookExecutor, HookEvent, Hook, fire_event
 
 # Register a hook
 registry = HookRegistry.get_instance()
 registry.register(Hook(
     event_pattern="tool:pre_execute",
-    command="echo 'Executing tool: $OPENCODE_TOOL_NAME'",
+    command="echo 'Executing tool: $FORGE_TOOL_NAME'",
     timeout=10.0,
 ))
 
@@ -227,7 +264,7 @@ for result in results:
 ## Session Management
 
 ```python
-from opencode.sessions import SessionManager, Session
+from forge.sessions import SessionManager, Session
 
 # Get singleton manager instance
 manager = SessionManager.get_instance()
@@ -280,7 +317,7 @@ manager.register_hook("session:save", lambda s: print(f"Saved: {s.id}"))
 ## Context Management
 
 ```python
-from opencode.context import ContextManager, TruncationMode
+from forge.context import ContextManager, TruncationMode
 
 # Create context manager for a model
 manager = ContextManager(
@@ -324,7 +361,7 @@ manager.reset()
 ### Token Counting
 
 ```python
-from opencode.context import get_counter, TiktokenCounter, ApproximateCounter
+from forge.context import get_counter, TiktokenCounter, ApproximateCounter
 
 # Get appropriate counter for model
 counter = get_counter("claude-3-opus")
@@ -347,7 +384,7 @@ approx = ApproximateCounter(tokens_per_word=1.3)
 ### Truncation Strategies
 
 ```python
-from opencode.context import (
+from forge.context import (
     SlidingWindowStrategy,
     TokenBudgetStrategy,
     SmartTruncationStrategy,
@@ -378,12 +415,12 @@ truncated = composite.truncate(messages, target_tokens, counter)
 ### Storage
 
 Sessions are stored as JSON files in:
-- Default: `~/.local/share/opencode/sessions/`
-- Project-local: `.opencode/sessions/`
+- Default: `~/.local/share/forge/sessions/`
+- Project-local: `.forge/sessions/`
 
 ## Slash Commands
 
-OpenCode provides an extensible slash command system for quick actions within the REPL.
+Code-Forge provides an extensible slash command system for quick actions within the REPL.
 
 ### Built-in Commands
 
@@ -439,7 +476,7 @@ OpenCode provides an extensible slash command system for quick actions within th
 ### Programmatic Usage
 
 ```python
-from opencode.commands import CommandRegistry, CommandExecutor, CommandContext
+from forge.commands import CommandRegistry, CommandExecutor, CommandContext
 
 # Get command registry
 registry = CommandRegistry.get_instance()
@@ -464,7 +501,7 @@ else:
 
 ## Operating Modes
 
-OpenCode supports different operating modes that modify assistant behavior for specialized tasks.
+Code-Forge supports different operating modes that modify assistant behavior for specialized tasks.
 
 ### Available Modes
 
@@ -478,7 +515,7 @@ OpenCode supports different operating modes that modify assistant behavior for s
 ### Programmatic Usage
 
 ```python
-from opencode.modes import ModeManager, ModeContext, ModeName, setup_modes
+from forge.modes import ModeManager, ModeContext, ModeName, setup_modes
 
 # Set up all default modes
 manager = setup_modes()
@@ -503,7 +540,7 @@ manager.switch_mode(ModeName.NORMAL, context)
 ### Plan Mode
 
 ```python
-from opencode.modes import PlanMode, Plan, PlanStep
+from forge.modes import PlanMode, Plan, PlanStep
 
 mode = PlanMode()
 
@@ -531,7 +568,7 @@ todos = mode.execute_plan()
 ### Thinking Mode
 
 ```python
-from opencode.modes import ThinkingMode, ThinkingConfig
+from forge.modes import ThinkingMode, ThinkingConfig
 
 # Configure thinking mode
 config = ThinkingConfig(
@@ -555,7 +592,7 @@ if result:
 ### Headless Mode
 
 ```python
-from opencode.modes import HeadlessMode, HeadlessConfig, OutputFormat
+from forge.modes import HeadlessMode, HeadlessConfig, OutputFormat
 
 # Configure headless mode for CI/CD
 config = HeadlessConfig(
@@ -585,9 +622,9 @@ mode.write_output(result)
 
 Configuration is loaded from multiple sources with precedence:
 
-1. Environment variables (`OPENCODE_*`)
-2. Project config (`.opencode/config.toml`)
-3. Global config (`~/.config/opencode/config.toml`)
+1. Environment variables (`FORGE_*`)
+2. Project config (`.forge/config.toml`)
+3. Global config (`~/.config/forge/config.toml`)
 
 ### Example Configuration
 
@@ -614,16 +651,16 @@ source .venv/bin/activate
 pytest tests/ -v
 
 # Run tests with coverage
-pytest tests/ --cov=src/opencode --cov-report=term-missing
+pytest tests/ --cov=src/forge --cov-report=term-missing
 
 # Type checking (strict mode)
-mypy src/opencode/
+mypy src/forge/
 
 # Linting
-ruff check src/opencode/
+ruff check src/forge/
 
 # Format code
-ruff format src/opencode/
+ruff format src/forge/
 ```
 
 ### Quality Gates

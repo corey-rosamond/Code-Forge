@@ -1,0 +1,68 @@
+"""Context management package.
+
+This package provides context window management for Code-Forge,
+including token counting, truncation strategies, and compaction.
+
+Example:
+    from code_forge.context import ContextManager, TruncationMode
+
+    # Create manager for model
+    manager = ContextManager(
+        model="anthropic/claude-3-opus",
+        mode=TruncationMode.SMART,
+    )
+
+    # Set system prompt
+    manager.set_system_prompt("You are a helpful assistant.")
+
+    # Add messages
+    manager.add_message({"role": "user", "content": "Hello"})
+    manager.add_message({"role": "assistant", "content": "Hi there!"})
+
+    # Check usage
+    print(f"Usage: {manager.usage_percentage:.1f}%")
+
+    # Get messages for request
+    messages = manager.get_context_for_request()
+"""
+
+from .compaction import ContextCompactor, ToolResultCompactor
+from .limits import ContextBudget, ContextLimits, ContextTracker
+from .manager import ContextManager, TruncationMode, get_strategy
+from .strategies import (
+    CompositeStrategy,
+    SelectiveTruncationStrategy,
+    SlidingWindowStrategy,
+    SmartTruncationStrategy,
+    TokenBudgetStrategy,
+    TruncationStrategy,
+)
+from .tokens import (
+    ApproximateCounter,
+    CachingCounter,
+    TiktokenCounter,
+    TokenCounter,
+    get_counter,
+)
+
+__all__ = [
+    "ApproximateCounter",
+    "CachingCounter",
+    "CompositeStrategy",
+    "ContextBudget",
+    "ContextCompactor",
+    "ContextLimits",
+    "ContextManager",
+    "ContextTracker",
+    "SelectiveTruncationStrategy",
+    "SlidingWindowStrategy",
+    "SmartTruncationStrategy",
+    "TiktokenCounter",
+    "TokenBudgetStrategy",
+    "TokenCounter",
+    "ToolResultCompactor",
+    "TruncationMode",
+    "TruncationStrategy",
+    "get_counter",
+    "get_strategy",
+]

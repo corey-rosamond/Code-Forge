@@ -5,12 +5,12 @@ from pathlib import Path
 
 import pytest
 
-from opencode.plugins.base import Plugin, PluginCapabilities, PluginMetadata
-from opencode.plugins.config import PluginConfig, PluginConfigManager
-from opencode.plugins.discovery import DiscoveredPlugin
-from opencode.plugins.exceptions import PluginLoadError
-from opencode.plugins.loader import LoadedPlugin, PluginLoader
-from opencode.plugins.manifest import PluginManifest
+from code_forge.plugins.base import Plugin, PluginCapabilities, PluginMetadata
+from code_forge.plugins.config import PluginConfig, PluginConfigManager
+from code_forge.plugins.discovery import DiscoveredPlugin
+from code_forge.plugins.exceptions import PluginLoadError
+from code_forge.plugins.loader import LoadedPlugin, PluginLoader
+from code_forge.plugins.manifest import PluginManifest
 
 
 class SamplePlugin(Plugin):
@@ -36,7 +36,7 @@ class TestLoadedPlugin:
         """Test creating LoadedPlugin."""
         import logging
 
-        from opencode.plugins.base import PluginContext
+        from code_forge.plugins.base import PluginContext
 
         manifest = PluginManifest(
             name="test",
@@ -100,7 +100,7 @@ class TestPluginLoader:
         # Create plugin module
         plugin_file = plugin_dir / "test_plugin.py"
         plugin_file.write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata, PluginCapabilities
+from code_forge.plugins.base import Plugin, PluginMetadata, PluginCapabilities
 
 class TestPlugin(Plugin):
     @property
@@ -160,7 +160,7 @@ class TestPlugin(Plugin):
 
         plugin_file = plugin_dir / "disabled_plugin.py"
         plugin_file.write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class DisabledPlugin(Plugin):
     @property
@@ -346,7 +346,7 @@ class NotAPlugin:
         """Test unloading a plugin."""
         import logging
 
-        from opencode.plugins.base import PluginContext
+        from code_forge.plugins.base import PluginContext
 
         manifest = PluginManifest(
             name="unload-test",
@@ -389,7 +389,7 @@ class NotAPlugin:
         """Test unload removes added sys.path entry."""
         import logging
 
-        from opencode.plugins.base import PluginContext
+        from code_forge.plugins.base import PluginContext
 
         plugin_path = str(tmp_path / "test-plugin")
         manifest = PluginManifest(

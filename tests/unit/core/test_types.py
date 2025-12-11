@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pytest
 
-from opencode.core.types import (
+from code_forge.core.types import (
     AgentId,
     CompletionRequest,
     CompletionResponse,

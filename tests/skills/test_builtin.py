@@ -2,8 +2,8 @@
 
 import pytest
 
-from opencode.skills.base import Skill
-from opencode.skills.builtin import (
+from code_forge.skills.base import Skill
+from code_forge.skills.builtin import (
     API_SKILL,
     BUILTIN_SKILLS,
     DATABASE_SKILL,
@@ -14,7 +14,7 @@ from opencode.skills.builtin import (
     get_builtin_skills,
     register_builtin_skills,
 )
-from opencode.skills.registry import SkillRegistry
+from code_forge.skills.registry import SkillRegistry
 
 
 class TestBuiltinSkills:
@@ -115,7 +115,7 @@ class TestCreateBuiltinSkill:
         assert skill.description == "Test skill"
         assert skill.definition.prompt == "Test prompt"
         assert skill.is_builtin is True
-        assert skill.definition.metadata.author == "OpenCode"
+        assert skill.definition.metadata.author == "Code-Forge"
 
     def test_create_with_tools(self) -> None:
         """Test creating skill with tools."""

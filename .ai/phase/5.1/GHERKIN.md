@@ -138,7 +138,7 @@ And timestamp should be ISO format string
 ```gherkin
 Given no custom storage directory
 When I call SessionStorage.get_default_dir()
-Then it should return ~/.local/share/src/opencode/sessions/
+Then it should return ~/.local/share/src/forge/sessions/
 ```
 
 ### Scenario: Create storage directory
@@ -622,7 +622,7 @@ Then it should return total size in bytes
 ```gherkin
 Given a project root path
 When I call SessionStorage.get_project_dir(project_root)
-Then it should return {project_root}/.src/opencode/sessions/
+Then it should return {project_root}/.src/forge/sessions/
 ```
 
 ### Scenario: Use project-local storage

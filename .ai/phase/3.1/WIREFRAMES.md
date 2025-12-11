@@ -244,7 +244,7 @@ Retry-After: 30
 │                                                                     │
 │ Please check your API key configuration:                            │
 │ 1. Set OPENROUTER_API_KEY environment variable, or                 │
-│ 2. Add api_key to ~/.src/opencode/settings.yaml                        │
+│ 2. Add api_key to ~/.src/forge/settings.yaml                        │
 │                                                                     │
 │ Get an API key at: https://openrouter.ai/keys                      │
 └─────────────────────────────────────────────────────────────────────┘
@@ -486,7 +486,7 @@ Retry-After: 30
 
 ### LLM Settings
 ```yaml
-# ~/.src/opencode/settings.yaml
+# ~/.src/forge/settings.yaml
 llm:
   provider: openrouter
   api_key: ${OPENROUTER_API_KEY}  # Use environment variable

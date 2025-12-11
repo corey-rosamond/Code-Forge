@@ -3,7 +3,7 @@
 from pathlib import Path
 from unittest.mock import patch
 
-from opencode.plugins.discovery import DiscoveredPlugin, PluginDiscovery
+from code_forge.plugins.discovery import DiscoveredPlugin, PluginDiscovery
 
 
 class TestDiscoveredPlugin:
@@ -11,8 +11,8 @@ class TestDiscoveredPlugin:
 
     def test_id_property(self, tmp_path: Path) -> None:
         """Test id property returns manifest name."""
-        from opencode.plugins.base import PluginCapabilities, PluginMetadata
-        from opencode.plugins.manifest import PluginManifest
+        from code_forge.plugins.base import PluginCapabilities, PluginMetadata
+        from code_forge.plugins.manifest import PluginManifest
 
         manifest = PluginManifest(
             name="test-plugin",
@@ -40,8 +40,8 @@ class TestPluginDiscovery:
     def test_default_directories(self) -> None:
         """Test default plugin directories."""
         discovery = PluginDiscovery()
-        assert discovery.user_dir == Path.home() / ".opencode" / "plugins"
-        assert discovery.project_dir == Path(".opencode") / "plugins"
+        assert discovery.user_dir == Path.home() / ".forge" / "plugins"
+        assert discovery.project_dir == Path(".forge") / "plugins"
 
     def test_custom_directories(self, tmp_path: Path) -> None:
         """Test custom plugin directories."""
@@ -230,7 +230,7 @@ entry_point: yml:Plugin
 
     def test_discover_with_manifest_parse_error(self, tmp_path: Path) -> None:
         """Test discovery handles manifest parse error gracefully."""
-        from opencode.plugins.exceptions import PluginManifestError
+        from code_forge.plugins.exceptions import PluginManifestError
 
         user_dir = tmp_path / "user"
         plugin_dir = user_dir / "error-plugin"
@@ -264,7 +264,7 @@ entry_point: error:Plugin
         mock_ep.name = "bad-plugin"
         mock_ep.load.side_effect = ImportError("Cannot import")
 
-        with patch("opencode.plugins.discovery.entry_points", return_value=[mock_ep]):
+        with patch("code_forge.plugins.discovery.entry_points", return_value=[mock_ep]):
             plugins = discovery.discover_package_plugins()
             # Should return empty list and not crash
             assert plugins == []
@@ -273,7 +273,7 @@ entry_point: error:Plugin
         """Test successful package plugin discovery."""
         from unittest.mock import MagicMock
 
-        from opencode.plugins.base import PluginCapabilities, PluginMetadata
+        from code_forge.plugins.base import PluginCapabilities, PluginMetadata
 
         discovery = PluginDiscovery()
 
@@ -294,7 +294,7 @@ entry_point: error:Plugin
         mock_ep.value = "package_plugin:PackagePlugin"
         mock_ep.load.return_value = mock_class
 
-        with patch("opencode.plugins.discovery.entry_points", return_value=[mock_ep]):
+        with patch("code_forge.plugins.discovery.entry_points", return_value=[mock_ep]):
             plugins = discovery.discover_package_plugins()
             assert len(plugins) == 1
             assert plugins[0].id == "package-plugin"
@@ -314,7 +314,7 @@ entry_point: error:Plugin
         mock_ep.value = "no_meta:Plugin"
         mock_ep.load.return_value = mock_class
 
-        with patch("opencode.plugins.discovery.entry_points", return_value=[mock_ep]):
+        with patch("code_forge.plugins.discovery.entry_points", return_value=[mock_ep]):
             plugins = discovery.discover_package_plugins()
             # Should skip plugins without metadata
             assert plugins == []

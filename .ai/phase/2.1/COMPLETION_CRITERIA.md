@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 2.1 is considered complet
 
 ## Checklist
 
-### ToolParameter Model (src/opencode/tools/base.py)
+### ToolParameter Model (src/forge/tools/base.py)
 - [ ] `ToolParameter` Pydantic model implemented
 - [ ] Fields: name, type, description, required, default, enum
 - [ ] Fields: min_length, max_length (for strings)
@@ -26,7 +26,7 @@ All of the following criteria must be met before Phase 2.1 is considered complet
 - [ ] String length constraints included in JSON Schema
 - [ ] Default values included in JSON Schema when present
 
-### ToolResult Model (src/opencode/tools/base.py)
+### ToolResult Model (src/forge/tools/base.py)
 - [ ] `ToolResult` Pydantic model implemented
 - [ ] Fields: success, output, error, duration_ms, metadata
 - [ ] `ok(output, **metadata)` class method creates success result
@@ -35,19 +35,19 @@ All of the following criteria must be met before Phase 2.1 is considered complet
 - [ ] Success result: to_display() returns output
 - [ ] Failure result: to_display() returns "Error: {error}"
 
-### ExecutionContext Model (src/opencode/tools/base.py)
+### ExecutionContext Model (src/forge/tools/base.py)
 - [ ] `ExecutionContext` Pydantic model implemented
 - [ ] Fields: working_dir, session_id, agent_id, dry_run, timeout
 - [ ] Fields: max_output_size, metadata
 - [ ] Default values: dry_run=False, timeout=120, max_output_size=100000
 - [ ] metadata defaults to empty dict
 
-### ToolCategory Enum (src/opencode/tools/base.py)
+### ToolCategory Enum (src/forge/tools/base.py)
 - [ ] `ToolCategory` string enum implemented
 - [ ] Values: FILE, EXECUTION, WEB, TASK, NOTEBOOK, MCP, OTHER
 - [ ] String values: "file", "execution", "web", "task", "notebook", "mcp", "other"
 
-### BaseTool Abstract Class (src/opencode/tools/base.py)
+### BaseTool Abstract Class (src/forge/tools/base.py)
 - [ ] `BaseTool` ABC class implemented
 - [ ] Abstract property: `name` -> str
 - [ ] Abstract property: `description` -> str
@@ -116,13 +116,13 @@ All of the following criteria must be met before Phase 2.1 is considered complet
 - [ ] Tool is callable
 - [ ] Tool executes the underlying _execute method
 
-### ToolExecution Record (src/opencode/tools/base.py)
+### ToolExecution Record (src/forge/tools/base.py)
 - [ ] `ToolExecution` Pydantic model implemented
 - [ ] Fields: tool_name, parameters, context, result
 - [ ] Fields: started_at, completed_at, duration_ms
 - [ ] All fields correctly typed
 
-### ToolRegistry Singleton (src/opencode/tools/registry.py)
+### ToolRegistry Singleton (src/forge/tools/registry.py)
 - [ ] `ToolRegistry` class implemented
 - [ ] Singleton pattern: only one instance exists
 - [ ] `_instance` class variable holds singleton
@@ -141,7 +141,7 @@ All of the following criteria must be met before Phase 2.1 is considered complet
 - [ ] `reset()` class method recreates singleton (for testing)
 - [ ] Duplicate registration raises ToolError
 
-### ToolExecutor (src/opencode/tools/executor.py)
+### ToolExecutor (src/forge/tools/executor.py)
 - [ ] `ToolExecutor` class implemented
 - [ ] Constructor takes ToolRegistry
 - [ ] `execute(tool_name, context, **kwargs)` async method
@@ -200,23 +200,23 @@ All of the following criteria must be met before Phase 2.1 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/tools/
+ls -la src/forge/tools/
 # Expected: __init__.py, base.py, registry.py, executor.py
 
 # 2. Test imports
 python -c "
-from opencode.tools.base import (
+from forge.tools.base import (
     ToolParameter, ToolResult, ExecutionContext,
     ToolCategory, BaseTool, ToolExecution
 )
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.executor import ToolExecutor
+from forge.tools.registry import ToolRegistry
+from forge.tools.executor import ToolExecutor
 print('All imports successful')
 "
 
 # 3. Test ToolParameter JSON Schema
 python -c "
-from opencode.tools.base import ToolParameter
+from forge.tools.base import ToolParameter
 
 param = ToolParameter(
     name='file_path',
@@ -234,7 +234,7 @@ print('ToolParameter: OK')
 
 # 4. Test ToolResult factory methods
 python -c "
-from opencode.tools.base import ToolResult
+from forge.tools.base import ToolResult
 
 success = ToolResult.ok('output', lines=10)
 assert success.success == True
@@ -251,7 +251,7 @@ print('ToolResult: OK')
 # 5. Test concrete tool implementation
 python -c "
 import asyncio
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool, ToolParameter, ToolResult,
     ExecutionContext, ToolCategory
 )
@@ -308,7 +308,7 @@ print('BaseTool implementation: OK')
 
 # 6. Test ToolRegistry singleton
 python -c "
-from opencode.tools.registry import ToolRegistry
+from forge.tools.registry import ToolRegistry
 
 # Reset for clean test
 ToolRegistry.reset()
@@ -322,8 +322,8 @@ print('ToolRegistry singleton: OK')
 
 # 7. Test ToolRegistry operations
 python -c "
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
+from forge.tools.registry import ToolRegistry
+from forge.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
 
 class TestTool(BaseTool):
     @property
@@ -368,9 +368,9 @@ print('ToolRegistry operations: OK')
 # 8. Test ToolExecutor
 python -c "
 import asyncio
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.executor import ToolExecutor
-from opencode.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
+from forge.tools.registry import ToolRegistry
+from forge.tools.executor import ToolExecutor
+from forge.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
 
 class EchoTool(BaseTool):
     @property
@@ -413,7 +413,7 @@ print('ToolExecutor: OK')
 # 9. Test timeout handling
 python -c "
 import asyncio
-from opencode.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
+from forge.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
 
 class SlowTool(BaseTool):
     @property
@@ -439,21 +439,21 @@ print('Timeout handling: OK')
 "
 
 # 10. Run all unit tests
-pytest tests/unit/tools/ -v --cov=opencode.tools --cov-report=term-missing
+pytest tests/unit/tools/ -v --cov=forge.tools --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 11. Type checking
-mypy src/opencode/tools/ --strict
+mypy src/forge/tools/ --strict
 # Expected: No errors
 
 # 12. Linting
-ruff check src/opencode/tools/
+ruff check src/forge/tools/
 # Expected: No errors
 
 # 13. Test LangChain integration
 python -c "
-from opencode.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
+from forge.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
 from langchain_core.tools import Tool
 
 class TestTool(BaseTool):
@@ -497,10 +497,10 @@ print('LangChain integration: OK')
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/tools/__init__.py` | Package exports |
-| `src/opencode/tools/base.py` | BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory, ToolExecution |
-| `src/opencode/tools/registry.py` | ToolRegistry singleton |
-| `src/opencode/tools/executor.py` | ToolExecutor class |
+| `src/forge/tools/__init__.py` | Package exports |
+| `src/forge/tools/base.py` | BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory, ToolExecution |
+| `src/forge/tools/registry.py` | ToolRegistry singleton |
+| `src/forge/tools/executor.py` | ToolExecutor class |
 | `tests/unit/tools/__init__.py` | Test package |
 | `tests/unit/tools/test_base.py` | Base classes tests |
 | `tests/unit/tools/test_registry.py` | Registry tests |

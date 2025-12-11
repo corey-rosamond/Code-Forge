@@ -1620,12 +1620,12 @@ def setup_modes(manager: ModeManager | None = None) -> ModeManager:
 
 ## Step 8: REPL Integration
 
-Integration points in `src/opencode/repl/repl.py`:
+Integration points in `src/forge/repl/repl.py`:
 
 ```python
 # In REPL class
 
-from opencode.modes import (
+from forge.modes import (
     ModeManager,
     ModeContext,
     ModeName,

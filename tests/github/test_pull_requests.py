@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.github.pull_requests import (
+from code_forge.github.pull_requests import (
     GitHubPullRequest,
     GitHubReview,
     GitHubReviewComment,
@@ -14,7 +14,7 @@ from opencode.github.pull_requests import (
     GitHubPRFile,
     PullRequestService,
 )
-from opencode.github.client import GitHubClient
+from code_forge.github.client import GitHubClient
 
 
 class TestGitHubPullRequest:

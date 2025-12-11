@@ -5,7 +5,7 @@ from datetime import datetime
 
 import pytest
 
-from opencode.agents.result import AgentResult, AggregatedResult
+from code_forge.agents.result import AgentResult, AggregatedResult
 
 
 class TestAgentResult:

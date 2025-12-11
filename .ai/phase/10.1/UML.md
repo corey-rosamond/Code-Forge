@@ -26,7 +26,7 @@
 │ + homepage: str | None              │       ├─────────────────────────────────────┤
 │ + repository: str | None            │       │ + to_dict(): dict                   │
 │ + keywords: list[str]               │       └─────────────────────────────────────┘
-│ + opencode_version: str | None      │
+│ + forge_version: str | None      │
 ├─────────────────────────────────────┤
 │ + to_dict(): dict                   │
 └─────────────────────────────────────┘
@@ -260,7 +260,7 @@
           ▼                         ▼                         ▼
 ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
 │   User Plugins   │     │ Project Plugins  │     │ Package Plugins  │
-│  ~/.src/opencode/    │     │   .src/opencode/     │     │  (entry points)  │
+│  ~/.src/forge/    │     │   .src/forge/     │     │  (entry points)  │
 │    plugins/      │     │    plugins/      │     │                  │
 └──────────────────┘     └──────────────────┘     └──────────────────┘
 ```
@@ -271,7 +271,7 @@
 
 ```
 ┌─────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│OpenCode │     │PluginManager │     │PluginDiscovery│    │ PluginLoader │     │PluginRegistry│
+│Code-Forge │     │PluginManager │     │PluginDiscovery│    │ PluginLoader │     │PluginRegistry│
 └────┬────┘     └──────┬───────┘     └──────┬───────┘     └──────┬───────┘     └──────┬───────┘
      │                 │                    │                    │                    │
      │ discover_and_   │                    │                    │                    │
@@ -512,7 +512,7 @@
 ## Plugin Directory Structure
 
 ```
-~/.src/opencode/
+~/.src/forge/
 ├── plugins/                      # User plugins directory
 │   ├── my-plugin/
 │   │   ├── plugin.yaml          # Plugin manifest
@@ -534,7 +534,7 @@
         └── ...
 
 
-.src/opencode/                        # Project-level
+.src/forge/                        # Project-level
 ├── plugins/                      # Project plugins
 │   └── project-plugin/
 │       └── ...

@@ -275,7 +275,7 @@
 │  │                        Configuration Layer                            │  │
 │  │                                                                       │  │
 │  │  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐         │  │
-│  │  │ ~/.src/opencode/ │     │ .src/opencode/   │     │ Environment  │         │  │
+│  │  │ ~/.src/forge/ │     │ .src/forge/   │     │ Environment  │         │  │
 │  │  │ mcp.yaml     │     │ mcp.yaml     │     │ Variables    │         │  │
 │  │  └──────┬───────┘     └──────┬───────┘     └──────┬───────┘         │  │
 │  │         │                    │                    │                  │  │
@@ -536,8 +536,8 @@
 
                          ┌─────────────────┐
                          │   Config Files  │
-                         │ ~/.src/opencode/    │
-                         │ .src/opencode/      │
+                         │ ~/.src/forge/    │
+                         │ .src/forge/      │
                          └────────┬────────┘
                                   │
                                   ▼
@@ -607,7 +607,7 @@
 ## Package Structure Diagram
 
 ```
-src/opencode/mcp/
+src/forge/mcp/
 ├── __init__.py
 │   ├── MCPClient
 │   ├── MCPManager

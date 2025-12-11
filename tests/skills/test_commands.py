@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opencode.skills.base import Skill, SkillConfig, SkillDefinition, SkillMetadata
-from opencode.skills.commands import (
+from code_forge.skills.base import Skill, SkillConfig, SkillDefinition, SkillMetadata
+from code_forge.skills.commands import (
     SkillCommand,
     SkillInfoCommand,
     SkillListCommand,
@@ -14,7 +14,7 @@ from opencode.skills.commands import (
     SkillSearchCommand,
     get_skill_command,
 )
-from opencode.skills.registry import SkillRegistry
+from code_forge.skills.registry import SkillRegistry
 
 
 def create_test_skill(

@@ -1,13 +1,13 @@
 # Quick Start Guide
 
-This guide will get you up and running with OpenCode in 5 minutes.
+This guide will get you up and running with Code-Forge in 5 minutes.
 
-## Starting OpenCode
+## Starting Code-Forge
 
-After installation, start OpenCode:
+After installation, start Code-Forge:
 
 ```bash
-opencode
+forge
 ```
 
 You'll see a welcome message and a prompt.
@@ -16,7 +16,7 @@ You'll see a welcome message and a prompt.
 
 ### Reading Files
 
-Ask OpenCode to read a file:
+Ask Code-Forge to read a file:
 
 ```
 You: Read the README.md file
@@ -90,7 +90,7 @@ Use slash commands for quick actions:
 | `/session new` | Start new session |
 | `/model <name>` | Change AI model |
 | `/clear` | Clear screen |
-| `/exit` | Exit OpenCode |
+| `/exit` | Exit Code-Forge |
 
 ## Session Management
 
@@ -117,7 +117,7 @@ Switch between AI models:
 
 ## Tips for Effective Use
 
-1. **Be specific** - Tell OpenCode exactly what file and what change you want
+1. **Be specific** - Tell Code-Forge exactly what file and what change you want
 2. **Verify changes** - Ask to read a file after editing to confirm
 3. **Use sessions** - Resume sessions to continue previous work
 4. **Leverage search** - Use glob and grep before editing to find the right location

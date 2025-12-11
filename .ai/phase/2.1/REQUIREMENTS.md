@@ -299,7 +299,7 @@ class BaseTool(ABC):
 
 ```python
 from typing import Dict, List, Type
-from opencode.core.errors import ToolError
+from forge.core.errors import ToolError
 
 class ToolRegistry:
     """
@@ -361,7 +361,7 @@ class ToolRegistry:
 
 ```python
 from typing import Dict, Any
-from opencode.core.logging import get_logger
+from forge.core.logging import get_logger
 
 logger = get_logger("tools")
 
@@ -446,7 +446,7 @@ class ToolExecutor:
 ```bash
 # Create a test tool
 python -c "
-from opencode.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
+from forge.tools.base import BaseTool, ToolParameter, ToolResult, ExecutionContext, ToolCategory
 
 class TestTool(BaseTool):
     @property
@@ -471,8 +471,8 @@ print(TestTool().to_openai_schema())
 
 # Test registry
 python -c "
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.base import ToolCategory
+from forge.tools.registry import ToolRegistry
+from forge.tools.base import ToolCategory
 
 registry = ToolRegistry()
 print(f'Tools: {len(registry.list_all())}')
@@ -480,7 +480,7 @@ print(f'File tools: {len(registry.list_by_category(ToolCategory.FILE))}')
 "
 
 # Run tests
-pytest tests/unit/tools/ -v --cov=opencode.tools
+pytest tests/unit/tools/ -v --cov=forge.tools
 ```
 
 ---

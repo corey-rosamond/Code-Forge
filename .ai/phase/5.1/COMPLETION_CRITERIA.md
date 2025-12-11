@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 5.1 is considered complet
 
 ## Checklist
 
-### Session Model (src/opencode/sessions/models.py)
+### Session Model (src/forge/sessions/models.py)
 - [ ] ToolInvocation dataclass defined
 - [ ] ToolInvocation.to_dict() serialization
 - [ ] ToolInvocation.from_dict() deserialization
@@ -36,7 +36,7 @@ All of the following criteria must be met before Phase 5.1 is considered complet
 - [ ] Session.from_json() JSON deserialization
 - [ ] Datetime fields use timezone-aware UTC
 
-### Session Storage (src/opencode/sessions/storage.py)
+### Session Storage (src/forge/sessions/storage.py)
 - [ ] SessionStorageError exception class
 - [ ] SessionNotFoundError exception class
 - [ ] SessionCorruptedError exception class
@@ -61,7 +61,7 @@ All of the following criteria must be met before Phase 5.1 is considered complet
 - [ ] Storage directory created with 700 permissions
 - [ ] Session files created with 600 permissions
 
-### Session Index (src/opencode/sessions/index.py)
+### Session Index (src/forge/sessions/index.py)
 - [ ] SessionSummary dataclass defined
 - [ ] SessionSummary.to_dict() serialization
 - [ ] SessionSummary.from_dict() deserialization
@@ -87,7 +87,7 @@ All of the following criteria must be met before Phase 5.1 is considered complet
 - [ ] __len__ returns count
 - [ ] __contains__ checks membership
 
-### Session Manager (src/opencode/sessions/manager.py)
+### Session Manager (src/forge/sessions/manager.py)
 - [ ] SessionManager class implemented
 - [ ] Singleton pattern via get_instance()
 - [ ] reset_instance() for testing
@@ -139,7 +139,7 @@ All of the following criteria must be met before Phase 5.1 is considered complet
 - [ ] Auto-save disabled when interval <= 0
 
 ### Package Structure
-- [ ] src/opencode/sessions/__init__.py exports all public classes
+- [ ] src/forge/sessions/__init__.py exports all public classes
 - [ ] All imports work correctly
 - [ ] No circular dependencies
 
@@ -167,12 +167,12 @@ All of the following criteria must be met before Phase 5.1 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/sessions/
+ls -la src/forge/sessions/
 # Expected: __init__.py, models.py, storage.py, index.py, manager.py
 
 # 2. Test imports
 python -c "
-from opencode.sessions import (
+from forge.sessions import (
     Session,
     SessionMessage,
     ToolInvocation,
@@ -189,7 +189,7 @@ print('All sessions imports successful')
 
 # 3. Test Session model
 python -c "
-from opencode.sessions import Session, SessionMessage, ToolInvocation
+from forge.sessions import Session, SessionMessage, ToolInvocation
 
 # Create session
 session = Session(title='Test', working_dir='/tmp', model='test-model')
@@ -216,7 +216,7 @@ print('Session model: OK')
 
 # 4. Test Session serialization
 python -c "
-from opencode.sessions import Session
+from forge.sessions import Session
 import json
 
 session = Session(title='Test', model='test')
@@ -251,7 +251,7 @@ print('Session serialization: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import Session, SessionStorage
+from forge.sessions import Session, SessionStorage
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -281,7 +281,7 @@ print('SessionStorage: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import SessionStorage, SessionNotFoundError
+from forge.sessions import SessionStorage, SessionNotFoundError
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -302,7 +302,7 @@ print('SessionNotFoundError: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import Session, SessionStorage, SessionIndex
+from forge.sessions import Session, SessionStorage, SessionIndex
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -341,7 +341,7 @@ print('SessionIndex: OK')
 
 # 8. Test SessionManager singleton
 python -c "
-from opencode.sessions import SessionManager
+from forge.sessions import SessionManager
 
 SessionManager.reset_instance()
 manager1 = SessionManager.get_instance()
@@ -355,7 +355,7 @@ print('SessionManager singleton: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import SessionStorage, SessionManager
+from forge.sessions import SessionStorage, SessionManager
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -386,7 +386,7 @@ print('SessionManager create/resume: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import SessionStorage, SessionManager
+from forge.sessions import SessionStorage, SessionManager
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -410,7 +410,7 @@ print('SessionManager add_message: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import SessionStorage, SessionManager
+from forge.sessions import SessionStorage, SessionManager
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -443,7 +443,7 @@ print('SessionManager hooks: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import SessionStorage, SessionManager
+from forge.sessions import SessionStorage, SessionManager
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -473,7 +473,7 @@ print('generate_title: OK')
 python -c "
 import tempfile
 from pathlib import Path
-from opencode.sessions import SessionStorage, SessionManager
+from forge.sessions import SessionStorage, SessionManager
 
 with tempfile.TemporaryDirectory() as tmpdir:
     storage = SessionStorage(Path(tmpdir))
@@ -498,16 +498,16 @@ print('list_sessions: OK')
 "
 
 # 14. Run all unit tests
-pytest tests/unit/sessions/ -v --cov=opencode.sessions --cov-report=term-missing
+pytest tests/unit/sessions/ -v --cov=forge.sessions --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 15. Type checking
-mypy src/opencode/sessions/ --strict
+mypy src/forge/sessions/ --strict
 # Expected: No errors
 
 # 16. Linting
-ruff check src/opencode/sessions/
+ruff check src/forge/sessions/
 # Expected: No errors
 ```
 
@@ -528,11 +528,11 @@ ruff check src/opencode/sessions/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/sessions/__init__.py` | Package exports |
-| `src/opencode/sessions/models.py` | Session data models |
-| `src/opencode/sessions/storage.py` | Session persistence |
-| `src/opencode/sessions/index.py` | Session index |
-| `src/opencode/sessions/manager.py` | Session lifecycle |
+| `src/forge/sessions/__init__.py` | Package exports |
+| `src/forge/sessions/models.py` | Session data models |
+| `src/forge/sessions/storage.py` | Session persistence |
+| `src/forge/sessions/index.py` | Session index |
+| `src/forge/sessions/manager.py` | Session lifecycle |
 | `tests/unit/sessions/__init__.py` | Test package |
 | `tests/unit/sessions/test_models.py` | Model tests |
 | `tests/unit/sessions/test_storage.py` | Storage tests |

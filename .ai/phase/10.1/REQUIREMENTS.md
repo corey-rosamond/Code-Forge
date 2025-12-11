@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 10.1 implements a plugin system for OpenCode, enabling third-party extensions that add tools, commands, hooks, and other functionality. This creates an extensible architecture where users and the community can enhance OpenCode's capabilities.
+Phase 10.1 implements a plugin system for Code-Forge, enabling third-party extensions that add tools, commands, hooks, and other functionality. This creates an extensible architecture where users and the community can enhance Code-Forge's capabilities.
 
 ---
 
@@ -58,13 +58,13 @@ Phase 10.1 implements a plugin system for OpenCode, enabling third-party extensi
 - Description
 - Author information
 - License
-- OpenCode version compatibility
+- Code-Forge version compatibility
 
 ### FR-2: Plugin Discovery
 
 **FR-2.1:** Discovery locations
-- User plugin directory (~/.src/opencode/plugins/)
-- Project plugin directory (.src/opencode/plugins/)
+- User plugin directory (~/.src/forge/plugins/)
+- Project plugin directory (.src/forge/plugins/)
 - Installed Python packages (entry points)
 - Explicit plugin paths in config
 
@@ -183,7 +183,7 @@ Phase 10.1 implements a plugin system for OpenCode, enabling third-party extensi
 ### Package Structure
 
 ```
-src/opencode/plugins/
+src/forge/plugins/
 ├── __init__.py           # Package exports
 ├── base.py               # Plugin base class
 ├── manifest.py           # Manifest parsing
@@ -198,7 +198,7 @@ src/opencode/plugins/
 ### Plugin Directory Structure
 
 ```
-~/.src/opencode/plugins/my-plugin/
+~/.src/forge/plugins/my-plugin/
 ├── plugin.yaml           # Plugin manifest
 ├── __init__.py           # Plugin entry point
 ├── tools/                # Plugin tools
@@ -229,7 +229,7 @@ class PluginMetadata:
     homepage: str | None = None
     repository: str | None = None
     keywords: list[str] = field(default_factory=list)
-    opencode_version: str | None = None  # e.g., ">=1.0.0"
+    forge_version: str | None = None  # e.g., ">=1.0.0"
 
 
 @dataclass
@@ -244,7 +244,7 @@ class PluginCapabilities:
 
 
 class Plugin(ABC):
-    """Base class for OpenCode plugins."""
+    """Base class for Code-Forge plugins."""
 
     @property
     @abstractmethod
@@ -551,7 +551,7 @@ class PluginConfigManager:
 ```yaml
 name: my-plugin
 version: 1.0.0
-description: A sample OpenCode plugin
+description: A sample Code-Forge plugin
 
 author: Jane Doe
 email: jane@example.com
@@ -568,7 +568,7 @@ capabilities:
 dependencies:
   - requests>=2.28.0
 
-opencode_version: ">=1.0.0"
+forge_version: ">=1.0.0"
 
 config:
   schema:

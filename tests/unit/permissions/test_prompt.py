@@ -4,11 +4,11 @@ import pytest
 import asyncio
 from unittest.mock import MagicMock, patch
 
-from opencode.permissions.models import (
+from code_forge.permissions.models import (
     PermissionLevel,
     PermissionRule,
 )
-from opencode.permissions.prompt import (
+from code_forge.permissions.prompt import (
     ConfirmationChoice,
     ConfirmationRequest,
     PermissionPrompt,

@@ -16,7 +16,7 @@ This phase implements the basic Read-Eval-Print Loop (REPL) shell that provides 
 ## Functional Requirements
 
 ### FR-1.3.1: REPL Loop
-- Start interactive prompt when `opencode` runs without arguments
+- Start interactive prompt when `forge` runs without arguments
 - Accept user input with multiline support
 - Display welcome message on startup
 - Handle graceful exit (Ctrl+D, Ctrl+C)
@@ -105,10 +105,10 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 
-class OpenCodeREPL:
-    """Main REPL interface for OpenCode."""
+class Code-ForgeREPL:
+    """Main REPL interface for Code-Forge."""
 
-    def __init__(self, config: OpenCodeConfig):
+    def __init__(self, config: Code-ForgeConfig):
         self._config = config
         self._console = Console(theme=self._get_theme())
         self._session = PromptSession(
@@ -193,7 +193,7 @@ def _create_key_bindings(self) -> KeyBindings:
 class StatusBar:
     """Status bar at bottom of terminal."""
 
-    def __init__(self, config: OpenCodeConfig):
+    def __init__(self, config: Code-ForgeConfig):
         self._config = config
         self._model = config.model.default
         self._tokens = (0, 0)  # (used, max)
@@ -245,7 +245,7 @@ LIGHT_THEME = {
 
 ### Definition of Done
 
-- [ ] REPL starts when running `opencode` without arguments
+- [ ] REPL starts when running `forge` without arguments
 - [ ] Welcome message displays correctly
 - [ ] User can type and submit input
 - [ ] Multiline input works with Shift+Enter
@@ -263,7 +263,7 @@ LIGHT_THEME = {
 
 ```bash
 # 1. Start REPL
-opencode
+forge
 # Expected: Welcome screen, prompt appears
 
 # 2. Test input
@@ -289,7 +289,7 @@ opencode
 # Expected: Clean exit
 
 # 7. Run tests
-pytest tests/unit/cli/ -v --cov=opencode.cli
+pytest tests/unit/cli/ -v --cov=forge.cli
 ```
 
 ---

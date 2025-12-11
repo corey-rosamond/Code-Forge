@@ -7,12 +7,12 @@ from pathlib import Path
 
 import pytest
 
-from opencode.hooks.config import (
+from code_forge.hooks.config import (
     DEFAULT_HOOKS,
     HOOK_TEMPLATES,
     HookConfig,
 )
-from opencode.hooks.registry import Hook
+from code_forge.hooks.registry import Hook
 
 
 class TestHookConfigPaths:
@@ -22,28 +22,28 @@ class TestHookConfigPaths:
         """Config dir uses XDG_CONFIG_HOME if set."""
         monkeypatch.setenv("XDG_CONFIG_HOME", "/custom/config")
         path = HookConfig.get_config_dir()
-        assert path == Path("/custom/config/opencode")
+        assert path == Path("/custom/config/forge")
 
     def test_get_config_dir_default(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
-        """Config dir defaults to ~/.config/opencode."""
+        """Config dir defaults to ~/.config/code_forge."""
         monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
         monkeypatch.setenv("HOME", str(tmp_path))
         path = HookConfig.get_config_dir()
-        assert path == tmp_path / ".config" / "opencode"
+        assert path == tmp_path / ".config" / "forge"
 
     def test_get_global_path(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Global path is in config dir."""
         monkeypatch.setenv("XDG_CONFIG_HOME", "/config")
         path = HookConfig.get_global_path()
-        assert path == Path("/config/opencode/hooks.json")
+        assert path == Path("/config/forge/hooks.json")
 
     def test_get_project_path_with_root(self) -> None:
         """Project path is in project directory."""
         project_root = Path("/project")
         path = HookConfig.get_project_path(project_root)
-        assert path == Path("/project/.opencode/hooks.json")
+        assert path == Path("/project/.forge/hooks.json")
 
     def test_get_project_path_none(self) -> None:
         """Project path is None when no root."""
@@ -66,7 +66,7 @@ class TestHookConfigLoadGlobal:
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         """Reads hooks from config file."""
-        config_dir = tmp_path / "opencode"
+        config_dir = tmp_path / "forge"
         config_dir.mkdir()
         config_file = config_dir / "hooks.json"
         config_file.write_text(
@@ -91,7 +91,7 @@ class TestHookConfigLoadGlobal:
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         """Returns defaults for corrupted config file."""
-        config_dir = tmp_path / "opencode"
+        config_dir = tmp_path / "forge"
         config_dir.mkdir()
         config_file = config_dir / "hooks.json"
         config_file.write_text("not valid json {{{")
@@ -105,7 +105,7 @@ class TestHookConfigLoadGlobal:
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         """Returns defaults for invalid JSON structure."""
-        config_dir = tmp_path / "opencode"
+        config_dir = tmp_path / "forge"
         config_dir.mkdir()
         config_file = config_dir / "hooks.json"
         config_file.write_text(json.dumps({"wrong": "structure"}))
@@ -131,7 +131,7 @@ class TestHookConfigLoadProject:
 
     def test_load_project_reads_file(self, tmp_path: Path) -> None:
         """Reads hooks from project config file."""
-        config_dir = tmp_path / ".opencode"
+        config_dir = tmp_path / ".forge"
         config_dir.mkdir()
         config_file = config_dir / "hooks.json"
         config_file.write_text(
@@ -151,7 +151,7 @@ class TestHookConfigLoadProject:
 
     def test_load_project_handles_corrupted_file(self, tmp_path: Path) -> None:
         """Returns empty for corrupted config file."""
-        config_dir = tmp_path / ".opencode"
+        config_dir = tmp_path / ".forge"
         config_dir.mkdir()
         config_file = config_dir / "hooks.json"
         config_file.write_text("not valid json")
@@ -175,7 +175,7 @@ class TestHookConfigSaveGlobal:
         ]
         HookConfig.save_global(hooks)
 
-        config_file = tmp_path / "opencode" / "hooks.json"
+        config_file = tmp_path / "forge" / "hooks.json"
         assert config_file.exists()
 
         data = json.loads(config_file.read_text())
@@ -191,7 +191,7 @@ class TestHookConfigSaveGlobal:
         hooks = [Hook(event_pattern="test", command="echo")]
         HookConfig.save_global(hooks)
 
-        assert (config_dir / "opencode" / "hooks.json").exists()
+        assert (config_dir / "forge" / "hooks.json").exists()
 
     def test_save_global_roundtrip(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
@@ -224,18 +224,18 @@ class TestHookConfigSaveProject:
         hooks = [Hook(event_pattern="tool:*", command="echo project")]
         HookConfig.save_project(tmp_path, hooks)
 
-        config_file = tmp_path / ".opencode" / "hooks.json"
+        config_file = tmp_path / ".forge" / "hooks.json"
         assert config_file.exists()
 
         data = json.loads(config_file.read_text())
         assert len(data["hooks"]) == 1
 
     def test_save_project_creates_directory(self, tmp_path: Path) -> None:
-        """Creates .opencode directory if needed."""
+        """Creates .forge directory if needed."""
         hooks = [Hook(event_pattern="test", command="echo")]
         HookConfig.save_project(tmp_path, hooks)
 
-        assert (tmp_path / ".opencode").is_dir()
+        assert (tmp_path / ".forge").is_dir()
 
     def test_save_project_roundtrip(self, tmp_path: Path) -> None:
         """Saved project hooks can be loaded back."""
@@ -264,7 +264,7 @@ class TestHookConfigLoadAll:
         # Set up global config
         global_dir = tmp_path / "global"
         global_dir.mkdir()
-        global_config = global_dir / "opencode"
+        global_config = global_dir / "forge"
         global_config.mkdir()
         (global_config / "hooks.json").write_text(
             json.dumps({"hooks": [{"event": "session:*", "command": "echo global"}]})
@@ -273,7 +273,7 @@ class TestHookConfigLoadAll:
         # Set up project config
         project_dir = tmp_path / "project"
         project_dir.mkdir()
-        project_config = project_dir / ".opencode"
+        project_config = project_dir / ".forge"
         project_config.mkdir()
         (project_config / "hooks.json").write_text(
             json.dumps({"hooks": [{"event": "tool:*", "command": "echo project"}]})
@@ -293,7 +293,7 @@ class TestHookConfigLoadAll:
         """Loads only global hooks when no project."""
         global_dir = tmp_path / "global"
         global_dir.mkdir()
-        global_config = global_dir / "opencode"
+        global_config = global_dir / "forge"
         global_config.mkdir()
         (global_config / "hooks.json").write_text(
             json.dumps({"hooks": [{"event": "session:*", "command": "echo global"}]})

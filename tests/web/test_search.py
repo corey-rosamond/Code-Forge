@@ -4,11 +4,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.web.search.base import SearchError, SearchProvider
-from opencode.web.search.brave import BraveSearchProvider
-from opencode.web.search.duckduckgo import DuckDuckGoProvider
-from opencode.web.search.google import GoogleSearchProvider
-from opencode.web.types import SearchResponse, SearchResult
+from code_forge.web.search.base import SearchError, SearchProvider
+from code_forge.web.search.brave import BraveSearchProvider
+from code_forge.web.search.duckduckgo import DuckDuckGoProvider
+from code_forge.web.search.google import GoogleSearchProvider
+from code_forge.web.types import SearchResponse, SearchResult
 
 
 class TestSearchProvider:
@@ -141,7 +141,7 @@ class TestDuckDuckGoProvider:
 
         with patch.dict("sys.modules", {"duckduckgo_search": None}):
             with patch(
-                "opencode.web.search.duckduckgo.DuckDuckGoProvider.search",
+                "code_forge.web.search.duckduckgo.DuckDuckGoProvider.search",
                 side_effect=SearchError("duckduckgo-search package not installed"),
             ):
                 with pytest.raises(SearchError, match="not installed"):

@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.modes.base import (
+from code_forge.modes.base import (
     Mode,
     ModeConfig,
     ModeContext,

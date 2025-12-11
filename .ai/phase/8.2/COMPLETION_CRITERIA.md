@@ -262,16 +262,16 @@
 pytest tests/web/ -v
 
 # Run with coverage
-pytest tests/web/ --cov=src/opencode/web --cov-report=term-missing
+pytest tests/web/ --cov=src/forge/web --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/web/ --cov=src/opencode/web --cov-fail-under=90
+pytest tests/web/ --cov=src/forge/web --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/web/
+mypy src/forge/web/
 
 # Complexity check
-flake8 src/opencode/web/ --max-complexity=10
+flake8 src/forge/web/ --max-complexity=10
 ```
 
 ---

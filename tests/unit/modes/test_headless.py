@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.modes.base import ModeContext, ModeName
-from opencode.modes.headless import (
+from code_forge.modes.base import ModeContext, ModeName
+from code_forge.modes.headless import (
     HeadlessConfig,
     HeadlessMode,
     HeadlessResult,

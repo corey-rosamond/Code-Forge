@@ -7,7 +7,7 @@ import time
 
 import pytest
 
-from opencode.hooks.events import EventType, HookEvent
+from code_forge.hooks.events import EventType, HookEvent
 
 
 class TestEventType:
@@ -96,8 +96,8 @@ class TestHookEventToEnv:
             timestamp=1234567890.123,
         )
         env = event.to_env()
-        assert env["OPENCODE_EVENT"] == "tool:pre_execute"
-        assert env["OPENCODE_TIMESTAMP"] == "1234567890.123"
+        assert env["FORGE_EVENT"] == "tool:pre_execute"
+        assert env["FORGE_TIMESTAMP"] == "1234567890.123"
 
     def test_session_id_env_var(self) -> None:
         """Session ID is included when present."""
@@ -106,7 +106,7 @@ class TestHookEventToEnv:
             session_id="sess_abc123",
         )
         env = event.to_env()
-        assert env["OPENCODE_SESSION_ID"] == "sess_abc123"
+        assert env["FORGE_SESSION_ID"] == "sess_abc123"
 
     def test_tool_name_env_var(self) -> None:
         """Tool name is included when present."""
@@ -115,7 +115,7 @@ class TestHookEventToEnv:
             tool_name="bash",
         )
         env = event.to_env()
-        assert env["OPENCODE_TOOL_NAME"] == "bash"
+        assert env["FORGE_TOOL_NAME"] == "bash"
 
     def test_data_as_env_vars(self) -> None:
         """Data fields are converted to env vars."""
@@ -127,9 +127,9 @@ class TestHookEventToEnv:
             },
         )
         env = event.to_env()
-        assert "OPENCODE_TOOL_ARGS" in env
-        assert json.loads(env["OPENCODE_TOOL_ARGS"]) == {"command": "ls"}
-        assert env["OPENCODE_SIMPLE_VALUE"] == "hello"
+        assert "FORGE_TOOL_ARGS" in env
+        assert json.loads(env["FORGE_TOOL_ARGS"]) == {"command": "ls"}
+        assert env["FORGE_SIMPLE_VALUE"] == "hello"
 
     def test_sanitizes_null_bytes(self) -> None:
         """Null bytes are removed from values."""
@@ -138,8 +138,8 @@ class TestHookEventToEnv:
             data={"user_input": "hello\x00world"},
         )
         env = event.to_env()
-        assert "\x00" not in env["OPENCODE_USER_INPUT"]
-        assert env["OPENCODE_USER_INPUT"] == "helloworld"
+        assert "\x00" not in env["FORGE_USER_INPUT"]
+        assert env["FORGE_USER_INPUT"] == "helloworld"
 
     def test_sanitizes_newlines(self) -> None:
         """Newlines are replaced with spaces."""
@@ -148,8 +148,8 @@ class TestHookEventToEnv:
             data={"user_input": "hello\nworld"},
         )
         env = event.to_env()
-        assert "\n" not in env["OPENCODE_USER_INPUT"]
-        assert env["OPENCODE_USER_INPUT"] == "hello world"
+        assert "\n" not in env["FORGE_USER_INPUT"]
+        assert env["FORGE_USER_INPUT"] == "hello world"
 
     def test_truncates_long_values(self) -> None:
         """Long values are truncated."""
@@ -159,7 +159,7 @@ class TestHookEventToEnv:
             data={"user_input": long_value},
         )
         env = event.to_env()
-        assert len(env["OPENCODE_USER_INPUT"]) <= 8192 + 20  # truncation marker
+        assert len(env["FORGE_USER_INPUT"]) <= 8192 + 20  # truncation marker
 
     def test_sanitizes_key_names(self) -> None:
         """Key names are sanitized for env var use."""
@@ -168,8 +168,8 @@ class TestHookEventToEnv:
             data={"tool-args": "value", "with spaces": "other"},
         )
         env = event.to_env()
-        assert "OPENCODE_TOOL_ARGS" in env
-        assert "OPENCODE_WITH_SPACES" in env
+        assert "FORGE_TOOL_ARGS" in env
+        assert "FORGE_WITH_SPACES" in env
 
 
 class TestHookEventToJson:

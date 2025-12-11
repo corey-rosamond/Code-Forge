@@ -6,10 +6,10 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.github.context import GitHubContext
-from opencode.github.repository import GitHubRepository
-from opencode.github.issues import GitHubIssue, GitHubUser, GitHubLabel, GitHubMilestone
-from opencode.github.pull_requests import GitHubPullRequest
+from code_forge.github.context import GitHubContext
+from code_forge.github.repository import GitHubRepository
+from code_forge.github.issues import GitHubIssue, GitHubUser, GitHubLabel, GitHubMilestone
+from code_forge.github.pull_requests import GitHubPullRequest
 
 
 class TestGitHubContext:

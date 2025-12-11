@@ -2,8 +2,8 @@
 
 import pytest
 
-from opencode.llm.models import MessageRole, StreamChunk, TokenUsage
-from opencode.llm.streaming import StreamCollector
+from code_forge.llm.models import MessageRole, StreamChunk, TokenUsage
+from code_forge.llm.streaming import StreamCollector
 
 
 class TestStreamCollector:

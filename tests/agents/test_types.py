@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.agents.types import (
+from code_forge.agents.types import (
     EXPLORE_AGENT,
     PLAN_AGENT,
     CODE_REVIEW_AGENT,

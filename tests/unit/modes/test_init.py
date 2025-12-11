@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.modes import (
+from code_forge.modes import (
     HeadlessMode,
     Mode,
     ModeConfig,

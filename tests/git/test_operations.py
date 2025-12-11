@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.git.operations import GitOperations, UnsafeOperationError
-from opencode.git.repository import GitError, GitRepository
-from opencode.git.safety import SafetyCheck
+from code_forge.git.operations import GitOperations, UnsafeOperationError
+from code_forge.git.repository import GitError, GitRepository
+from code_forge.git.safety import SafetyCheck
 
 
 class TestGitOperations:

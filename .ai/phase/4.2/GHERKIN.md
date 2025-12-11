@@ -83,9 +83,9 @@ And the data should contain "error"
 ```gherkin
 Given a HookEvent for tool:pre_execute with tool "bash"
 When I call event.to_env()
-Then the result should contain "OPENCODE_EVENT" = "tool:pre_execute"
-And the result should contain "OPENCODE_TOOL_NAME" = "bash"
-And the result should contain "OPENCODE_TOOL_ARGS" as JSON
+Then the result should contain "FORGE_EVENT" = "tool:pre_execute"
+And the result should contain "FORGE_TOOL_NAME" = "bash"
+And the result should contain "FORGE_TOOL_ARGS" as JSON
 ```
 
 ### Scenario: Serialize event to JSON
@@ -238,7 +238,7 @@ And the result should_continue should be False
 
 ### Scenario: Hook receives environment variables
 ```gherkin
-Given a Hook with command "echo $OPENCODE_TOOL_NAME"
+Given a Hook with command "echo $FORGE_TOOL_NAME"
 And an event with tool_name "bash"
 When I execute the hook
 Then the stdout should contain "bash"
@@ -327,7 +327,7 @@ Then I should get 2 Hook objects
 
 ### Scenario: Load project hooks
 ```gherkin
-Given a project with .src/opencode/hooks.json containing 1 hook
+Given a project with .src/forge/hooks.json containing 1 hook
 When I call HookConfig.load_project(project_root)
 Then I should get 1 Hook object
 ```
@@ -455,10 +455,10 @@ And the tool should not execute
 
 ### Scenario: Tool args available as JSON
 ```gherkin
-Given a hook with command that uses $OPENCODE_TOOL_ARGS
+Given a hook with command that uses $FORGE_TOOL_ARGS
 And tool arguments {"file": "/tmp/test", "content": "hello"}
 When the hook executes
-Then OPENCODE_TOOL_ARGS should be valid JSON
+Then FORGE_TOOL_ARGS should be valid JSON
 And it should contain the file and content keys
 ```
 
@@ -466,16 +466,16 @@ And it should contain the file and content keys
 ```gherkin
 Given a hook with no explicit working_dir
 When the hook executes
-Then OPENCODE_WORKING_DIR should be set
+Then FORGE_WORKING_DIR should be set
 And the process should run in that directory
 ```
 
 ### Scenario: Session ID available
 ```gherkin
-Given a hook that uses $OPENCODE_SESSION_ID
+Given a hook that uses $FORGE_SESSION_ID
 And an event with session_id "sess_123"
 When the hook executes
-Then OPENCODE_SESSION_ID should be "sess_123"
+Then FORGE_SESSION_ID should be "sess_123"
 ```
 
 ---

@@ -6,8 +6,8 @@ import asyncio
 
 import pytest
 
-from opencode.tools.base import ExecutionContext
-from opencode.tools.execution import (
+from code_forge.tools.base import ExecutionContext
+from code_forge.tools.execution import (
     BashOutputTool,
     BashTool,
     KillShellTool,
@@ -15,7 +15,7 @@ from opencode.tools.execution import (
     ShellStatus,
     register_execution_tools,
 )
-from opencode.tools.registry import ToolRegistry
+from code_forge.tools.registry import ToolRegistry
 
 
 @pytest.fixture(autouse=True)

@@ -22,7 +22,7 @@ All tools extend `BaseTool` from Phase 2.1.
 ## Architecture
 
 ```
-src/opencode/tools/
+src/forge/tools/
 ├── __init__.py          # Updated exports
 ├── base.py              # From Phase 2.1
 ├── registry.py          # From Phase 2.1
@@ -42,17 +42,17 @@ src/opencode/tools/
 
 ### Step 1: Create File Tools Package
 
-Create the `src/opencode/tools/file/` directory structure and `__init__.py`:
+Create the `src/forge/tools/file/` directory structure and `__init__.py`:
 
 ```python
-# src/opencode/tools/file/__init__.py
-"""File operation tools for OpenCode."""
+# src/forge/tools/file/__init__.py
+"""File operation tools for Code-Forge."""
 
-from opencode.tools.file.read import ReadTool
-from opencode.tools.file.write import WriteTool
-from opencode.tools.file.edit import EditTool
-from opencode.tools.file.glob import GlobTool
-from opencode.tools.file.grep import GrepTool
+from forge.tools.file.read import ReadTool
+from forge.tools.file.write import WriteTool
+from forge.tools.file.edit import EditTool
+from forge.tools.file.glob import GlobTool
+from forge.tools.file.grep import GrepTool
 
 __all__ = [
     "ReadTool",
@@ -65,7 +65,7 @@ __all__ = [
 
 def register_file_tools(registry: "ToolRegistry") -> None:
     """Register all file tools with the registry."""
-    from opencode.tools.registry import ToolRegistry
+    from forge.tools.registry import ToolRegistry
 
     registry.register(ReadTool())
     registry.register(WriteTool())
@@ -77,7 +77,7 @@ def register_file_tools(registry: "ToolRegistry") -> None:
 ### Step 2: Implement ReadTool
 
 ```python
-# src/opencode/tools/file/read.py
+# src/forge/tools/file/read.py
 """Read tool implementation."""
 
 from __future__ import annotations
@@ -87,7 +87,7 @@ import mimetypes
 from pathlib import Path
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -364,7 +364,7 @@ Usage:
 ### Step 3: Implement WriteTool
 
 ```python
-# src/opencode/tools/file/write.py
+# src/forge/tools/file/write.py
 """Write tool implementation."""
 
 from __future__ import annotations
@@ -373,7 +373,7 @@ import os
 from pathlib import Path
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -484,7 +484,7 @@ Usage:
 ### Step 4: Implement EditTool
 
 ```python
-# src/opencode/tools/file/edit.py
+# src/forge/tools/file/edit.py
 """Edit tool implementation."""
 
 from __future__ import annotations
@@ -492,7 +492,7 @@ from __future__ import annotations
 import os
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -655,7 +655,7 @@ Usage:
 ### Step 5: Implement GlobTool
 
 ```python
-# src/opencode/tools/file/glob.py
+# src/forge/tools/file/glob.py
 """Glob tool implementation."""
 
 from __future__ import annotations
@@ -665,7 +665,7 @@ import glob as glob_module
 from pathlib import Path
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -823,7 +823,7 @@ Usage:
 ### Step 6: Implement GrepTool
 
 ```python
-# src/opencode/tools/file/grep.py
+# src/forge/tools/file/grep.py
 """Grep tool implementation."""
 
 from __future__ import annotations
@@ -833,7 +833,7 @@ import re
 from pathlib import Path
 from typing import Any, List, Optional
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -1173,13 +1173,13 @@ Usage:
 
 ### Step 7: Register File Tools
 
-Update `src/opencode/tools/__init__.py` to include file tools registration:
+Update `src/forge/tools/__init__.py` to include file tools registration:
 
 ```python
-# src/opencode/tools/__init__.py
-"""OpenCode tool system."""
+# src/forge/tools/__init__.py
+"""Code-Forge tool system."""
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -1187,11 +1187,11 @@ from opencode.tools.base import (
     ToolCategory,
     ToolExecution,
 )
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.executor import ToolExecutor
+from forge.tools.registry import ToolRegistry
+from forge.tools.executor import ToolExecutor
 
 # File tools
-from opencode.tools.file import (
+from forge.tools.file import (
     ReadTool,
     WriteTool,
     EditTool,
@@ -1307,10 +1307,10 @@ pypdf = "^4.0"  # For PDF reading
 
 ### Path Traversal Prevention Implementation
 
-Add this utility function to `src/opencode/tools/file/utils.py`:
+Add this utility function to `src/forge/tools/file/utils.py`:
 
 ```python
-# src/opencode/tools/file/utils.py
+# src/forge/tools/file/utils.py
 """Security utilities for file operations."""
 
 import os
@@ -1388,7 +1388,7 @@ Update ReadTool to use the validator (add after "Validate path is absolute"):
 # In ReadTool._execute(), after checking if path is absolute:
 
 # Security validation
-from opencode.tools.file.utils import validate_path_security
+from forge.tools.file.utils import validate_path_security
 is_valid, error = validate_path_security(file_path)
 if not is_valid:
     return ToolResult.fail(error)

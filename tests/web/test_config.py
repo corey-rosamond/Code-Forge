@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from opencode.web.config import (
+from code_forge.web.config import (
     CacheConfig,
     FetchConfig,
     SearchConfig,

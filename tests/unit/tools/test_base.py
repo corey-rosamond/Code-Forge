@@ -1,4 +1,4 @@
-"""Tests for opencode.tools.base module."""
+"""Tests for code_forge.tools.base module."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 
 import pytest
 
-from opencode.tools.base import (
+from code_forge.tools.base import (
     BaseTool,
     ExecutionContext,
     ToolCategory,

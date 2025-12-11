@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document describes the high-level architecture of OpenCode.
+This document describes the high-level architecture of Code-Forge.
 
 ## System Architecture
 

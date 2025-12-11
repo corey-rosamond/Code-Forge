@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 7.1 implements the subagents system for OpenCode, enabling the main agent to spawn specialized child agents for complex, multi-step tasks. Subagents run autonomously with their own context and tools, returning results to the parent agent upon completion.
+Phase 7.1 implements the subagents system for Code-Forge, enabling the main agent to spawn specialized child agents for complex, multi-step tasks. Subagents run autonomously with their own context and tools, returning results to the parent agent upon completion.
 
 ---
 
@@ -199,7 +199,7 @@ Phase 7.1 implements the subagents system for OpenCode, enabling the main agent 
 ### Package Structure
 
 ```
-src/opencode/agents/
+src/forge/agents/
 ├── __init__.py           # Package exports
 ├── base.py               # Base agent classes
 ├── types.py              # Agent type definitions

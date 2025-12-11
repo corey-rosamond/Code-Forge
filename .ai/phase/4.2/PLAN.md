@@ -20,7 +20,7 @@
 
 ## Step 1: Event Types and Data
 
-Create `src/opencode/hooks/events.py`:
+Create `src/forge/hooks/events.py`:
 
 ```python
 """Hook event types and data structures."""
@@ -129,21 +129,21 @@ class HookEvent:
             Dictionary of environment variable name -> value
         """
         env = {
-            "OPENCODE_EVENT": self._sanitize_env_value(self.type.value),
-            "OPENCODE_TIMESTAMP": str(self.timestamp),
+            "FORGE_EVENT": self._sanitize_env_value(self.type.value),
+            "FORGE_TIMESTAMP": str(self.timestamp),
         }
 
         if self.session_id:
-            env["OPENCODE_SESSION_ID"] = self._sanitize_env_value(self.session_id)
+            env["FORGE_SESSION_ID"] = self._sanitize_env_value(self.session_id)
 
         if self.tool_name:
-            env["OPENCODE_TOOL_NAME"] = self._sanitize_env_value(self.tool_name)
+            env["FORGE_TOOL_NAME"] = self._sanitize_env_value(self.tool_name)
 
         # Add specific data fields as environment variables
         for key, value in self.data.items():
             # Sanitize key to valid env var name (alphanumeric + underscore)
             safe_key = ''.join(c if c.isalnum() or c == '_' else '_' for c in key.upper())
-            env_key = f"OPENCODE_{safe_key}"
+            env_key = f"FORGE_{safe_key}"
 
             if isinstance(value, (dict, list)):
                 env[env_key] = self._sanitize_env_value(json.dumps(value))
@@ -311,7 +311,7 @@ class HookEvent:
 
 ## Step 2: Hook Definition and Pattern Matching
 
-Create `src/opencode/hooks/registry.py`:
+Create `src/forge/hooks/registry.py`:
 
 ```python
 """Hook registration and pattern matching."""
@@ -323,7 +323,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-from opencode.hooks.events import HookEvent, EventType
+from forge.hooks.events import HookEvent, EventType
 
 
 @dataclass
@@ -572,7 +572,7 @@ class HookRegistry:
 
 ## Step 3: Hook Executor
 
-Create `src/opencode/hooks/executor.py`:
+Create `src/forge/hooks/executor.py`:
 
 ```python
 """Hook execution engine."""
@@ -587,8 +587,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from opencode.hooks.events import HookEvent
-from opencode.hooks.registry import Hook, HookRegistry
+from forge.hooks.events import HookEvent
+from forge.hooks.registry import Hook, HookRegistry
 
 if TYPE_CHECKING:
     pass
@@ -772,7 +772,7 @@ class HookExecutor:
 
         # Add working directory
         work_dir = hook.working_dir or str(self.working_dir)
-        env["OPENCODE_WORKING_DIR"] = work_dir
+        env["FORGE_WORKING_DIR"] = work_dir
 
         # Add hook-specific env vars
         if hook.env:
@@ -887,7 +887,7 @@ async def fire_event(
 
 ## Step 4: Configuration
 
-Create `src/opencode/hooks/config.py`:
+Create `src/forge/hooks/config.py`:
 
 ```python
 """Hook configuration management."""
@@ -899,7 +899,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from opencode.hooks.registry import Hook
+from forge.hooks.registry import Hook
 
 if TYPE_CHECKING:
     pass
@@ -915,12 +915,12 @@ class HookConfig:
     """Manages hook configuration files."""
 
     GLOBAL_FILE = "hooks.json"
-    PROJECT_FILE = ".src/opencode/hooks.json"
+    PROJECT_FILE = ".src/forge/hooks.json"
 
     @classmethod
     def get_global_path(cls) -> Path:
         """Get path to global hooks file."""
-        from opencode.config import Config
+        from forge.config import Config
 
         config_dir = Config.get_config_dir()
         return config_dir / cls.GLOBAL_FILE
@@ -1035,12 +1035,12 @@ class HookConfig:
 HOOK_TEMPLATES = {
     "log_all": Hook(
         event_pattern="*",
-        command='echo "[$(date)] $OPENCODE_EVENT" >> ~/.src/opencode/events.log',
+        command='echo "[$(date)] $FORGE_EVENT" >> ~/.src/forge/events.log',
         description="Log all events to file",
     ),
     "notify_session_start": Hook(
         event_pattern="session:start",
-        command="notify-send 'OpenCode' 'Session started'",
+        command="notify-send 'Code-Forge' 'Session started'",
         description="Desktop notification on session start",
     ),
     "git_auto_commit": Hook(
@@ -1056,7 +1056,7 @@ HOOK_TEMPLATES = {
     "block_sudo": Hook(
         event_pattern="tool:pre_execute:bash",
         command=(
-            'if echo "$OPENCODE_TOOL_ARGS" | grep -q "sudo"; then '
+            'if echo "$FORGE_TOOL_ARGS" | grep -q "sudo"; then '
             'echo "sudo blocked by hook"; exit 1; fi'
         ),
         description="Block sudo commands in bash",
@@ -1068,19 +1068,19 @@ HOOK_TEMPLATES = {
 
 ## Step 5: Package Exports
 
-Create `src/opencode/hooks/__init__.py`:
+Create `src/forge/hooks/__init__.py`:
 
 ```python
 """
-Hooks system for OpenCode.
+Hooks system for Code-Forge.
 
 This package provides a hooks mechanism that allows users to
 execute custom shell commands in response to various events
-in the OpenCode lifecycle.
+in the Code-Forge lifecycle.
 
 Example:
     ```python
-    from opencode.hooks import (
+    from forge.hooks import (
         HookRegistry,
         HookExecutor,
         HookEvent,
@@ -1092,7 +1092,7 @@ Example:
     registry = HookRegistry.get_instance()
     registry.register(Hook(
         event_pattern="tool:pre_execute",
-        command="echo 'Executing tool: $OPENCODE_TOOL_NAME'",
+        command="echo 'Executing tool: $FORGE_TOOL_NAME'",
     ))
 
     # Fire an event
@@ -1106,21 +1106,21 @@ Example:
     ```
 """
 
-from opencode.hooks.events import (
+from forge.hooks.events import (
     EventType,
     HookEvent,
 )
-from opencode.hooks.registry import (
+from forge.hooks.registry import (
     Hook,
     HookRegistry,
 )
-from opencode.hooks.executor import (
+from forge.hooks.executor import (
     HookResult,
     HookExecutor,
     HookBlockedError,
     fire_event,
 )
-from opencode.hooks.config import (
+from forge.hooks.config import (
     HookConfig,
     HOOK_TEMPLATES,
 )
@@ -1147,12 +1147,12 @@ __all__ = [
 
 ## Step 6: Integration with Tool Executor
 
-Update `src/opencode/tools/executor.py` to fire hook events:
+Update `src/forge/tools/executor.py` to fire hook events:
 
 ```python
 # Add to ToolExecutor.execute()
 
-from opencode.hooks import HookEvent, fire_event, HookBlockedError
+from forge.hooks import HookEvent, fire_event, HookBlockedError
 
 async def execute(
     self,

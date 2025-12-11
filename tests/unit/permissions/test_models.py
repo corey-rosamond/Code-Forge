@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.permissions.models import (
+from code_forge.permissions.models import (
     PermissionLevel,
     PermissionCategory,
     PermissionRule,

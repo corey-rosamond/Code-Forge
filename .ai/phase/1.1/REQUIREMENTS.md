@@ -16,10 +16,10 @@ This phase establishes the foundational project structure, dependencies, and cor
 ## Functional Requirements
 
 ### FR-1.1.1: Project Structure
-- Create Python package `OpenCode` with proper module structure
+- Create Python package `Code-Forge` with proper module structure
 - Establish clear separation: `cli/`, `core/`, `tools/`, `providers/`, `utils/`
 - Create `__init__.py` files with appropriate exports
-- Set up `__main__.py` for `python -m OpenCode` execution
+- Set up `__main__.py` for `python -m Code-Forge` execution
 
 ### FR-1.1.2: Dependency Management
 - Use `pyproject.toml` with setuptools for dependency management
@@ -52,12 +52,12 @@ This phase establishes the foundational project structure, dependencies, and cor
 - Create `get_logger()` for consistent logger creation
 
 ### FR-1.1.5: Exception Hierarchy
-- Define base `OpenCodeError` exception
+- Define base `Code-ForgeError` exception
 - Create specific exceptions: `ConfigError`, `ToolError`, `ProviderError`, `PermissionDeniedError`
 - Implement exception context and chaining
 
 ### FR-1.1.6: Entry Point
-- Create CLI entry point `opencode` command
+- Create CLI entry point `forge` command
 - Implement `--version` flag
 - Implement `--help` flag (basic)
 - Return proper exit codes (0 success, 1 error)
@@ -91,7 +91,7 @@ This phase establishes the foundational project structure, dependencies, and cor
 
 ### Directory Structure
 ```
-src/opencode/                    # Project root (also the package)
+src/forge/                    # Project root (also the package)
 ├── __init__.py              # Package init, version
 ├── __main__.py              # Entry point for python -m
 ├── pyproject.toml           # Project configuration
@@ -141,7 +141,7 @@ src/opencode/                    # Project root (also the package)
 ### pyproject.toml Structure
 ```toml
 [project]
-name = "opencode"
+name = "forge"
 version = "0.1.0"
 description = "AI-powered CLI development assistant"
 requires-python = ">=3.10,<4.0"
@@ -167,7 +167,7 @@ dev = [
 ]
 
 [project.scripts]
-opencode = "OpenCode.cli.main:main"
+forge = "Code-Forge.cli.main:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -194,8 +194,8 @@ testpaths = ["tests"]
 
 - [ ] `pyproject.toml` exists with all dependencies defined
 - [ ] `python -m venv .venv && . .venv/bin/activate && pip install -e ".[dev]"` completes without errors
-- [ ] `opencode --version` outputs version number
-- [ ] `opencode --help` displays help text
+- [ ] `forge --version` outputs version number
+- [ ] `forge --help` displays help text
 - [ ] All abstract base classes defined in `core/interfaces.py`
 - [ ] All value objects defined in `core/types.py`
 - [ ] Exception hierarchy in `core/errors.py`
@@ -216,11 +216,11 @@ python -m venv .venv
 pip install -e ".[dev]"
 
 # Run application
-opencode --version
-opencode --help
+forge --version
+forge --help
 
 # Or run as module (works without installing)
-PYTHONPATH=. python -m OpenCode --version
+PYTHONPATH=. python -m Code-Forge --version
 
 # Run tests
 pytest --cov=. --cov-report=term-missing

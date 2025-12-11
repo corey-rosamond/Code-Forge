@@ -7,7 +7,7 @@ import time
 
 import pytest
 
-from opencode.tools.execution.shell_manager import (
+from code_forge.tools.execution.shell_manager import (
     ShellManager,
     ShellProcess,
     ShellStatus,

@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import aiohttp
 import pytest
 
-from opencode.web.fetch.fetcher import FetchError, URLFetcher
-from opencode.web.fetch.parser import HTMLParser
-from opencode.web.types import FetchOptions
+from code_forge.web.fetch.fetcher import FetchError, URLFetcher
+from code_forge.web.fetch.parser import HTMLParser
+from code_forge.web.types import FetchOptions
 
 
 class TestURLFetcher:

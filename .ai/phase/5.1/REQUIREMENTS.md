@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 5.1 implements session management for OpenCode, enabling conversation persistence, session resume, and conversation history tracking. Sessions are the fundamental unit of interaction, containing messages, tool calls, and metadata that can be saved and restored.
+Phase 5.1 implements session management for Code-Forge, enabling conversation persistence, session resume, and conversation history tracking. Sessions are the fundamental unit of interaction, containing messages, tool calls, and metadata that can be saved and restored.
 
 ---
 
@@ -47,7 +47,7 @@ Phase 5.1 implements session management for OpenCode, enabling conversation pers
 
 **FR-1.2:** Session contains messages
 - List of conversation messages
-- Messages are OpenCode Message objects
+- Messages are Code-Forge Message objects
 - Preserve message ordering
 - Track message timestamps
 
@@ -71,9 +71,9 @@ Phase 5.1 implements session management for OpenCode, enabling conversation pers
 - Human-readable format
 
 **FR-2.2:** Storage location
-- Default: `~/.local/share/src/opencode/sessions/`
+- Default: `~/.local/share/src/forge/sessions/`
 - Configurable via settings
-- Project-local option: `.src/opencode/sessions/`
+- Project-local option: `.src/forge/sessions/`
 
 **FR-2.3:** File naming
 - `{session_id}.json` format
@@ -186,7 +186,7 @@ Phase 5.1 implements session management for OpenCode, enabling conversation pers
 ### Package Structure
 
 ```
-src/opencode/sessions/
+src/forge/sessions/
 ├── __init__.py           # Package exports
 ├── models.py             # Session data models
 ├── storage.py            # Persistence layer

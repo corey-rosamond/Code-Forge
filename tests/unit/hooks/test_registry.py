@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.hooks.events import EventType, HookEvent
-from opencode.hooks.registry import Hook, HookRegistry
+from code_forge.hooks.events import EventType, HookEvent
+from code_forge.hooks.registry import Hook, HookRegistry
 
 
 class TestHook:

@@ -54,8 +54,8 @@ from enum import Enum
 import asyncio
 from datetime import datetime
 
-from opencode.core.errors import ToolError, OpenCodeError
-from opencode.core.logging import get_logger
+from forge.core.errors import ToolError, Code-ForgeError
+from forge.core.logging import get_logger
 
 logger = get_logger("tools")
 
@@ -262,7 +262,7 @@ class BaseTool(ABC):
             )
         except asyncio.CancelledError:
             result = ToolResult.fail("Tool execution cancelled")
-        except OpenCodeError as e:
+        except Code-ForgeError as e:
             result = ToolResult.fail(str(e))
         except Exception as e:
             logger.exception(f"Unexpected error in {self.name}")
@@ -617,10 +617,10 @@ class ToolExecutor:
 
 ## Implementation Order
 
-1. Create `src/opencode/tools/__init__.py` with exports
-2. Create `src/opencode/tools/base.py` with BaseTool and models
-3. Create `src/opencode/tools/registry.py` with ToolRegistry
-4. Create `src/opencode/tools/executor.py` with ToolExecutor
+1. Create `src/forge/tools/__init__.py` with exports
+2. Create `src/forge/tools/base.py` with BaseTool and models
+3. Create `src/forge/tools/registry.py` with ToolRegistry
+4. Create `src/forge/tools/executor.py` with ToolExecutor
 5. Create example tool for testing
 6. Write comprehensive tests
 7. Verify schema generation
@@ -630,7 +630,7 @@ class ToolExecutor:
 ## File Structure
 
 ```
-src/opencode/tools/
+src/forge/tools/
 ├── __init__.py       # Exports: BaseTool, ToolRegistry, ToolExecutor, etc.
 ├── base.py           # BaseTool, ToolParameter, ToolResult, ExecutionContext
 ├── registry.py       # ToolRegistry singleton

@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock, MagicMock, PropertyMock
 
 import pytest
 
-from opencode.commands.executor import CommandContext
-from opencode.commands.parser import ParsedCommand
-from opencode.commands.registry import CommandRegistry
+from code_forge.commands.executor import CommandContext
+from code_forge.commands.parser import ParsedCommand
+from code_forge.commands.registry import CommandRegistry
 
 
 @pytest.fixture(autouse=True)
@@ -25,8 +25,8 @@ class TestHelpCommand:
     @pytest.mark.asyncio
     async def test_help_general(self) -> None:
         """Test /help shows all commands."""
-        from opencode.commands.builtin.help_commands import HelpCommand
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.builtin.help_commands import HelpCommand
+        from code_forge.commands.executor import register_builtin_commands
 
         register_builtin_commands()
 
@@ -36,14 +36,14 @@ class TestHelpCommand:
 
         result = await cmd.execute(parsed, context)
         assert result.success is True
-        assert "OpenCode Commands" in result.output
+        assert "Code-Forge Commands" in result.output
         assert "help" in result.output.lower()
 
     @pytest.mark.asyncio
     async def test_help_specific_command(self) -> None:
         """Test /help <command> shows command help."""
-        from opencode.commands.builtin.help_commands import HelpCommand
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.builtin.help_commands import HelpCommand
+        from code_forge.commands.executor import register_builtin_commands
 
         register_builtin_commands()
 
@@ -58,7 +58,7 @@ class TestHelpCommand:
     @pytest.mark.asyncio
     async def test_help_unknown_command(self) -> None:
         """Test /help <unknown> shows error."""
-        from opencode.commands.builtin.help_commands import HelpCommand
+        from code_forge.commands.builtin.help_commands import HelpCommand
 
         cmd = HelpCommand()
         parsed = ParsedCommand(name="help", args=["nonexistent"])
@@ -75,8 +75,8 @@ class TestCommandsCommand:
     @pytest.mark.asyncio
     async def test_commands_list_all(self) -> None:
         """Test /commands lists all commands."""
-        from opencode.commands.builtin.help_commands import CommandsCommand
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.builtin.help_commands import CommandsCommand
+        from code_forge.commands.executor import register_builtin_commands
 
         register_builtin_commands()
 
@@ -91,8 +91,8 @@ class TestCommandsCommand:
     @pytest.mark.asyncio
     async def test_commands_filter_category(self) -> None:
         """Test /commands --category filters."""
-        from opencode.commands.builtin.help_commands import CommandsCommand
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.builtin.help_commands import CommandsCommand
+        from code_forge.commands.executor import register_builtin_commands
 
         register_builtin_commands()
 
@@ -107,7 +107,7 @@ class TestCommandsCommand:
     @pytest.mark.asyncio
     async def test_commands_invalid_category(self) -> None:
         """Test /commands with invalid category."""
-        from opencode.commands.builtin.help_commands import CommandsCommand
+        from code_forge.commands.builtin.help_commands import CommandsCommand
 
         cmd = CommandsCommand()
         parsed = ParsedCommand(name="commands", kwargs={"category": "invalid"})
@@ -124,7 +124,7 @@ class TestSessionCommand:
     @pytest.mark.asyncio
     async def test_session_no_manager(self) -> None:
         """Test /session without session manager."""
-        from opencode.commands.builtin.session_commands import SessionCommand
+        from code_forge.commands.builtin.session_commands import SessionCommand
 
         cmd = SessionCommand()
         parsed = ParsedCommand(name="session", args=[])
@@ -137,7 +137,7 @@ class TestSessionCommand:
     @pytest.mark.asyncio
     async def test_session_no_active(self) -> None:
         """Test /session with no active session."""
-        from opencode.commands.builtin.session_commands import SessionCommand
+        from code_forge.commands.builtin.session_commands import SessionCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = False
@@ -153,7 +153,7 @@ class TestSessionCommand:
     @pytest.mark.asyncio
     async def test_session_shows_info(self) -> None:
         """Test /session shows current session info."""
-        from opencode.commands.builtin.session_commands import SessionCommand
+        from code_forge.commands.builtin.session_commands import SessionCommand
 
         mock_session = MagicMock()
         mock_session.id = "test-session-123"
@@ -180,7 +180,7 @@ class TestSessionCommand:
     @pytest.mark.asyncio
     async def test_session_list(self) -> None:
         """Test /session list."""
-        from opencode.commands.builtin.session_commands import SessionListCommand
+        from code_forge.commands.builtin.session_commands import SessionListCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"
@@ -203,7 +203,7 @@ class TestSessionCommand:
     @pytest.mark.asyncio
     async def test_session_new(self) -> None:
         """Test /session new."""
-        from opencode.commands.builtin.session_commands import SessionNewCommand
+        from code_forge.commands.builtin.session_commands import SessionNewCommand
 
         mock_session = MagicMock()
         mock_session.id = "new-session-id"
@@ -228,7 +228,7 @@ class TestControlCommands:
     @pytest.mark.asyncio
     async def test_clear(self) -> None:
         """Test /clear command."""
-        from opencode.commands.builtin.control_commands import ClearCommand
+        from code_forge.commands.builtin.control_commands import ClearCommand
 
         output_calls: list[str] = []
         cmd = ClearCommand()
@@ -244,7 +244,7 @@ class TestControlCommands:
     @pytest.mark.asyncio
     async def test_exit(self) -> None:
         """Test /exit command."""
-        from opencode.commands.builtin.control_commands import ExitCommand
+        from code_forge.commands.builtin.control_commands import ExitCommand
 
         cmd = ExitCommand()
         parsed = ParsedCommand(name="exit", args=[])
@@ -258,7 +258,7 @@ class TestControlCommands:
     @pytest.mark.asyncio
     async def test_exit_saves_session(self) -> None:
         """Test /exit saves active session."""
-        from opencode.commands.builtin.control_commands import ExitCommand
+        from code_forge.commands.builtin.control_commands import ExitCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = True
@@ -274,7 +274,7 @@ class TestControlCommands:
     @pytest.mark.asyncio
     async def test_reset(self) -> None:
         """Test /reset command."""
-        from opencode.commands.builtin.control_commands import ResetCommand
+        from code_forge.commands.builtin.control_commands import ResetCommand
 
         mock_session = MagicMock()
         mock_session.id = "new-id"
@@ -301,7 +301,7 @@ class TestControlCommands:
     @pytest.mark.asyncio
     async def test_stop(self) -> None:
         """Test /stop command."""
-        from opencode.commands.builtin.control_commands import StopCommand
+        from code_forge.commands.builtin.control_commands import StopCommand
 
         cmd = StopCommand()
         parsed = ParsedCommand(name="stop", args=[])
@@ -318,7 +318,7 @@ class TestContextCommands:
     @pytest.mark.asyncio
     async def test_context_no_manager(self) -> None:
         """Test /context without context manager."""
-        from opencode.commands.builtin.context_commands import ContextCommand
+        from code_forge.commands.builtin.context_commands import ContextCommand
 
         cmd = ContextCommand()
         parsed = ParsedCommand(name="context", args=[])
@@ -331,7 +331,7 @@ class TestContextCommands:
     @pytest.mark.asyncio
     async def test_context_shows_status(self) -> None:
         """Test /context shows status."""
-        from opencode.commands.builtin.context_commands import ContextCommand
+        from code_forge.commands.builtin.context_commands import ContextCommand
 
         mock_manager = MagicMock()
         mock_manager.get_stats.return_value = {
@@ -354,7 +354,7 @@ class TestContextCommands:
     @pytest.mark.asyncio
     async def test_context_reset(self) -> None:
         """Test /context reset."""
-        from opencode.commands.builtin.context_commands import ContextResetCommand
+        from code_forge.commands.builtin.context_commands import ContextResetCommand
 
         mock_manager = MagicMock()
 
@@ -369,8 +369,8 @@ class TestContextCommands:
     @pytest.mark.asyncio
     async def test_context_mode_valid(self) -> None:
         """Test /context mode with valid mode."""
-        from opencode.commands.builtin.context_commands import ContextModeCommand
-        from opencode.context.manager import TruncationMode
+        from code_forge.commands.builtin.context_commands import ContextModeCommand
+        from code_forge.context.manager import TruncationMode
 
         mock_manager = MagicMock()
 
@@ -386,7 +386,7 @@ class TestContextCommands:
     @pytest.mark.asyncio
     async def test_context_mode_invalid(self) -> None:
         """Test /context mode with invalid mode."""
-        from opencode.commands.builtin.context_commands import ContextModeCommand
+        from code_forge.commands.builtin.context_commands import ContextModeCommand
 
         mock_manager = MagicMock()
 
@@ -405,7 +405,7 @@ class TestConfigCommands:
     @pytest.mark.asyncio
     async def test_config_no_config(self) -> None:
         """Test /config without config."""
-        from opencode.commands.builtin.config_commands import ConfigCommand
+        from code_forge.commands.builtin.config_commands import ConfigCommand
 
         cmd = ConfigCommand()
         parsed = ParsedCommand(name="config", args=[])
@@ -418,7 +418,7 @@ class TestConfigCommands:
     @pytest.mark.asyncio
     async def test_model_show(self) -> None:
         """Test /model shows current model."""
-        from opencode.commands.builtin.config_commands import ModelCommand
+        from code_forge.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
         mock_llm = MagicMock()
@@ -435,7 +435,7 @@ class TestConfigCommands:
     @pytest.mark.asyncio
     async def test_model_set(self) -> None:
         """Test /model <name> sets model."""
-        from opencode.commands.builtin.config_commands import ModelCommand
+        from code_forge.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
         mock_llm = MagicMock()
@@ -456,7 +456,7 @@ class TestDebugCommands:
     @pytest.mark.asyncio
     async def test_debug_toggle_on(self) -> None:
         """Test /debug toggles debug mode on."""
-        from opencode.commands.builtin.debug_commands import DebugCommand
+        from code_forge.commands.builtin.debug_commands import DebugCommand
 
         mock_repl = MagicMock()
         mock_repl.debug = False
@@ -473,7 +473,7 @@ class TestDebugCommands:
     @pytest.mark.asyncio
     async def test_debug_toggle_off(self) -> None:
         """Test /debug toggles debug mode off."""
-        from opencode.commands.builtin.debug_commands import DebugCommand
+        from code_forge.commands.builtin.debug_commands import DebugCommand
 
         mock_repl = MagicMock()
         mock_repl.debug = True
@@ -489,7 +489,7 @@ class TestDebugCommands:
     @pytest.mark.asyncio
     async def test_tokens(self) -> None:
         """Test /tokens shows token usage."""
-        from opencode.commands.builtin.debug_commands import TokensCommand
+        from code_forge.commands.builtin.debug_commands import TokensCommand
 
         mock_session = MagicMock()
         mock_session.total_prompt_tokens = 1000
@@ -511,7 +511,7 @@ class TestDebugCommands:
     @pytest.mark.asyncio
     async def test_history_no_session(self) -> None:
         """Test /history with no active session."""
-        from opencode.commands.builtin.debug_commands import HistoryCommand
+        from code_forge.commands.builtin.debug_commands import HistoryCommand
 
         cmd = HistoryCommand()
         parsed = ParsedCommand(name="history", args=[])
@@ -528,7 +528,7 @@ class TestConfigGetCommand:
     @pytest.mark.asyncio
     async def test_config_get_no_key(self) -> None:
         """Test /config get without key."""
-        from opencode.commands.builtin.config_commands import ConfigGetCommand
+        from code_forge.commands.builtin.config_commands import ConfigGetCommand
 
         mock_config = MagicMock()
         cmd = ConfigGetCommand()
@@ -542,7 +542,7 @@ class TestConfigGetCommand:
     @pytest.mark.asyncio
     async def test_config_get_direct_attribute(self) -> None:
         """Test /config get for direct attribute."""
-        from opencode.commands.builtin.config_commands import ConfigGetCommand
+        from code_forge.commands.builtin.config_commands import ConfigGetCommand
 
         mock_config = MagicMock()
         mock_config.some_key = "some_value"
@@ -558,7 +558,7 @@ class TestConfigGetCommand:
     @pytest.mark.asyncio
     async def test_config_get_nested_attribute(self) -> None:
         """Test /config get for nested attribute like llm.model."""
-        from opencode.commands.builtin.config_commands import ConfigGetCommand
+        from code_forge.commands.builtin.config_commands import ConfigGetCommand
 
         mock_llm = MagicMock()
         mock_llm.model = "gpt-4"
@@ -576,7 +576,7 @@ class TestConfigGetCommand:
     @pytest.mark.asyncio
     async def test_config_get_not_found(self) -> None:
         """Test /config get for non-existent key."""
-        from opencode.commands.builtin.config_commands import ConfigGetCommand
+        from code_forge.commands.builtin.config_commands import ConfigGetCommand
 
         mock_config = MagicMock(spec=[])  # Empty spec means no attributes
 
@@ -594,7 +594,7 @@ class TestConfigSetCommand:
     @pytest.mark.asyncio
     async def test_config_set_no_key(self) -> None:
         """Test /config set without key."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         mock_config = MagicMock()
         cmd = ConfigSetCommand()
@@ -608,7 +608,7 @@ class TestConfigSetCommand:
     @pytest.mark.asyncio
     async def test_config_set_no_value(self) -> None:
         """Test /config set without value."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         mock_config = MagicMock()
         cmd = ConfigSetCommand()
@@ -622,7 +622,7 @@ class TestConfigSetCommand:
     @pytest.mark.asyncio
     async def test_config_set_string(self) -> None:
         """Test /config set with string value."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         mock_config = MagicMock()
         mock_config.key = "old_value"
@@ -638,7 +638,7 @@ class TestConfigSetCommand:
     @pytest.mark.asyncio
     async def test_config_set_bool_true(self) -> None:
         """Test /config set with boolean true value."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         mock_config = MagicMock()
         mock_config.flag = False
@@ -653,7 +653,7 @@ class TestConfigSetCommand:
     @pytest.mark.asyncio
     async def test_config_set_int(self) -> None:
         """Test /config set with integer value."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         mock_config = MagicMock()
         mock_config.count = 10
@@ -668,7 +668,7 @@ class TestConfigSetCommand:
     @pytest.mark.asyncio
     async def test_config_set_float(self) -> None:
         """Test /config set with float value."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         mock_config = MagicMock()
         mock_config.temperature = 0.7
@@ -687,7 +687,7 @@ class TestConfigDefaultCommand:
     @pytest.mark.asyncio
     async def test_config_shows_current(self) -> None:
         """Test /config shows current config."""
-        from opencode.commands.builtin.config_commands import ConfigCommand
+        from code_forge.commands.builtin.config_commands import ConfigCommand
 
         mock_llm = MagicMock()
         mock_llm.model = "gpt-4"
@@ -713,7 +713,7 @@ class TestContextCompactCommand:
     @pytest.mark.asyncio
     async def test_context_compact_saves_tokens(self) -> None:
         """Test /context compact saves tokens."""
-        from opencode.commands.builtin.context_commands import ContextCompactCommand
+        from code_forge.commands.builtin.context_commands import ContextCompactCommand
 
         mock_manager = MagicMock()
         mock_manager.get_stats.side_effect = [
@@ -733,7 +733,7 @@ class TestContextCompactCommand:
     @pytest.mark.asyncio
     async def test_context_compact_no_change(self) -> None:
         """Test /context compact when already compact."""
-        from opencode.commands.builtin.context_commands import ContextCompactCommand
+        from code_forge.commands.builtin.context_commands import ContextCompactCommand
 
         mock_manager = MagicMock()
         mock_manager.get_stats.return_value = {"token_count": 100}
@@ -750,7 +750,7 @@ class TestContextCompactCommand:
     @pytest.mark.asyncio
     async def test_context_compact_error(self) -> None:
         """Test /context compact handles errors."""
-        from opencode.commands.builtin.context_commands import ContextCompactCommand
+        from code_forge.commands.builtin.context_commands import ContextCompactCommand
 
         mock_manager = MagicMock()
         mock_manager.get_stats.side_effect = Exception("Error")
@@ -769,7 +769,7 @@ class TestContextModeCommand:
     @pytest.mark.asyncio
     async def test_context_mode_no_mode(self) -> None:
         """Test /context mode without mode arg."""
-        from opencode.commands.builtin.context_commands import ContextModeCommand
+        from code_forge.commands.builtin.context_commands import ContextModeCommand
 
         mock_manager = MagicMock()
         cmd = ContextModeCommand()
@@ -787,7 +787,7 @@ class TestSessionResumeCommand:
     @pytest.mark.asyncio
     async def test_session_resume_by_id(self) -> None:
         """Test /session resume with session ID."""
-        from opencode.commands.builtin.session_commands import SessionResumeCommand
+        from code_forge.commands.builtin.session_commands import SessionResumeCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"
@@ -809,7 +809,7 @@ class TestSessionResumeCommand:
     @pytest.mark.asyncio
     async def test_session_resume_not_found(self) -> None:
         """Test /session resume with non-existent ID."""
-        from opencode.commands.builtin.session_commands import SessionResumeCommand
+        from code_forge.commands.builtin.session_commands import SessionResumeCommand
 
         mock_manager = MagicMock()
         mock_manager.list_sessions.return_value = []
@@ -825,7 +825,7 @@ class TestSessionResumeCommand:
     @pytest.mark.asyncio
     async def test_session_resume_latest(self) -> None:
         """Test /session resume with no ID resumes latest."""
-        from opencode.commands.builtin.session_commands import SessionResumeCommand
+        from code_forge.commands.builtin.session_commands import SessionResumeCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"
@@ -845,7 +845,7 @@ class TestSessionResumeCommand:
     @pytest.mark.asyncio
     async def test_session_resume_latest_none(self) -> None:
         """Test /session resume when no sessions exist."""
-        from opencode.commands.builtin.session_commands import SessionResumeCommand
+        from code_forge.commands.builtin.session_commands import SessionResumeCommand
 
         mock_manager = MagicMock()
         mock_manager.resume_latest.return_value = None
@@ -865,7 +865,7 @@ class TestSessionDeleteCommand:
     @pytest.mark.asyncio
     async def test_session_delete_success(self) -> None:
         """Test /session delete with valid ID."""
-        from opencode.commands.builtin.session_commands import SessionDeleteCommand
+        from code_forge.commands.builtin.session_commands import SessionDeleteCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"
@@ -885,7 +885,7 @@ class TestSessionDeleteCommand:
     @pytest.mark.asyncio
     async def test_session_delete_no_id(self) -> None:
         """Test /session delete without ID."""
-        from opencode.commands.builtin.session_commands import SessionDeleteCommand
+        from code_forge.commands.builtin.session_commands import SessionDeleteCommand
 
         mock_manager = MagicMock()
         cmd = SessionDeleteCommand()
@@ -899,7 +899,7 @@ class TestSessionDeleteCommand:
     @pytest.mark.asyncio
     async def test_session_delete_not_found(self) -> None:
         """Test /session delete with non-existent ID."""
-        from opencode.commands.builtin.session_commands import SessionDeleteCommand
+        from code_forge.commands.builtin.session_commands import SessionDeleteCommand
 
         mock_manager = MagicMock()
         mock_manager.list_sessions.return_value = []
@@ -918,7 +918,7 @@ class TestSessionTitleCommand:
     @pytest.mark.asyncio
     async def test_session_title_success(self) -> None:
         """Test /session title sets title."""
-        from opencode.commands.builtin.session_commands import SessionTitleCommand
+        from code_forge.commands.builtin.session_commands import SessionTitleCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = True
@@ -934,7 +934,7 @@ class TestSessionTitleCommand:
     @pytest.mark.asyncio
     async def test_session_title_no_title(self) -> None:
         """Test /session title without title."""
-        from opencode.commands.builtin.session_commands import SessionTitleCommand
+        from code_forge.commands.builtin.session_commands import SessionTitleCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = True
@@ -950,7 +950,7 @@ class TestSessionTitleCommand:
     @pytest.mark.asyncio
     async def test_session_title_no_session(self) -> None:
         """Test /session title with no active session."""
-        from opencode.commands.builtin.session_commands import SessionTitleCommand
+        from code_forge.commands.builtin.session_commands import SessionTitleCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = False
@@ -969,7 +969,7 @@ class TestSessionTagCommand:
     @pytest.mark.asyncio
     async def test_session_tag_add(self) -> None:
         """Test /session tag adds tag."""
-        from opencode.commands.builtin.session_commands import SessionTagCommand
+        from code_forge.commands.builtin.session_commands import SessionTagCommand
 
         mock_session = MagicMock()
         mock_session.tags = []
@@ -989,7 +989,7 @@ class TestSessionTagCommand:
     @pytest.mark.asyncio
     async def test_session_tag_duplicate(self) -> None:
         """Test /session tag with existing tag."""
-        from opencode.commands.builtin.session_commands import SessionTagCommand
+        from code_forge.commands.builtin.session_commands import SessionTagCommand
 
         mock_session = MagicMock()
         mock_session.tags = ["important"]
@@ -1008,7 +1008,7 @@ class TestSessionTagCommand:
     @pytest.mark.asyncio
     async def test_session_tag_no_name(self) -> None:
         """Test /session tag without tag name."""
-        from opencode.commands.builtin.session_commands import SessionTagCommand
+        from code_forge.commands.builtin.session_commands import SessionTagCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = True
@@ -1027,7 +1027,7 @@ class TestSessionUntagCommand:
     @pytest.mark.asyncio
     async def test_session_untag_remove(self) -> None:
         """Test /session untag removes tag."""
-        from opencode.commands.builtin.session_commands import SessionUntagCommand
+        from code_forge.commands.builtin.session_commands import SessionUntagCommand
 
         mock_session = MagicMock()
         mock_session.tags = ["important", "todo"]
@@ -1047,7 +1047,7 @@ class TestSessionUntagCommand:
     @pytest.mark.asyncio
     async def test_session_untag_not_found(self) -> None:
         """Test /session untag with non-existent tag."""
-        from opencode.commands.builtin.session_commands import SessionUntagCommand
+        from code_forge.commands.builtin.session_commands import SessionUntagCommand
 
         mock_session = MagicMock()
         mock_session.tags = []
@@ -1070,7 +1070,7 @@ class TestHistoryCommand:
     @pytest.mark.asyncio
     async def test_history_shows_messages(self) -> None:
         """Test /history shows message history."""
-        from opencode.commands.builtin.debug_commands import HistoryCommand
+        from code_forge.commands.builtin.debug_commands import HistoryCommand
 
         mock_msg1 = MagicMock()
         mock_msg1.role = "user"
@@ -1102,7 +1102,7 @@ class TestHistoryCommand:
     @pytest.mark.asyncio
     async def test_history_empty(self) -> None:
         """Test /history with no messages."""
-        from opencode.commands.builtin.debug_commands import HistoryCommand
+        from code_forge.commands.builtin.debug_commands import HistoryCommand
 
         mock_session = MagicMock()
         mock_session.messages = []
@@ -1122,7 +1122,7 @@ class TestHistoryCommand:
     @pytest.mark.asyncio
     async def test_history_with_limit(self) -> None:
         """Test /history with limit parameter."""
-        from opencode.commands.builtin.debug_commands import HistoryCommand
+        from code_forge.commands.builtin.debug_commands import HistoryCommand
 
         messages = [MagicMock(role="user", content=f"msg{i}", tool_calls=None) for i in range(10)]
 
@@ -1144,7 +1144,7 @@ class TestHistoryCommand:
     @pytest.mark.asyncio
     async def test_history_with_tool_calls(self) -> None:
         """Test /history shows tool calls."""
-        from opencode.commands.builtin.debug_commands import HistoryCommand
+        from code_forge.commands.builtin.debug_commands import HistoryCommand
 
         mock_msg = MagicMock()
         mock_msg.role = "assistant"
@@ -1173,7 +1173,7 @@ class TestToolsCommand:
     @pytest.mark.asyncio
     async def test_tools_lists_tools(self) -> None:
         """Test /tools lists available tools."""
-        from opencode.commands.builtin.debug_commands import ToolsCommand
+        from code_forge.commands.builtin.debug_commands import ToolsCommand
 
         cmd = ToolsCommand()
         parsed = ParsedCommand(name="tools", args=[])
@@ -1191,7 +1191,7 @@ class TestDebugNoRepl:
     @pytest.mark.asyncio
     async def test_debug_no_repl(self) -> None:
         """Test /debug fails without REPL."""
-        from opencode.commands.builtin.debug_commands import DebugCommand
+        from code_forge.commands.builtin.debug_commands import DebugCommand
 
         cmd = DebugCommand()
         parsed = ParsedCommand(name="debug", args=[])
@@ -1208,7 +1208,7 @@ class TestModelCommand:
     @pytest.mark.asyncio
     async def test_model_no_config(self) -> None:
         """Test /model shows no model configured without config."""
-        from opencode.commands.builtin.config_commands import ModelCommand
+        from code_forge.commands.builtin.config_commands import ModelCommand
 
         cmd = ModelCommand()
         parsed = ParsedCommand(name="model", args=[])
@@ -1221,7 +1221,7 @@ class TestModelCommand:
     @pytest.mark.asyncio
     async def test_model_show_none(self) -> None:
         """Test /model shows no model configured when model.default is None."""
-        from opencode.commands.builtin.config_commands import ModelCommand
+        from code_forge.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
         mock_config.model.default = None
@@ -1237,7 +1237,7 @@ class TestModelCommand:
     @pytest.mark.asyncio
     async def test_model_set_no_llm(self) -> None:
         """Test /model set fails without llm config."""
-        from opencode.commands.builtin.config_commands import ModelCommand
+        from code_forge.commands.builtin.config_commands import ModelCommand
 
         mock_config = MagicMock()
         mock_config.llm = None
@@ -1257,7 +1257,7 @@ class TestContextShowStatus:
     @pytest.mark.asyncio
     async def test_context_shows_full_stats(self) -> None:
         """Test /context shows comprehensive stats."""
-        from opencode.commands.builtin.context_commands import ContextCommand
+        from code_forge.commands.builtin.context_commands import ContextCommand
 
         mock_manager = MagicMock()
         mock_manager.get_stats.return_value = {
@@ -1283,7 +1283,7 @@ class TestContextShowStatus:
     @pytest.mark.asyncio
     async def test_context_error_handling(self) -> None:
         """Test /context handles errors gracefully."""
-        from opencode.commands.builtin.context_commands import ContextCommand
+        from code_forge.commands.builtin.context_commands import ContextCommand
 
         mock_manager = MagicMock()
         mock_manager.get_stats.side_effect = Exception("Stats error")
@@ -1302,7 +1302,7 @@ class TestTokensWithContextManager:
     @pytest.mark.asyncio
     async def test_tokens_with_context_budget(self) -> None:
         """Test /tokens shows context budget info."""
-        from opencode.commands.builtin.debug_commands import TokensCommand
+        from code_forge.commands.builtin.debug_commands import TokensCommand
 
         mock_session = MagicMock()
         mock_session.total_prompt_tokens = 1000
@@ -1335,7 +1335,7 @@ class TestTokensWithContextManager:
     @pytest.mark.asyncio
     async def test_tokens_no_data(self) -> None:
         """Test /tokens when no token data available."""
-        from opencode.commands.builtin.debug_commands import TokensCommand
+        from code_forge.commands.builtin.debug_commands import TokensCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = False
@@ -1355,7 +1355,7 @@ class TestHistoryInvalidLimit:
     @pytest.mark.asyncio
     async def test_history_invalid_limit(self) -> None:
         """Test /history with non-numeric limit."""
-        from opencode.commands.builtin.debug_commands import HistoryCommand
+        from code_forge.commands.builtin.debug_commands import HistoryCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = True
@@ -1376,7 +1376,7 @@ class TestSessionListLimit:
     @pytest.mark.asyncio
     async def test_session_list_with_limit(self) -> None:
         """Test /session list with limit parameter."""
-        from opencode.commands.builtin.session_commands import SessionListCommand
+        from code_forge.commands.builtin.session_commands import SessionListCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345678"
@@ -1399,7 +1399,7 @@ class TestSessionListLimit:
     @pytest.mark.asyncio
     async def test_session_list_invalid_limit(self) -> None:
         """Test /session list with invalid limit."""
-        from opencode.commands.builtin.session_commands import SessionListCommand
+        from code_forge.commands.builtin.session_commands import SessionListCommand
 
         mock_manager = MagicMock()
         cmd = SessionListCommand()
@@ -1417,7 +1417,7 @@ class TestConfigEdgeCases:
     @pytest.mark.asyncio
     async def test_config_get_no_config(self) -> None:
         """Test /config get without config."""
-        from opencode.commands.builtin.config_commands import ConfigGetCommand
+        from code_forge.commands.builtin.config_commands import ConfigGetCommand
 
         cmd = ConfigGetCommand()
         parsed = ParsedCommand(name="get", args=["key"])
@@ -1430,7 +1430,7 @@ class TestConfigEdgeCases:
     @pytest.mark.asyncio
     async def test_config_set_no_config(self) -> None:
         """Test /config set without config."""
-        from opencode.commands.builtin.config_commands import ConfigSetCommand
+        from code_forge.commands.builtin.config_commands import ConfigSetCommand
 
         cmd = ConfigSetCommand()
         parsed = ParsedCommand(name="set", args=["key", "value"])
@@ -1443,7 +1443,7 @@ class TestConfigEdgeCases:
     @pytest.mark.asyncio
     async def test_config_default_no_config(self) -> None:
         """Test /config without config."""
-        from opencode.commands.builtin.config_commands import ConfigCommand
+        from code_forge.commands.builtin.config_commands import ConfigCommand
 
         cmd = ConfigCommand()
         parsed = ParsedCommand(name="config", args=[])
@@ -1459,7 +1459,7 @@ class TestSessionEdgeCases:
     @pytest.mark.asyncio
     async def test_session_new_closes_current(self) -> None:
         """Test /session new closes current session."""
-        from opencode.commands.builtin.session_commands import SessionNewCommand
+        from code_forge.commands.builtin.session_commands import SessionNewCommand
 
         mock_session = MagicMock()
         mock_session.id = "new123456"
@@ -1479,7 +1479,7 @@ class TestSessionEdgeCases:
     @pytest.mark.asyncio
     async def test_session_tag_no_session(self) -> None:
         """Test /session tag with no active session."""
-        from opencode.commands.builtin.session_commands import SessionTagCommand
+        from code_forge.commands.builtin.session_commands import SessionTagCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = False
@@ -1494,7 +1494,7 @@ class TestSessionEdgeCases:
     @pytest.mark.asyncio
     async def test_session_untag_no_session(self) -> None:
         """Test /session untag with no active session."""
-        from opencode.commands.builtin.session_commands import SessionUntagCommand
+        from code_forge.commands.builtin.session_commands import SessionUntagCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = False
@@ -1509,7 +1509,7 @@ class TestSessionEdgeCases:
     @pytest.mark.asyncio
     async def test_session_untag_no_name(self) -> None:
         """Test /session untag without tag name."""
-        from opencode.commands.builtin.session_commands import SessionUntagCommand
+        from code_forge.commands.builtin.session_commands import SessionUntagCommand
 
         mock_manager = MagicMock()
         mock_manager.has_current = True
@@ -1528,7 +1528,7 @@ class TestSessionResumeEdgeCases:
     @pytest.mark.asyncio
     async def test_session_resume_closes_current(self) -> None:
         """Test /session resume closes current session."""
-        from opencode.commands.builtin.session_commands import SessionResumeCommand
+        from code_forge.commands.builtin.session_commands import SessionResumeCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"
@@ -1550,7 +1550,7 @@ class TestSessionResumeEdgeCases:
     @pytest.mark.asyncio
     async def test_session_resume_fails(self) -> None:
         """Test /session resume when resume returns None."""
-        from opencode.commands.builtin.session_commands import SessionResumeCommand
+        from code_forge.commands.builtin.session_commands import SessionResumeCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"
@@ -1574,7 +1574,7 @@ class TestSessionDeleteEdgeCases:
     @pytest.mark.asyncio
     async def test_session_delete_fails(self) -> None:
         """Test /session delete when delete returns False."""
-        from opencode.commands.builtin.session_commands import SessionDeleteCommand
+        from code_forge.commands.builtin.session_commands import SessionDeleteCommand
 
         mock_session = MagicMock()
         mock_session.id = "abc12345"

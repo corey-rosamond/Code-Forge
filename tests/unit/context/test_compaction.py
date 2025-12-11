@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from opencode.context.compaction import ContextCompactor, ToolResultCompactor
-from opencode.context.tokens import ApproximateCounter
+from code_forge.context.compaction import ContextCompactor, ToolResultCompactor
+from code_forge.context.tokens import ApproximateCounter
 
 
 class TestContextCompactor:

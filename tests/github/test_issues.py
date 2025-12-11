@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.github.issues import (
+from code_forge.github.issues import (
     GitHubUser,
     GitHubLabel,
     GitHubMilestone,
@@ -14,7 +14,7 @@ from opencode.github.issues import (
     GitHubComment,
     IssueService,
 )
-from opencode.github.client import GitHubClient
+from code_forge.github.client import GitHubClient
 
 
 class TestGitHubUser:

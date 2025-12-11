@@ -357,8 +357,8 @@ class ProjectId(BaseModel):
 ## Exception Hierarchy
 
 ```python
-class OpenCodeError(Exception):
-    """Base exception for all OpenCode errors."""
+class Code-ForgeError(Exception):
+    """Base exception for all Code-Forge errors."""
 
     def __init__(self, message: str, cause: Exception | None = None):
         super().__init__(message)
@@ -369,23 +369,23 @@ class OpenCodeError(Exception):
             return f"{self.args[0]} (caused by: {self.cause})"
         return self.args[0]
 
-class ConfigError(OpenCodeError):
+class ConfigError(Code-ForgeError):
     """Configuration-related errors."""
     pass
 
-class ToolError(OpenCodeError):
+class ToolError(Code-ForgeError):
     """Tool execution errors."""
     def __init__(self, tool_name: str, message: str, cause: Exception | None = None):
         super().__init__(f"Tool '{tool_name}': {message}", cause)
         self.tool_name = tool_name
 
-class ProviderError(OpenCodeError):
+class ProviderError(Code-ForgeError):
     """Model provider errors."""
     def __init__(self, provider: str, message: str, cause: Exception | None = None):
         super().__init__(f"Provider '{provider}': {message}", cause)
         self.provider = provider
 
-class PermissionDeniedError(OpenCodeError):
+class PermissionDeniedError(Code-ForgeError):
     """Permission denied errors.
 
     Note: Named PermissionDeniedError to avoid shadowing the builtin
@@ -397,7 +397,7 @@ class PermissionDeniedError(OpenCodeError):
         self.action = action
         self.reason = reason
 
-class SessionError(OpenCodeError):
+class SessionError(Code-ForgeError):
     """Session management errors."""
     pass
 ```
@@ -482,7 +482,7 @@ def setup_logging(
     rich_console: bool = True
 ) -> None:
     """
-    Configure logging for OpenCode.
+    Configure logging for Code-Forge.
 
     Args:
         level: Logging level
@@ -511,7 +511,7 @@ def setup_logging(
 
 def get_logger(name: str) -> logging.Logger:
     """Get a logger with the given name."""
-    return logging.getLogger(f"opencode.{name}")
+    return logging.getLogger(f"forge.{name}")
 ```
 
 ---
@@ -520,14 +520,14 @@ def get_logger(name: str) -> logging.Logger:
 
 ```python
 import sys
-from opencode import __version__
+from forge import __version__
 
 def main() -> int:
-    """Main entry point for OpenCode CLI."""
+    """Main entry point for Code-Forge CLI."""
     args = sys.argv[1:]
 
     if "--version" in args or "-v" in args:
-        print(f"opencode {__version__}")
+        print(f"forge {__version__}")
         return 0
 
     if "--help" in args or "-h" in args:
@@ -535,16 +535,16 @@ def main() -> int:
         return 0
 
     # Future phases will add actual functionality
-    print("OpenCode - AI Development Assistant")
+    print("Code-Forge - AI Development Assistant")
     print("Run with --help for usage information")
     return 0
 
 def print_help() -> None:
     """Print help message."""
     help_text = """
-OpenCode - AI-powered CLI Development Assistant
+Code-Forge - AI-powered CLI Development Assistant
 
-Usage: opencode [OPTIONS] [PROMPT]
+Usage: forge [OPTIONS] [PROMPT]
 
 Options:
   -v, --version     Show version and exit
@@ -553,7 +553,7 @@ Options:
   --resume          Select session to resume
   -p, --print       Run in headless mode with prompt
 
-For more information, visit: https://github.com/opencode
+For more information, visit: https://github.com/forge
 """
     print(help_text.strip())
 
@@ -584,8 +584,8 @@ if __name__ == "__main__":
 
 Before completing Phase 1.1:
 - [ ] `pip install -e ".[dev]"` succeeds
-- [ ] `opencode --version` works
-- [ ] `opencode --help` works
+- [ ] `forge --version` works
+- [ ] `forge --help` works
 - [ ] `pytest` passes with ≥90% coverage
 - [ ] `mypy --strict` passes
 - [ ] `ruff check` passes

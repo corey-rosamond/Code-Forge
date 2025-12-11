@@ -433,7 +433,7 @@ Then the result should be approximately 5000
 
 ### Scenario: All execution tools are registered
 ```gherkin
-Given the OpenCode application initializes
+Given the Code-Forge application initializes
 When I call register_execution_tools(registry)
 Then the registry should contain "Bash" tool
 And the registry should contain "BashOutput" tool

@@ -484,7 +484,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph opencode_tools["src/opencode/tools/"]
+    subgraph forge_tools["src/forge/tools/"]
         INIT["__init__.py"]
         BASE["base.py"]
         REG["registry.py"]

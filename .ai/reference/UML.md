@@ -1,4 +1,4 @@
-# OpenCode UML Diagrams
+# Code-Forge UML Diagrams
 ## Comprehensive System Architecture Visualization
 
 **Version:** 1.0
@@ -27,24 +27,24 @@
 
 ```mermaid
 C4Context
-    title OpenCode System Context Diagram
+    title Code-Forge System Context Diagram
 
-    Person(developer, "Developer", "Software developer using OpenCode for AI-assisted development")
-    Person(admin, "Administrator", "Configures and manages OpenCode installations")
+    Person(developer, "Developer", "Software developer using Code-Forge for AI-assisted development")
+    Person(admin, "Administrator", "Configures and manages Code-Forge installations")
 
-    System(opencode, "OpenCode", "AI-powered CLI development assistant with multi-model support")
+    System(forge, "Code-Forge", "AI-powered CLI development assistant with multi-model support")
 
     System_Ext(openrouter, "OpenRouter API", "Unified API gateway to 400+ AI models")
     System_Ext(github, "GitHub", "Version control and collaboration platform")
     System_Ext(mcp_servers, "MCP Servers", "Model Context Protocol tool servers")
     System_Ext(filesystem, "File System", "Local project files and configurations")
 
-    Rel(developer, opencode, "Uses", "CLI/Terminal")
-    Rel(admin, opencode, "Configures", "Settings/Hooks")
-    Rel(opencode, openrouter, "Sends requests", "HTTPS/REST")
-    Rel(opencode, github, "Manages repos", "gh CLI/API")
-    Rel(opencode, mcp_servers, "Connects to", "stdio/Streamable HTTP")
-    Rel(opencode, filesystem, "Reads/Writes", "File I/O")
+    Rel(developer, forge, "Uses", "CLI/Terminal")
+    Rel(admin, forge, "Configures", "Settings/Hooks")
+    Rel(forge, openrouter, "Sends requests", "HTTPS/REST")
+    Rel(forge, github, "Manages repos", "gh CLI/API")
+    Rel(forge, mcp_servers, "Connects to", "stdio/Streamable HTTP")
+    Rel(forge, filesystem, "Reads/Writes", "File I/O")
 ```
 
 ### 1.2 External Integrations
@@ -57,7 +57,7 @@ flowchart TB
         IDE[IDE Integration]
     end
 
-    subgraph OpenCode["OpenCode System"]
+    subgraph Code-Forge["Code-Forge System"]
         CLI[CLI Interface]
         AGENT[Agent Core]
         TOOLS[Tool System]
@@ -105,7 +105,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    subgraph OpenCode["OpenCode Application"]
+    subgraph Code-Forge["Code-Forge Application"]
         direction TB
 
         subgraph Presentation["Presentation Layer"]
@@ -1111,7 +1111,7 @@ sequenceDiagram
     participant CM as ContextManager
     participant A as Agent
 
-    U->>CLI: opencode --resume
+    U->>CLI: forge --resume
     CLI->>SM: List recent sessions
 
     SM->>SR: Load session list
@@ -1691,13 +1691,13 @@ flowchart TB
     subgraph UserMachine["User's Machine"]
         subgraph Terminal["Terminal Environment"]
             SHELL[Shell/Terminal]
-            OPENCODE[OpenCode Process]
+            FORGE[Code-Forge Process]
         end
 
         subgraph LocalStorage["Local Storage"]
-            CONFIG[~/.opencode/]
-            PROJECT[.opencode/]
-            SESSIONS[~/.opencode/sessions/]
+            CONFIG[~/.forge/]
+            PROJECT[.forge/]
+            SESSIONS[~/.forge/sessions/]
         end
 
         subgraph LocalServices["Local Services (Optional)"]
@@ -1712,15 +1712,15 @@ flowchart TB
         MCP_REMOTE[Remote MCP Servers]
     end
 
-    SHELL --> OPENCODE
-    OPENCODE --> CONFIG
-    OPENCODE --> PROJECT
-    OPENCODE --> SESSIONS
-    OPENCODE --> DOCKER
-    OPENCODE --> MCP_LOCAL
-    OPENCODE --> OPENROUTER
-    OPENCODE --> GITHUB
-    OPENCODE --> MCP_REMOTE
+    SHELL --> FORGE
+    FORGE --> CONFIG
+    FORGE --> PROJECT
+    FORGE --> SESSIONS
+    FORGE --> DOCKER
+    FORGE --> MCP_LOCAL
+    FORGE --> OPENROUTER
+    FORGE --> GITHUB
+    FORGE --> MCP_REMOTE
 ```
 
 ### 9.2 Container Deployment
@@ -1728,8 +1728,8 @@ flowchart TB
 ```mermaid
 flowchart TB
     subgraph DockerHost["Docker Host"]
-        subgraph OpenCodeContainer["OpenCode Container"]
-            APP[OpenCode Application]
+        subgraph Code-ForgeContainer["Code-Forge Container"]
+            APP[Code-Forge Application]
             VENV[Python Virtual Env]
         end
 
@@ -1818,7 +1818,7 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-    subgraph opencode["opencode (Main Package)"]
+    subgraph forge["forge (Main Package)"]
         direction TB
 
         subgraph cli["cli"]

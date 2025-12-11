@@ -10,7 +10,7 @@
 
 ### Basic Permission Check
 ```python
-from opencode.permissions import (
+from forge.permissions import (
     PermissionChecker,
     PermissionLevel,
     PermissionResult,
@@ -52,7 +52,7 @@ print(f"Denied: {result.denied}")        # True
 
 ### Creating Rules
 ```python
-from opencode.permissions import PermissionRule, PermissionLevel
+from forge.permissions import PermissionRule, PermissionLevel
 
 # Simple tool rule
 rule1 = PermissionRule(
@@ -108,7 +108,7 @@ rule = PermissionRule.from_dict(data)
 
 ### Pattern Syntax
 ```python
-from opencode.permissions import PatternMatcher
+from forge.permissions import PatternMatcher
 
 # Tool patterns
 PatternMatcher.match("tool:bash", "bash", {})          # True
@@ -172,7 +172,7 @@ PatternMatcher.specificity("category:execute_operations") # Lowest
 
 ### Creating and Using RuleSets
 ```python
-from opencode.permissions import RuleSet, PermissionRule, PermissionLevel
+from forge.permissions import RuleSet, PermissionRule, PermissionLevel
 
 # Create empty rule set
 rules = RuleSet(default=PermissionLevel.ASK)
@@ -219,7 +219,7 @@ rules2 = RuleSet.from_dict(data)
 
 ### Multi-Source Checking
 ```python
-from opencode.permissions import PermissionChecker, RuleSet, PermissionRule, PermissionLevel
+from forge.permissions import PermissionChecker, RuleSet, PermissionRule, PermissionLevel
 
 # Create with multiple rule sources
 global_rules = RuleSet(default=PermissionLevel.ASK)
@@ -290,7 +290,7 @@ Choice [a/A/d/D]: _
 
 ### Prompt Implementation
 ```python
-from opencode.permissions import (
+from forge.permissions import (
     PermissionPrompt,
     ConfirmationRequest,
     ConfirmationChoice,
@@ -345,7 +345,7 @@ prompt = PermissionPrompt(
 
 ## 7. Configuration Files
 
-### Global Configuration (~/.config/src/opencode/permissions.json)
+### Global Configuration (~/.config/src/forge/permissions.json)
 ```json
 {
   "default": "ask",
@@ -385,7 +385,7 @@ prompt = PermissionPrompt(
 }
 ```
 
-### Project Configuration (.src/opencode/permissions.json)
+### Project Configuration (.src/forge/permissions.json)
 ```json
 {
   "default": "ask",
@@ -411,7 +411,7 @@ prompt = PermissionPrompt(
 
 ### Loading Configuration
 ```python
-from opencode.permissions import PermissionConfig
+from forge.permissions import PermissionConfig
 
 # Load global rules
 global_rules = PermissionConfig.load_global()
@@ -436,8 +436,8 @@ PermissionConfig.reset_to_defaults()
 
 ### With Permission Checking
 ```python
-from opencode.tools import ToolExecutor, ToolRegistry
-from opencode.permissions import (
+from forge.tools import ToolExecutor, ToolRegistry
+from forge.permissions import (
     PermissionChecker,
     PermissionPrompt,
     PermissionError,
@@ -498,7 +498,7 @@ return await tool.execute(params, context)
 
 ### Error Structure
 ```python
-from opencode.permissions import PermissionError, PermissionResult, PermissionLevel
+from forge.permissions import PermissionError, PermissionResult, PermissionLevel
 
 # Create error
 result = PermissionResult(
@@ -534,7 +534,7 @@ except PermissionError as e:
 ## 10. Default Rules Reference
 
 ```python
-from opencode.permissions import DEFAULT_RULES
+from forge.permissions import DEFAULT_RULES
 
 # Default rules include:
 
@@ -572,8 +572,8 @@ from opencode.permissions import DEFAULT_RULES
 import asyncio
 from pathlib import Path
 
-from opencode.config import Config
-from opencode.permissions import (
+from forge.config import Config
+from forge.permissions import (
     PermissionChecker,
     PermissionPrompt,
     PermissionError,

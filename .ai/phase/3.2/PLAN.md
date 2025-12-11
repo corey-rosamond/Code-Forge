@@ -20,10 +20,10 @@
 
 ## Step 1: Message Conversion Utilities
 
-Create `src/opencode/langchain/messages.py`:
+Create `src/forge/langchain/messages.py`:
 
 ```python
-"""Message conversion between LangChain and OpenCode formats."""
+"""Message conversion between LangChain and Code-Forge formats."""
 
 from __future__ import annotations
 
@@ -39,23 +39,23 @@ from langchain_core.messages import (
 )
 
 if TYPE_CHECKING:
-    from opencode.llm.models import Message, MessageRole, ToolCall
+    from forge.llm.models import Message, MessageRole, ToolCall
 
 
-def langchain_to_opencode(message: BaseMessage) -> "Message":
+def langchain_to_forge(message: BaseMessage) -> "Message":
     """
-    Convert a LangChain message to an OpenCode message.
+    Convert a LangChain message to an Code-Forge message.
 
     Args:
         message: LangChain message to convert
 
     Returns:
-        Equivalent OpenCode Message
+        Equivalent Code-Forge Message
 
     Raises:
         ValueError: If message type is not supported
     """
-    from opencode.llm.models import Message, ToolCall
+    from forge.llm.models import Message, ToolCall
 
     if isinstance(message, SystemMessage):
         return Message.system(str(message.content))
@@ -90,12 +90,12 @@ def langchain_to_opencode(message: BaseMessage) -> "Message":
         raise ValueError(f"Unsupported message type: {type(message).__name__}")
 
 
-def opencode_to_langchain(message: "Message") -> BaseMessage:
+def forge_to_langchain(message: "Message") -> BaseMessage:
     """
-    Convert an OpenCode message to a LangChain message.
+    Convert an Code-Forge message to a LangChain message.
 
     Args:
-        message: OpenCode message to convert
+        message: Code-Forge message to convert
 
     Returns:
         Equivalent LangChain message
@@ -103,7 +103,7 @@ def opencode_to_langchain(message: "Message") -> BaseMessage:
     Raises:
         ValueError: If message role is not supported
     """
-    from opencode.llm.models import MessageRole
+    from forge.llm.models import MessageRole
 
     if message.role == MessageRole.SYSTEM:
         return SystemMessage(content=message.content or "")
@@ -141,21 +141,21 @@ def opencode_to_langchain(message: "Message") -> BaseMessage:
         raise ValueError(f"Unsupported message role: {message.role}")
 
 
-def langchain_messages_to_opencode(messages: list[BaseMessage]) -> list["Message"]:
-    """Convert a list of LangChain messages to OpenCode messages."""
-    return [langchain_to_opencode(m) for m in messages]
+def langchain_messages_to_forge(messages: list[BaseMessage]) -> list["Message"]:
+    """Convert a list of LangChain messages to Code-Forge messages."""
+    return [langchain_to_forge(m) for m in messages]
 
 
-def opencode_messages_to_langchain(messages: list["Message"]) -> list[BaseMessage]:
-    """Convert a list of OpenCode messages to LangChain messages."""
-    return [opencode_to_langchain(m) for m in messages]
+def forge_messages_to_langchain(messages: list["Message"]) -> list[BaseMessage]:
+    """Convert a list of Code-Forge messages to LangChain messages."""
+    return [forge_to_langchain(m) for m in messages]
 ```
 
 ---
 
 ## Step 2: OpenRouterLLM Wrapper
 
-Create `src/opencode/langchain/llm.py`:
+Create `src/forge/langchain/llm.py`:
 
 ```python
 """LangChain LLM wrapper for OpenRouter client."""
@@ -175,14 +175,14 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
 
-from opencode.langchain.messages import (
-    langchain_messages_to_opencode,
-    opencode_to_langchain,
+from forge.langchain.messages import (
+    langchain_messages_to_forge,
+    forge_to_langchain,
 )
 
 if TYPE_CHECKING:
-    from opencode.llm.client import OpenRouterClient
-    from opencode.llm.models import ToolDefinition
+    from forge.llm.client import OpenRouterClient
+    from forge.llm.models import ToolDefinition
 
 
 class OpenRouterLLM(BaseChatModel):
@@ -190,13 +190,13 @@ class OpenRouterLLM(BaseChatModel):
     LangChain chat model wrapper for OpenRouter API.
 
     This class bridges LangChain's BaseChatModel interface with
-    OpenCode's OpenRouterClient, enabling use of OpenRouter's
+    Code-Forge's OpenRouterClient, enabling use of OpenRouter's
     400+ models through LangChain's ecosystem.
 
     Example:
         ```python
-        from opencode.llm import OpenRouterClient
-        from opencode.langchain import OpenRouterLLM
+        from forge.llm import OpenRouterClient
+        from forge.langchain import OpenRouterLLM
 
         client = OpenRouterClient(api_key="sk-or-xxx")
         llm = OpenRouterLLM(client=client, model="anthropic/claude-3-opus")
@@ -248,9 +248,9 @@ class OpenRouterLLM(BaseChatModel):
         **kwargs: Any,
     ) -> "CompletionRequest":
         """Build a CompletionRequest from LangChain messages."""
-        from opencode.llm.models import CompletionRequest
+        from forge.llm.models import CompletionRequest
 
-        opencode_messages = langchain_messages_to_opencode(messages)
+        forge_messages = langchain_messages_to_forge(messages)
 
         # Merge stop sequences
         all_stops = list(self.stop or [])
@@ -267,7 +267,7 @@ class OpenRouterLLM(BaseChatModel):
 
         return CompletionRequest(
             model=self.model,
-            messages=opencode_messages,
+            messages=forge_messages,
             temperature=kwargs.get("temperature", self.temperature),
             max_tokens=kwargs.get("max_tokens", self.max_tokens),
             top_p=kwargs.get("top_p", self.top_p),
@@ -340,7 +340,7 @@ class OpenRouterLLM(BaseChatModel):
         # Convert response to LangChain format
         generations = []
         for choice in response.choices:
-            lc_message = opencode_to_langchain(choice.message)
+            lc_message = forge_to_langchain(choice.message)
             generations.append(
                 ChatGeneration(
                     message=lc_message,
@@ -480,7 +480,7 @@ class OpenRouterLLM(BaseChatModel):
         Bind tools to this LLM instance.
 
         Args:
-            tools: Tools to bind (OpenCode ToolDefinition or LangChain tools)
+            tools: Tools to bind (Code-Forge ToolDefinition or LangChain tools)
             tool_choice: How to choose tools ("auto", "none", or specific)
             **kwargs: Additional parameters
 
@@ -490,7 +490,7 @@ class OpenRouterLLM(BaseChatModel):
         Raises:
             ValueError: If too many tools are provided (max: MAX_BOUND_TOOLS)
         """
-        from opencode.llm.models import ToolDefinition
+        from forge.llm.models import ToolDefinition
 
         # Check tool count limit
         if len(tools) > self.MAX_BOUND_TOOLS:
@@ -505,7 +505,7 @@ class OpenRouterLLM(BaseChatModel):
             if isinstance(tool, ToolDefinition):
                 converted_tools.append(tool)
             elif hasattr(tool, "to_openai_schema"):
-                # OpenCode BaseTool
+                # Code-Forge BaseTool
                 converted_tools.append(tool.to_openai_schema())
             elif hasattr(tool, "name") and hasattr(tool, "description"):
                 # LangChain-style tool
@@ -548,7 +548,7 @@ class OpenRouterLLM(BaseChatModel):
         """
         # For now, just bind as a tool if using function calling
         if method == "function_calling":
-            from opencode.llm.models import ToolDefinition
+            from forge.llm.models import ToolDefinition
 
             if isinstance(schema, type):
                 # Pydantic model
@@ -574,10 +574,10 @@ class OpenRouterLLM(BaseChatModel):
 
 ## Step 3: Tool Adapters
 
-Create `src/opencode/langchain/tools.py`:
+Create `src/forge/langchain/tools.py`:
 
 ```python
-"""Tool adapters between LangChain and OpenCode."""
+"""Tool adapters between LangChain and Code-Forge."""
 
 from __future__ import annotations
 
@@ -589,32 +589,32 @@ from langchain_core.tools import BaseTool as LangChainBaseTool
 from pydantic import BaseModel, Field, create_model
 
 if TYPE_CHECKING:
-    from opencode.tools.base import BaseTool as OpenCodeBaseTool
-    from opencode.tools.executor import ToolExecutor
-    from opencode.tools.models import ExecutionContext
+    from forge.tools.base import BaseTool as Code-ForgeBaseTool
+    from forge.tools.executor import ToolExecutor
+    from forge.tools.models import ExecutionContext
 
 
 class LangChainToolAdapter(LangChainBaseTool):
     """
-    Adapts an OpenCode BaseTool to LangChain's tool interface.
+    Adapts an Code-Forge BaseTool to LangChain's tool interface.
 
-    This allows OpenCode tools to be used seamlessly with LangChain
+    This allows Code-Forge tools to be used seamlessly with LangChain
     agents and chains.
 
     Example:
         ```python
-        from opencode.tools import ReadTool
-        from opencode.langchain.tools import LangChainToolAdapter
+        from forge.tools import ReadTool
+        from forge.langchain.tools import LangChainToolAdapter
 
         read_tool = ReadTool()
-        lc_tool = LangChainToolAdapter(opencode_tool=read_tool)
+        lc_tool = LangChainToolAdapter(forge_tool=read_tool)
 
         # Now usable with LangChain agents
         result = lc_tool.invoke({"file_path": "/path/to/file"})
         ```
     """
 
-    opencode_tool: Any  # OpenCode BaseTool
+    forge_tool: Any  # Code-Forge BaseTool
     executor: Any = None  # Optional ToolExecutor
     context: Any = None  # Optional ExecutionContext
 
@@ -625,24 +625,24 @@ class LangChainToolAdapter(LangChainBaseTool):
     @property
     def name(self) -> str:
         """Return tool name."""
-        return self.opencode_tool.name
+        return self.forge_tool.name
 
     @property
     def description(self) -> str:
         """Return tool description."""
-        return self.opencode_tool.description
+        return self.forge_tool.description
 
     @property
     def args_schema(self) -> type[BaseModel]:
         """
-        Generate Pydantic model from OpenCode tool parameters.
+        Generate Pydantic model from Code-Forge tool parameters.
 
         Returns:
             Dynamically created Pydantic model for arguments
         """
         fields = {}
-        for param in self.opencode_tool.parameters:
-            # Map OpenCode types to Python types
+        for param in self.forge_tool.parameters:
+            # Map Code-Forge types to Python types
             type_map = {
                 "string": str,
                 "integer": int,
@@ -663,7 +663,7 @@ class LangChainToolAdapter(LangChainBaseTool):
                 )
 
         # Create dynamic model
-        model_name = f"{self.opencode_tool.name.title().replace('_', '')}Args"
+        model_name = f"{self.forge_tool.name.title().replace('_', '')}Args"
         return create_model(model_name, **fields)
 
     def _run(self, **kwargs: Any) -> str:
@@ -690,8 +690,8 @@ class LangChainToolAdapter(LangChainBaseTool):
         Returns:
             Tool result as string
         """
-        from opencode.tools.executor import ToolExecutor
-        from opencode.tools.models import ExecutionContext
+        from forge.tools.executor import ToolExecutor
+        from forge.tools.models import ExecutionContext
 
         # Get or create executor
         executor = self.executor
@@ -703,9 +703,9 @@ class LangChainToolAdapter(LangChainBaseTool):
         if context is None:
             context = ExecutionContext()
 
-        # Execute through OpenCode
+        # Execute through Code-Forge
         result = await executor.execute(
-            self.opencode_tool,
+            self.forge_tool,
             kwargs,
             context,
         )
@@ -719,23 +719,23 @@ class LangChainToolAdapter(LangChainBaseTool):
             return f"Error: {result.error}"
 
 
-class OpenCodeToolAdapter:
+class Code-ForgeToolAdapter:
     """
-    Adapts a LangChain tool to OpenCode's BaseTool interface.
+    Adapts a LangChain tool to Code-Forge's BaseTool interface.
 
-    This allows existing LangChain tools to be used within OpenCode's
+    This allows existing LangChain tools to be used within Code-Forge's
     tool system.
 
     Example:
         ```python
         from langchain_community.tools import WikipediaQueryRun
-        from opencode.langchain.tools import opencodeToolAdapter
+        from forge.langchain.tools import forgeToolAdapter
 
         wiki_tool = WikipediaQueryRun()
-        opencode_tool = OpenCodeToolAdapter(langchain_tool=wiki_tool)
+        forge_tool = Code-ForgeToolAdapter(langchain_tool=wiki_tool)
 
-        # Now usable with OpenCode
-        result = await tool_executor.execute(opencode_tool, {"query": "Python"}, ctx)
+        # Now usable with Code-Forge
+        result = await tool_executor.execute(forge_tool, {"query": "Python"}, ctx)
         ```
     """
 
@@ -762,7 +762,7 @@ class OpenCodeToolAdapter:
     @property
     def category(self) -> str:
         """Return tool category."""
-        from opencode.tools.models import ToolCategory
+        from forge.tools.models import ToolCategory
         return ToolCategory.OTHER
 
     @property
@@ -777,7 +777,7 @@ class OpenCodeToolAdapter:
 
     def _extract_parameters(self) -> list:
         """Extract parameters from LangChain tool schema."""
-        from opencode.tools.models import ToolParameter
+        from forge.tools.models import ToolParameter
 
         params = []
         schema = getattr(self.langchain_tool, "args_schema", None)
@@ -811,7 +811,7 @@ class OpenCodeToolAdapter:
         Returns:
             ToolResult with execution output
         """
-        from opencode.tools.models import ToolResult
+        from forge.tools.models import ToolResult
 
         try:
             # Try async first
@@ -856,10 +856,10 @@ def adapt_tools_for_langchain(
     context: Any = None,
 ) -> list[LangChainBaseTool]:
     """
-    Convert a list of OpenCode tools to LangChain tools.
+    Convert a list of Code-Forge tools to LangChain tools.
 
     Args:
-        tools: List of OpenCode BaseTool instances
+        tools: List of Code-Forge BaseTool instances
         executor: Optional ToolExecutor to use
         context: Optional ExecutionContext to use
 
@@ -868,7 +868,7 @@ def adapt_tools_for_langchain(
     """
     return [
         LangChainToolAdapter(
-            opencode_tool=tool,
+            forge_tool=tool,
             executor=executor,
             context=context,
         )
@@ -876,24 +876,24 @@ def adapt_tools_for_langchain(
     ]
 
 
-def adapt_tools_for_opencode(tools: list[LangChainBaseTool]) -> list:
+def adapt_tools_for_forge(tools: list[LangChainBaseTool]) -> list:
     """
-    Convert a list of LangChain tools to OpenCode tools.
+    Convert a list of LangChain tools to Code-Forge tools.
 
     Args:
         tools: List of LangChain tools
 
     Returns:
-        List of OpenCode-compatible tools
+        List of Code-Forge-compatible tools
     """
-    return [OpenCodeToolAdapter(langchain_tool=tool) for tool in tools]
+    return [Code-ForgeToolAdapter(langchain_tool=tool) for tool in tools]
 ```
 
 ---
 
 ## Step 4: Conversation Memory
 
-Create `src/opencode/langchain/memory.py`:
+Create `src/forge/langchain/memory.py`:
 
 ```python
 """Conversation memory management for agents."""
@@ -905,14 +905,14 @@ from typing import TYPE_CHECKING
 
 from langchain_core.messages import BaseMessage
 
-from opencode.langchain.messages import (
-    langchain_to_opencode,
-    opencode_to_langchain,
-    opencode_messages_to_langchain,
+from forge.langchain.messages import (
+    langchain_to_forge,
+    forge_to_langchain,
+    forge_messages_to_langchain,
 )
 
 if TYPE_CHECKING:
-    from opencode.llm.models import Message
+    from forge.llm.models import Message
 
 
 @dataclass
@@ -921,7 +921,7 @@ class ConversationMemory:
     Manages conversation history for agent interactions.
 
     Supports message windowing, token-based truncation, and
-    conversion between OpenCode and LangChain message formats.
+    conversion between Code-Forge and LangChain message formats.
 
     Example:
         ```python
@@ -952,7 +952,7 @@ class ConversationMemory:
         If max_messages is set and exceeded, oldest messages
         (excluding system) are removed.
         """
-        from opencode.llm.models import MessageRole
+        from forge.llm.models import MessageRole
 
         # Don't add system messages to history, use set_system_message
         if message.role == MessageRole.SYSTEM:
@@ -982,8 +982,8 @@ class ConversationMemory:
         Args:
             message: LangChain message to add
         """
-        opencode_msg = langchain_to_opencode(message)
-        self.add_message(opencode_msg)
+        forge_msg = langchain_to_forge(message)
+        self.add_message(forge_msg)
 
     def get_messages(self) -> list["Message"]:
         """
@@ -1014,10 +1014,10 @@ class ConversationMemory:
         Args:
             message: System message to set
         """
-        from opencode.llm.models import MessageRole
+        from forge.llm.models import MessageRole
 
         if message.role != MessageRole.SYSTEM:
-            from opencode.llm.models import Message
+            from forge.llm.models import Message
             message = Message.system(message.content)
 
         self.system_message = message
@@ -1083,7 +1083,7 @@ class ConversationMemory:
         Returns:
             List of LangChain BaseMessage instances
         """
-        return opencode_messages_to_langchain(self.get_messages())
+        return forge_messages_to_langchain(self.get_messages())
 
     def from_langchain_messages(self, messages: list[BaseMessage]) -> None:
         """
@@ -1092,17 +1092,17 @@ class ConversationMemory:
         Args:
             messages: LangChain messages to set
         """
-        from opencode.llm.models import MessageRole
+        from forge.llm.models import MessageRole
 
         self.messages = []
         self.system_message = None
 
         for msg in messages:
-            opencode_msg = langchain_to_opencode(msg)
-            if opencode_msg.role == MessageRole.SYSTEM:
-                self.system_message = opencode_msg
+            forge_msg = langchain_to_forge(msg)
+            if forge_msg.role == MessageRole.SYSTEM:
+                self.system_message = forge_msg
             else:
-                self.messages.append(opencode_msg)
+                self.messages.append(forge_msg)
 
     def __len__(self) -> int:
         """Return number of messages (excluding system)."""
@@ -1131,7 +1131,7 @@ class SlidingWindowMemory(ConversationMemory):
 
     def _enforce_window(self) -> None:
         """Ensure only window_size pairs are kept."""
-        from opencode.llm.models import MessageRole
+        from forge.llm.models import MessageRole
 
         # Count pairs (user + assistant = 1 pair)
         pair_count = 0
@@ -1176,7 +1176,7 @@ class SummaryMemory(ConversationMemory):
 
     def get_messages(self) -> list["Message"]:
         """Get messages with summary prepended if available."""
-        from opencode.llm.models import Message
+        from forge.llm.models import Message
 
         result = []
 
@@ -1233,7 +1233,7 @@ class SummaryMemory(ConversationMemory):
 
 ## Step 5: Callback Handlers
 
-Create `src/opencode/langchain/callbacks.py`:
+Create `src/forge/langchain/callbacks.py`:
 
 ```python
 """Callback handlers for LangChain integration."""
@@ -1251,15 +1251,15 @@ from langchain_core.outputs import LLMResult
 
 
 @dataclass
-class OpenCodeCallbackHandler(BaseCallbackHandler):
+class Code-ForgeCallbackHandler(BaseCallbackHandler):
     """
-    Base callback handler for OpenCode.
+    Base callback handler for Code-Forge.
 
     Provides a foundation for custom callback handlers with
     common utility methods.
     """
 
-    name: str = "opencode"
+    name: str = "forge"
     raise_error: bool = False
 
     def _safe_call(self, func, *args, **kwargs) -> None:
@@ -1273,7 +1273,7 @@ class OpenCodeCallbackHandler(BaseCallbackHandler):
 
 
 @dataclass
-class TokenTrackingCallback(OpenCodeCallbackHandler):
+class TokenTrackingCallback(Code-ForgeCallbackHandler):
     """
     Tracks token usage across LLM calls.
 
@@ -1319,7 +1319,7 @@ class TokenTrackingCallback(OpenCodeCallbackHandler):
         Returns:
             TokenUsage dataclass with totals
         """
-        from opencode.llm.models import TokenUsage
+        from forge.llm.models import TokenUsage
 
         return TokenUsage(
             prompt_tokens=self.total_prompt_tokens,
@@ -1335,7 +1335,7 @@ class TokenTrackingCallback(OpenCodeCallbackHandler):
 
 
 @dataclass
-class LoggingCallback(OpenCodeCallbackHandler):
+class LoggingCallback(Code-ForgeCallbackHandler):
     """
     Logs all LLM and tool events for debugging.
 
@@ -1353,7 +1353,7 @@ class LoggingCallback(OpenCodeCallbackHandler):
     """
 
     name: str = "logger"
-    logger: logging.Logger = field(default_factory=lambda: logging.getLogger("opencode.langchain"))
+    logger: logging.Logger = field(default_factory=lambda: logging.getLogger("forge.langchain"))
     log_level: int = logging.INFO
     _start_times: dict = field(default_factory=dict)
 
@@ -1449,7 +1449,7 @@ class LoggingCallback(OpenCodeCallbackHandler):
 
 
 @dataclass
-class StreamingCallback(OpenCodeCallbackHandler):
+class StreamingCallback(Code-ForgeCallbackHandler):
     """
     Handles streaming output for display.
 
@@ -1507,7 +1507,7 @@ class StreamingCallback(OpenCodeCallbackHandler):
 
 
 @dataclass
-class CompositeCallback(OpenCodeCallbackHandler):
+class CompositeCallback(Code-ForgeCallbackHandler):
     """
     Combines multiple callbacks into one.
 
@@ -1569,7 +1569,7 @@ class CompositeCallback(OpenCodeCallbackHandler):
 
 ## Step 6: Agent Executor
 
-Create `src/opencode/langchain/agent.py`:
+Create `src/forge/langchain/agent.py`:
 
 ```python
 """Agent executor for tool-calling workflows."""
@@ -1587,12 +1587,12 @@ from typing import Any, Literal, TYPE_CHECKING
 from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
-from opencode.langchain.memory import ConversationMemory
-from opencode.langchain.tools import LangChainToolAdapter
+from forge.langchain.memory import ConversationMemory
+from forge.langchain.tools import LangChainToolAdapter
 
 if TYPE_CHECKING:
-    from opencode.langchain.llm import OpenRouterLLM
-    from opencode.llm.models import Message, TokenUsage
+    from forge.langchain.llm import OpenRouterLLM
+    from forge.llm.models import Message, TokenUsage
 
 
 class AgentEventType(str, Enum):
@@ -1637,7 +1637,7 @@ class AgentResult:
     stopped_reason: str  # "complete", "max_iterations", "timeout", "error"
 
 
-class OpenCodeAgent:
+class Code-ForgeAgent:
     """
     Agent executor for tool-calling workflows.
 
@@ -1650,14 +1650,14 @@ class OpenCodeAgent:
 
     Example:
         ```python
-        from opencode.langchain import OpenRouterLLM, OpenCodeAgent
-        from opencode.langchain.memory import ConversationMemory
+        from forge.langchain import OpenRouterLLM, Code-ForgeAgent
+        from forge.langchain.memory import ConversationMemory
 
         llm = OpenRouterLLM(client=client, model="anthropic/claude-3-opus")
         memory = ConversationMemory()
         tools = [ReadTool(), WriteTool(), BashTool()]
 
-        agent = OpenCodeAgent(
+        agent = Code-ForgeAgent(
             llm=llm,
             tools=tools,
             memory=memory,
@@ -1721,7 +1721,7 @@ class OpenCodeAgent:
         Returns:
             AgentResult with output and metadata
         """
-        from opencode.llm.models import Message, TokenUsage
+        from forge.llm.models import Message, TokenUsage
 
         start_time = time.time()
         tool_call_records: list[ToolCallRecord] = []
@@ -1762,8 +1762,8 @@ class OpenCodeAgent:
                 # Check for tool calls
                 if isinstance(response, AIMessage) and response.tool_calls:
                     # Add assistant message to memory
-                    from opencode.langchain.messages import langchain_to_opencode
-                    self.memory.add_message(langchain_to_opencode(response))
+                    from forge.langchain.messages import langchain_to_forge
+                    self.memory.add_message(langchain_to_forge(response))
 
                     # Execute tools
                     for tool_call in response.tool_calls:
@@ -1857,7 +1857,7 @@ class OpenCodeAgent:
         Yields:
             AgentEvent for each significant occurrence
         """
-        from opencode.llm.models import Message, TokenUsage
+        from forge.llm.models import Message, TokenUsage
 
         start_time = time.time()
         tool_call_records: list[ToolCallRecord] = []
@@ -1915,8 +1915,8 @@ class OpenCodeAgent:
                     response = await self._bound_llm.ainvoke(messages)
 
                     if isinstance(response, AIMessage) and response.tool_calls:
-                        from opencode.langchain.messages import langchain_to_opencode
-                        self.memory.add_message(langchain_to_opencode(response))
+                        from forge.langchain.messages import langchain_to_forge
+                        self.memory.add_message(langchain_to_forge(response))
 
                         for tool_call in response.tool_calls:
                             tool_name = tool_call["name"]
@@ -2003,22 +2003,22 @@ class OpenCodeAgent:
 
 ## Step 7: Package Exports
 
-Create `src/opencode/langchain/__init__.py`:
+Create `src/forge/langchain/__init__.py`:
 
 ```python
 """
-LangChain integration for OpenCode.
+LangChain integration for Code-Forge.
 
-This package provides bridges between LangChain and OpenCode,
+This package provides bridges between LangChain and Code-Forge,
 enabling use of OpenRouter's LLM API through LangChain's
 ecosystem of tools, agents, and chains.
 
 Example:
     ```python
-    from opencode.llm import OpenRouterClient
-    from opencode.langchain import (
+    from forge.llm import OpenRouterClient
+    from forge.langchain import (
         OpenRouterLLM,
-        OpenCodeAgent,
+        Code-ForgeAgent,
         ConversationMemory,
         LangChainToolAdapter,
     )
@@ -2028,9 +2028,9 @@ Example:
     llm = OpenRouterLLM(client=client, model="anthropic/claude-3-opus")
 
     # Create agent with tools
-    tools = [LangChainToolAdapter(opencode_tool=ReadTool())]
+    tools = [LangChainToolAdapter(forge_tool=ReadTool())]
     memory = ConversationMemory()
-    agent = OpenCodeAgent(llm=llm, tools=tools, memory=memory)
+    agent = Code-ForgeAgent(llm=llm, tools=tools, memory=memory)
 
     # Run agent
     result = await agent.run("Read /tmp/test.txt and summarize it")
@@ -2038,37 +2038,37 @@ Example:
     ```
 """
 
-from opencode.langchain.llm import OpenRouterLLM
-from opencode.langchain.tools import (
+from forge.langchain.llm import OpenRouterLLM
+from forge.langchain.tools import (
     LangChainToolAdapter,
-    OpenCodeToolAdapter,
+    Code-ForgeToolAdapter,
     adapt_tools_for_langchain,
-    adapt_tools_for_opencode,
+    adapt_tools_for_forge,
 )
-from opencode.langchain.memory import (
+from forge.langchain.memory import (
     ConversationMemory,
     SlidingWindowMemory,
     SummaryMemory,
 )
-from opencode.langchain.agent import (
-    OpenCodeAgent,
+from forge.langchain.agent import (
+    Code-ForgeAgent,
     AgentEvent,
     AgentEventType,
     AgentResult,
     ToolCallRecord,
 )
-from opencode.langchain.callbacks import (
-    OpenCodeCallbackHandler,
+from forge.langchain.callbacks import (
+    Code-ForgeCallbackHandler,
     TokenTrackingCallback,
     LoggingCallback,
     StreamingCallback,
     CompositeCallback,
 )
-from opencode.langchain.messages import (
-    langchain_to_opencode,
-    opencode_to_langchain,
-    langchain_messages_to_opencode,
-    opencode_messages_to_langchain,
+from forge.langchain.messages import (
+    langchain_to_forge,
+    forge_to_langchain,
+    langchain_messages_to_forge,
+    forge_messages_to_langchain,
 )
 
 __all__ = [
@@ -2076,30 +2076,30 @@ __all__ = [
     "OpenRouterLLM",
     # Tools
     "LangChainToolAdapter",
-    "OpenCodeToolAdapter",
+    "Code-ForgeToolAdapter",
     "adapt_tools_for_langchain",
-    "adapt_tools_for_opencode",
+    "adapt_tools_for_forge",
     # Memory
     "ConversationMemory",
     "SlidingWindowMemory",
     "SummaryMemory",
     # Agent
-    "OpenCodeAgent",
+    "Code-ForgeAgent",
     "AgentEvent",
     "AgentEventType",
     "AgentResult",
     "ToolCallRecord",
     # Callbacks
-    "OpenCodeCallbackHandler",
+    "Code-ForgeCallbackHandler",
     "TokenTrackingCallback",
     "LoggingCallback",
     "StreamingCallback",
     "CompositeCallback",
     # Message conversion
-    "langchain_to_opencode",
-    "opencode_to_langchain",
-    "langchain_messages_to_opencode",
-    "opencode_messages_to_langchain",
+    "langchain_to_forge",
+    "forge_to_langchain",
+    "langchain_messages_to_forge",
+    "forge_messages_to_langchain",
 ]
 ```
 
@@ -2136,7 +2136,7 @@ tests/unit/langchain/
 3. **test_tools.py**
    - Test LangChainToolAdapter parameter extraction
    - Test tool execution
-   - Test OpenCodeToolAdapter
+   - Test Code-ForgeToolAdapter
 
 4. **test_memory.py**
    - Test message addition

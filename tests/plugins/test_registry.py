@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opencode.plugins.registry import PluginRegistry
+from code_forge.plugins.registry import PluginRegistry
 
 
 class TestPluginRegistry:

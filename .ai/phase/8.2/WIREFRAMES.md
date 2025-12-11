@@ -318,7 +318,7 @@ Would you like me to fetch more details from any of the other search results?
 ### Configuration File
 
 ```yaml
-# ~/.src/opencode/config.yaml
+# ~/.src/forge/config.yaml
 
 web:
   search:
@@ -337,7 +337,7 @@ web:
   fetch:
     timeout: 30
     max_size: 5242880  # 5MB
-    user_agent: "src/opencode/1.0 (AI Assistant)"
+    user_agent: "src/forge/1.0 (AI Assistant)"
     follow_redirects: true
     max_redirects: 5
 
@@ -345,7 +345,7 @@ web:
     enabled: true
     ttl: 900  # 15 minutes
     max_size: 104857600  # 100MB
-    directory: ~/.src/opencode/cache/web
+    directory: ~/.src/forge/cache/web
 ```
 
 ### Environment Variables
@@ -522,7 +522,7 @@ You: How much web content is cached?
 Web Cache Status
 ══════════════════════════════════════════════════
 
-Location: ~/.src/opencode/cache/web
+Location: ~/.src/forge/cache/web
 Entries:  47
 Size:     12.3 MB / 100 MB
 TTL:      15 minutes

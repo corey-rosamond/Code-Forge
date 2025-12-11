@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 8.2 implements web tools for OpenCode, enabling the assistant to search the web and fetch content from URLs. These tools provide access to real-time information beyond the model's training cutoff and allow retrieval of documentation, APIs, and other web resources.
+Phase 8.2 implements web tools for Code-Forge, enabling the assistant to search the web and fetch content from URLs. These tools provide access to real-time information beyond the model's training cutoff and allow retrieval of documentation, APIs, and other web resources.
 
 ---
 
@@ -180,7 +180,7 @@ Phase 8.2 implements web tools for OpenCode, enabling the assistant to search th
 ### Package Structure
 
 ```
-src/opencode/web/
+src/forge/web/
 ├── __init__.py           # Package exports
 ├── search/
 │   ├── __init__.py
@@ -202,7 +202,7 @@ src/opencode/web/
 ### Configuration Format
 
 ```yaml
-# ~/.src/opencode/config.yaml
+# ~/.src/forge/config.yaml
 web:
   search:
     default_provider: duckduckgo
@@ -223,7 +223,7 @@ web:
   fetch:
     timeout: 30
     max_size: 5242880  # 5MB
-    user_agent: "src/opencode/1.0"
+    user_agent: "src/forge/1.0"
     follow_redirects: true
     max_redirects: 5
 
@@ -344,7 +344,7 @@ class FetchOptions:
     """Options for URL fetching."""
     timeout: int = 30
     max_size: int = 5 * 1024 * 1024  # 5MB
-    user_agent: str = "src/opencode/1.0"
+    user_agent: str = "src/forge/1.0"
     follow_redirects: bool = True
     max_redirects: int = 5
     headers: dict[str, str] | None = None

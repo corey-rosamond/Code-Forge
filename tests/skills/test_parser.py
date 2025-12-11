@@ -5,7 +5,7 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 
-from opencode.skills.parser import (
+from code_forge.skills.parser import (
     ParseResult,
     SkillParseError,
     SkillParser,

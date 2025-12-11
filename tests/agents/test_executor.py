@@ -4,9 +4,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.agents.base import Agent, AgentConfig, AgentContext, AgentState
-from opencode.agents.executor import AgentExecutionError, AgentExecutor
-from opencode.agents.result import AgentResult
+from code_forge.agents.base import Agent, AgentConfig, AgentContext, AgentState
+from code_forge.agents.executor import AgentExecutionError, AgentExecutor
+from code_forge.agents.result import AgentResult
 
 
 # Concrete implementation for testing

@@ -15,7 +15,7 @@ Phase 1.2 has no interactive UI. Configuration is loaded from files and environm
 ## 1. Configuration File Format - JSON
 
 ```json
-// .src/opencode/settings.json
+// .src/forge/settings.json
 {
   "model": {
     "default": "gpt-5",
@@ -80,7 +80,7 @@ Phase 1.2 has no interactive UI. Configuration is loaded from files and environm
 ## 2. Configuration File Format - YAML
 
 ```yaml
-# .src/opencode/settings.yaml
+# .src/forge/settings.yaml
 model:
   default: gpt-5
   fallback:
@@ -137,7 +137,7 @@ session:
 ## 3. Local Override File
 
 ```json
-// .src/opencode/settings.local.json
+// .src/forge/settings.local.json
 // This file should be gitignored
 {
   "model": {
@@ -155,9 +155,9 @@ session:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode                                                      │
+│ $ forge                                                      │
 │                                                                 │
-│ Warning: Failed to load .src/opencode/settings.json                 │
+│ Warning: Failed to load .src/forge/settings.json                 │
 │   Error: Expecting ',' delimiter at line 5, column 3            │
 │   Using default configuration                                   │
 │                                                                 │
@@ -169,9 +169,9 @@ session:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode                                                      │
+│ $ forge                                                      │
 │                                                                 │
-│ Warning: Invalid configuration in .src/opencode/settings.json       │
+│ Warning: Invalid configuration in .src/forge/settings.json       │
 │   - model.max_tokens: Input should be a valid integer           │
 │     (got 'not-a-number')                                        │
 │   - model.temperature: Input should be less than or equal to 2  │
@@ -188,7 +188,7 @@ session:
 ┌─────────────────────────────────────────────────────────────────┐
 │ > (working...)                                                  │
 │                                                                 │
-│ [Config] Reloaded .src/opencode/settings.json                       │
+│ [Config] Reloaded .src/forge/settings.json                       │
 │ [Config] Model changed: gpt-5 → claude-4                        │
 │                                                                 │
 │ >                                                               │
@@ -201,7 +201,7 @@ session:
 ┌─────────────────────────────────────────────────────────────────┐
 │ > (working...)                                                  │
 │                                                                 │
-│ [Config] Failed to reload .src/opencode/settings.json               │
+│ [Config] Failed to reload .src/forge/settings.json               │
 │   Error: Invalid JSON syntax                                    │
 │   Keeping previous configuration                                │
 │                                                                 │
@@ -219,17 +219,17 @@ Configuration Load Order (displayed on --debug flag)
 
 ┌─ Priority ─┬─ Source ─────────────────────────────┬─ Status ─┐
 │ 1 (lowest) │ Built-in defaults                    │ Loaded   │
-│ 2          │ /etc/src/opencode/settings.json          │ Not found│
-│ 3          │ ~/.src/opencode/settings.json            │ Loaded   │
-│ 4          │ .src/opencode/settings.json              │ Loaded   │
-│ 5          │ .src/opencode/settings.local.json        │ Loaded   │
+│ 2          │ /etc/src/forge/settings.json          │ Not found│
+│ 3          │ ~/.src/forge/settings.json            │ Loaded   │
+│ 4          │ .src/forge/settings.json              │ Loaded   │
+│ 5          │ .src/forge/settings.local.json        │ Loaded   │
 │ 6 (highest)│ Environment variables                │ 2 vars   │
 └────────────┴──────────────────────────────────────┴──────────┘
 
 Merged Configuration:
   model.default = "gpt-5" (from: environment)
-  model.max_tokens = 16384 (from: .src/opencode/settings.json)
-  display.theme = "light" (from: ~/.src/opencode/settings.json)
+  model.max_tokens = 16384 (from: .src/forge/settings.json)
+  display.theme = "light" (from: ~/.src/forge/settings.json)
 ```
 
 ---
@@ -240,12 +240,12 @@ Merged Configuration:
 ┌─────────────────────────────────────────────────────────────────┐
 │ Environment Variables                                           │
 ├─────────────────────────────────────────────────────────────────┤
-│ OPENCODE_API_KEY      OpenRouter API key                        │
-│ OPENCODE_MODEL        Default model (e.g., gpt-5, claude-4)     │
-│ OPENCODE_MAX_TOKENS   Maximum tokens per request                │
-│ OPENCODE_THEME        Display theme (dark, light)               │
-│ OPENCODE_LOG_LEVEL    Logging level (DEBUG, INFO, WARNING)      │
-│ OPENCODE_CONFIG_PATH  Custom configuration file path            │
+│ FORGE_API_KEY      OpenRouter API key                        │
+│ FORGE_MODEL        Default model (e.g., gpt-5, claude-4)     │
+│ FORGE_MAX_TOKENS   Maximum tokens per request                │
+│ FORGE_THEME        Display theme (dark, light)               │
+│ FORGE_LOG_LEVEL    Logging level (DEBUG, INFO, WARNING)      │
+│ FORGE_CONFIG_PATH  Custom configuration file path            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -255,19 +255,19 @@ Merged Configuration:
 
 ```
 User Configuration:
-~/.src/opencode/
+~/.src/forge/
 ├── settings.json        ← User preferences
 ├── sessions/            ← Session storage (Phase 5.1)
 ├── cache/               ← Cached data
 └── commands/            ← User custom commands (Phase 6.1)
 
 Project Configuration:
-.src/opencode/
+.src/forge/
 ├── settings.json        ← Project settings (version controlled)
 ├── settings.local.json  ← Local overrides (gitignored)
 ├── commands/            ← Project custom commands
 ├── agents/              ← Custom agent definitions
-└── OPENCODE.md          ← Project context document
+└── FORGE.md          ← Project context document
 ```
 
 ---

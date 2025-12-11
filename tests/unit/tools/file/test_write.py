@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools.base import ExecutionContext
-from opencode.tools.file.write import WriteTool
+from code_forge.tools.base import ExecutionContext
+from code_forge.tools.file.write import WriteTool
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ class TestWriteToolProperties:
         assert "overwrite" in write_tool.description.lower()
 
     def test_category(self, write_tool: WriteTool) -> None:
-        from opencode.tools.base import ToolCategory
+        from code_forge.tools.base import ToolCategory
 
         assert write_tool.category == ToolCategory.FILE
 

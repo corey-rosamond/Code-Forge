@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from opencode.skills.base import (
+from code_forge.skills.base import (
     Skill,
     SkillConfig,
     SkillDefinition,
@@ -139,13 +139,13 @@ class TestSkillMetadata:
         metadata = SkillMetadata(
             name="pdf",
             description="Work with PDF documents",
-            author="OpenCode",
+            author="Code-Forge",
             version="1.0.0",
             tags=["documents", "analysis"],
         )
         assert metadata.name == "pdf"
         assert metadata.description == "Work with PDF documents"
-        assert metadata.author == "OpenCode"
+        assert metadata.author == "Code-Forge"
         assert "documents" in metadata.tags
 
     def test_matches_query_name(self) -> None:

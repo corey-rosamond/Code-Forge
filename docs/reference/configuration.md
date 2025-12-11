@@ -1,13 +1,13 @@
 # Configuration Reference
 
-OpenCode can be configured via YAML files and environment variables.
+Code-Forge can be configured via YAML files and environment variables.
 
 ## Configuration Files
 
 Configuration is loaded from (in order of priority):
 
-1. Project config: `.opencode/config.yaml` or `.opencode.yaml`
-2. User config: `~/.config/opencode/config.yaml`
+1. Project config: `.forge/config.yaml` or `.forge.yaml`
+2. User config: `~/.config/forge/config.yaml`
 3. Environment variables
 
 ## Full Configuration Schema
@@ -69,12 +69,12 @@ hooks:
   # Pre-execution hooks
   pre:
     - matcher: "Bash(*)"
-      command: "echo 'Running: $OPENCODE_COMMAND'"
+      command: "echo 'Running: $FORGE_COMMAND'"
 
   # Post-execution hooks
   post:
     - matcher: "*"
-      command: "logger 'OpenCode tool executed'"
+      command: "logger 'Code-Forge tool executed'"
 
 # MCP Server Configuration
 mcp:
@@ -104,10 +104,10 @@ plugins:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OPENROUTER_API_KEY` | OpenRouter API key | Required |
-| `OPENCODE_MODEL` | Default model | claude-3-sonnet |
-| `OPENCODE_CONFIG` | Config file path | Auto-detected |
-| `OPENCODE_DATA_DIR` | Data directory | ~/.local/share/opencode |
-| `OPENCODE_LOG_LEVEL` | Log level | INFO |
+| `FORGE_MODEL` | Default model | claude-3-sonnet |
+| `FORGE_CONFIG` | Config file path | Auto-detected |
+| `FORGE_DATA_DIR` | Data directory | ~/.local/share/forge |
+| `FORGE_LOG_LEVEL` | Log level | INFO |
 
 ## Permission Patterns
 
@@ -139,7 +139,7 @@ Hooks execute shell commands on events:
 hooks:
   pre:
     - matcher: "Bash(*)"
-      command: "echo 'Executing: $OPENCODE_TOOL_NAME'"
+      command: "echo 'Executing: $FORGE_TOOL_NAME'"
       timeout: 5  # seconds
 
   post:
@@ -148,6 +148,6 @@ hooks:
 ```
 
 Available environment variables in hooks:
-- `OPENCODE_TOOL_NAME` - Tool being executed
-- `OPENCODE_TOOL_ARGS` - JSON of arguments
-- `OPENCODE_SUCCESS` - "true" or "false" (post hooks)
+- `FORGE_TOOL_NAME` - Tool being executed
+- `FORGE_TOOL_ARGS` - JSON of arguments
+- `FORGE_SUCCESS` - "true" or "false" (post hooks)

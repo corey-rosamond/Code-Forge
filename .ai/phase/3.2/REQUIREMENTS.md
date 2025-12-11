@@ -42,14 +42,14 @@ Phase 3.2 integrates LangChain 1.0 as the middleware layer for agent orchestrati
 - Must implement `_astream()` for async streaming
 
 **FR-1.2:** Support all LangChain message types
-- `SystemMessage` → OpenCode `Message.system()`
-- `HumanMessage` → OpenCode `Message.user()`
-- `AIMessage` → OpenCode `Message.assistant()`
-- `ToolMessage` → OpenCode `Message.tool_result()`
+- `SystemMessage` → Code-Forge `Message.system()`
+- `HumanMessage` → Code-Forge `Message.user()`
+- `AIMessage` → Code-Forge `Message.assistant()`
+- `ToolMessage` → Code-Forge `Message.tool_result()`
 
 **FR-1.3:** Handle tool calls in LangChain format
 - Parse `AIMessage.tool_calls` from responses
-- Convert OpenCode `ToolCall` to LangChain format
+- Convert Code-Forge `ToolCall` to LangChain format
 - Support `tool_choice` parameter
 
 **FR-1.4:** Pass through model parameters
@@ -63,9 +63,9 @@ Phase 3.2 integrates LangChain 1.0 as the middleware layer for agent orchestrati
 
 ### FR-2: Tool Adapters
 
-**FR-2.1:** Create `LangChainToolAdapter` to wrap OpenCode `BaseTool`
-- Convert OpenCode tool parameters to LangChain tool schema
-- Execute tool through OpenCode's `ToolExecutor`
+**FR-2.1:** Create `LangChainToolAdapter` to wrap Code-Forge `BaseTool`
+- Convert Code-Forge tool parameters to LangChain tool schema
+- Execute tool through Code-Forge's `ToolExecutor`
 - Return results in LangChain expected format
 
 **FR-2.2:** Support both sync and async execution
@@ -77,12 +77,12 @@ Phase 3.2 integrates LangChain 1.0 as the middleware layer for agent orchestrati
 - Preserve error details for debugging
 
 **FR-2.4:** Provide reverse adapter for LangChain tools
-- `OpenCodeToolAdapter` wraps LangChain tools as OpenCode `BaseTool`
-- Enable use of existing LangChain tools in OpenCode
+- `Code-ForgeToolAdapter` wraps LangChain tools as Code-Forge `BaseTool`
+- Enable use of existing LangChain tools in Code-Forge
 
 ### FR-3: Agent Executor
 
-**FR-3.1:** Create `OpenCodeAgent` class for tool-calling agents
+**FR-3.1:** Create `Code-ForgeAgent` class for tool-calling agents
 - Support ReAct-style reasoning loop
 - Configurable maximum iterations
 - Timeout handling per iteration and overall
@@ -140,8 +140,8 @@ Phase 3.2 integrates LangChain 1.0 as the middleware layer for agent orchestrati
 - Support `on_tool_start`, `on_tool_end`
 - Support `on_chain_start`, `on_chain_end`
 
-**FR-5.2:** Create OpenCode-specific callbacks
-- `OpenCodeCallbackHandler` base class
+**FR-5.2:** Create Code-Forge-specific callbacks
+- `Code-ForgeCallbackHandler` base class
 - Token usage tracking callback
 - Logging callback for debugging
 
@@ -180,11 +180,11 @@ Phase 3.2 integrates LangChain 1.0 as the middleware layer for agent orchestrati
 ### Package Structure
 
 ```
-src/opencode/langchain/
+src/forge/langchain/
 ├── __init__.py           # Package exports
 ├── llm.py                # OpenRouterLLM wrapper
 ├── tools.py              # Tool adapters
-├── agent.py              # OpenCodeAgent
+├── agent.py              # Code-ForgeAgent
 ├── memory.py             # ConversationMemory
 └── callbacks.py          # Callback handlers
 ```
@@ -250,9 +250,9 @@ class OpenRouterLLM(BaseChatModel):
 
 # tools.py
 class LangChainToolAdapter(BaseTool):
-    """Adapts OpenCode BaseTool to LangChain tool."""
+    """Adapts Code-Forge BaseTool to LangChain tool."""
 
-    opencode_tool: "opencode.tools.BaseTool"
+    forge_tool: "forge.tools.BaseTool"
 
     @property
     def name(self) -> str: ...
@@ -268,8 +268,8 @@ class LangChainToolAdapter(BaseTool):
     async def _arun(self, **kwargs) -> str: ...
 
 
-class OpenCodeToolAdapter(BaseTool):
-    """Adapts LangChain tool to OpenCode BaseTool."""
+class Code-ForgeToolAdapter(BaseTool):
+    """Adapts LangChain tool to Code-Forge BaseTool."""
 
     langchain_tool: "langchain.tools.BaseTool"
 
@@ -277,7 +277,7 @@ class OpenCodeToolAdapter(BaseTool):
 
 
 # agent.py
-class OpenCodeAgent:
+class Code-ForgeAgent:
     """Agent executor for tool-calling workflows."""
 
     llm: OpenRouterLLM
@@ -338,12 +338,12 @@ class ConversationMemory:
 
 
 # callbacks.py
-class OpenCodeCallbackHandler(BaseCallbackHandler):
-    """Base callback handler for OpenCode."""
+class Code-ForgeCallbackHandler(BaseCallbackHandler):
+    """Base callback handler for Code-Forge."""
     pass
 
 
-class TokenTrackingCallback(OpenCodeCallbackHandler):
+class TokenTrackingCallback(Code-ForgeCallbackHandler):
     """Tracks token usage across calls."""
 
     total_prompt_tokens: int = 0
@@ -354,7 +354,7 @@ class TokenTrackingCallback(OpenCodeCallbackHandler):
     def reset(self) -> None: ...
 
 
-class LoggingCallback(OpenCodeCallbackHandler):
+class LoggingCallback(Code-ForgeCallbackHandler):
     """Logs all LLM and tool events."""
 
     logger: Logger
@@ -369,11 +369,11 @@ class LoggingCallback(OpenCodeCallbackHandler):
 
 ## Message Conversion
 
-### LangChain to OpenCode
+### LangChain to Code-Forge
 
 ```python
-def langchain_to_opencode(message: BaseMessage) -> Message:
-    """Convert LangChain message to OpenCode message."""
+def langchain_to_forge(message: BaseMessage) -> Message:
+    """Convert LangChain message to Code-Forge message."""
     if isinstance(message, SystemMessage):
         return Message.system(message.content)
     elif isinstance(message, HumanMessage):
@@ -399,11 +399,11 @@ def langchain_to_opencode(message: BaseMessage) -> Message:
         raise ValueError(f"Unknown message type: {type(message)}")
 ```
 
-### OpenCode to LangChain
+### Code-Forge to LangChain
 
 ```python
-def opencode_to_langchain(message: Message) -> BaseMessage:
-    """Convert OpenCode message to LangChain message."""
+def forge_to_langchain(message: Message) -> BaseMessage:
+    """Convert Code-Forge message to LangChain message."""
     if message.role == MessageRole.SYSTEM:
         return SystemMessage(content=message.content)
     elif message.role == MessageRole.USER:

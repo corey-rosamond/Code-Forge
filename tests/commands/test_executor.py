@@ -7,10 +7,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opencode.commands.base import Command, CommandCategory, CommandResult
-from opencode.commands.executor import CommandContext, CommandExecutor
-from opencode.commands.parser import CommandParser, ParsedCommand
-from opencode.commands.registry import CommandRegistry
+from code_forge.commands.base import Command, CommandCategory, CommandResult
+from code_forge.commands.executor import CommandContext, CommandExecutor
+from code_forge.commands.parser import CommandParser, ParsedCommand
+from code_forge.commands.registry import CommandRegistry
 
 
 class TestCommandContext:
@@ -83,7 +83,7 @@ class TestCommandExecutor:
         description = "Requires argument"
         usage = "/required <arg>"
 
-        from opencode.commands.base import CommandArgument
+        from code_forge.commands.base import CommandArgument
 
         arguments = [CommandArgument(name="arg", description="Required arg")]
 
@@ -237,7 +237,7 @@ class TestRegisterBuiltinCommands:
 
     def test_registers_commands(self) -> None:
         """Test builtin commands are registered."""
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.executor import register_builtin_commands
 
         registry = CommandRegistry()
         register_builtin_commands(registry)
@@ -252,7 +252,7 @@ class TestRegisterBuiltinCommands:
 
     def test_registers_to_singleton(self) -> None:
         """Test registers to singleton when no registry provided."""
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.executor import register_builtin_commands
 
         register_builtin_commands()
         registry = CommandRegistry.get_instance()
@@ -261,7 +261,7 @@ class TestRegisterBuiltinCommands:
 
     def test_aliases_work(self) -> None:
         """Test command aliases are registered."""
-        from opencode.commands.executor import register_builtin_commands
+        from code_forge.commands.executor import register_builtin_commands
 
         registry = CommandRegistry()
         register_builtin_commands(registry)

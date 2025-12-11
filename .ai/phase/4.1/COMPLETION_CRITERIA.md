@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 
 ## Checklist
 
-### Permission Models (src/opencode/permissions/models.py)
+### Permission Models (src/forge/permissions/models.py)
 - [ ] PermissionLevel enum defined (ALLOW, ASK, DENY)
 - [ ] PermissionLevel comparison operators work (ALLOW < ASK < DENY)
 - [ ] PermissionCategory enum defined
@@ -28,7 +28,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 - [ ] TOOL_CATEGORIES mapping defined
 - [ ] get_tool_category() function
 
-### Pattern Matching (src/opencode/permissions/rules.py)
+### Pattern Matching (src/forge/permissions/rules.py)
 - [ ] PatternMatcher.match() for tool patterns
 - [ ] PatternMatcher.match() for argument patterns
 - [ ] PatternMatcher.match() for category patterns
@@ -38,7 +38,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 - [ ] Glob pattern matching works
 - [ ] Regex pattern matching works
 
-### Rule Set (src/opencode/permissions/rules.py)
+### Rule Set (src/forge/permissions/rules.py)
 - [ ] RuleSet class with rules list and default
 - [ ] RuleSet.add_rule() adds rules
 - [ ] RuleSet.remove_rule() removes by pattern
@@ -50,7 +50,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 - [ ] RuleSet.to_dict() serializes
 - [ ] RuleSet.from_dict() deserializes
 
-### Permission Checker (src/opencode/permissions/checker.py)
+### Permission Checker (src/forge/permissions/checker.py)
 - [ ] PermissionChecker class with multiple rule sources
 - [ ] PermissionChecker.check() evaluates all sources
 - [ ] Session rules take highest priority
@@ -64,7 +64,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 - [ ] PermissionChecker.from_config() factory method
 - [ ] PermissionError exception class
 
-### User Confirmation (src/opencode/permissions/prompt.py)
+### User Confirmation (src/forge/permissions/prompt.py)
 - [ ] ConfirmationChoice enum (ALLOW, ALLOW_ALWAYS, DENY, DENY_ALWAYS, TIMEOUT)
 - [ ] ConfirmationRequest dataclass
 - [ ] PermissionPrompt.format_request() creates display string
@@ -75,7 +75,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 - [ ] Timeout returns TIMEOUT choice
 - [ ] create_rule_from_choice() creates rules for "always" choices
 
-### Configuration (src/opencode/permissions/config.py)
+### Configuration (src/forge/permissions/config.py)
 - [ ] DEFAULT_RULES list defined
 - [ ] Default read operations ALLOW
 - [ ] Default write operations ASK
@@ -91,7 +91,7 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 - [ ] Handles corrupted files gracefully
 
 ### Package Structure
-- [ ] src/opencode/permissions/__init__.py exports all public classes
+- [ ] src/forge/permissions/__init__.py exports all public classes
 - [ ] All imports work correctly
 - [ ] No circular dependencies
 
@@ -115,12 +115,12 @@ All of the following criteria must be met before Phase 4.1 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/permissions/
+ls -la src/forge/permissions/
 # Expected: __init__.py, models.py, rules.py, checker.py, prompt.py, config.py
 
 # 2. Test imports
 python -c "
-from opencode.permissions import (
+from forge.permissions import (
     PermissionLevel,
     PermissionCategory,
     PermissionResult,
@@ -143,7 +143,7 @@ print('All permission imports successful')
 
 # 3. Test PermissionLevel comparison
 python -c "
-from opencode.permissions import PermissionLevel
+from forge.permissions import PermissionLevel
 
 assert PermissionLevel.ALLOW < PermissionLevel.ASK
 assert PermissionLevel.ASK < PermissionLevel.DENY
@@ -156,7 +156,7 @@ print('PermissionLevel comparison: OK')
 
 # 4. Test PatternMatcher
 python -c "
-from opencode.permissions import PatternMatcher
+from forge.permissions import PatternMatcher
 
 # Tool pattern
 assert PatternMatcher.match('tool:bash', 'bash', {}) == True
@@ -178,7 +178,7 @@ print('PatternMatcher: OK')
 
 # 5. Test RuleSet
 python -c "
-from opencode.permissions import RuleSet, PermissionRule, PermissionLevel
+from forge.permissions import RuleSet, PermissionRule, PermissionLevel
 
 rules = RuleSet(default=PermissionLevel.ASK)
 rules.add_rule(PermissionRule('tool:read', PermissionLevel.ALLOW))
@@ -200,7 +200,7 @@ print('RuleSet: OK')
 
 # 6. Test PermissionChecker
 python -c "
-from opencode.permissions import PermissionChecker, RuleSet, PermissionRule, PermissionLevel
+from forge.permissions import PermissionChecker, RuleSet, PermissionRule, PermissionLevel
 
 global_rules = RuleSet()
 global_rules.add_rule(PermissionRule('tool:bash', PermissionLevel.ASK))
@@ -230,7 +230,7 @@ print('PermissionChecker: OK')
 
 # 7. Test PermissionResult
 python -c "
-from opencode.permissions import PermissionResult, PermissionLevel
+from forge.permissions import PermissionResult, PermissionLevel
 
 result_allow = PermissionResult(level=PermissionLevel.ALLOW)
 assert result_allow.allowed == True
@@ -252,7 +252,7 @@ print('PermissionResult: OK')
 
 # 8. Test confirmation choice parsing
 python -c "
-from opencode.permissions import PermissionPrompt, ConfirmationChoice
+from forge.permissions import PermissionPrompt, ConfirmationChoice
 
 prompt = PermissionPrompt()
 
@@ -268,7 +268,7 @@ print('Confirmation parsing: OK')
 
 # 9. Test create_rule_from_choice
 python -c "
-from opencode.permissions import (
+from forge.permissions import (
     create_rule_from_choice, ConfirmationChoice, PermissionLevel
 )
 
@@ -289,7 +289,7 @@ print('create_rule_from_choice: OK')
 
 # 10. Test rule serialization
 python -c "
-from opencode.permissions import PermissionRule, PermissionLevel
+from forge.permissions import PermissionRule, PermissionLevel
 
 rule = PermissionRule(
     pattern='tool:bash',
@@ -311,7 +311,7 @@ print('Rule serialization: OK')
 
 # 11. Test RuleSet serialization
 python -c "
-from opencode.permissions import RuleSet, PermissionRule, PermissionLevel
+from forge.permissions import RuleSet, PermissionRule, PermissionLevel
 
 rules = RuleSet(default=PermissionLevel.ASK)
 rules.add_rule(PermissionRule('tool:read', PermissionLevel.ALLOW))
@@ -329,7 +329,7 @@ print('RuleSet serialization: OK')
 
 # 12. Test default rules
 python -c "
-from opencode.permissions import PermissionConfig, PermissionLevel
+from forge.permissions import PermissionConfig, PermissionLevel
 
 defaults = PermissionConfig.get_default_rules()
 
@@ -350,7 +350,7 @@ print('Default rules: OK')
 
 # 13. Test tool categories
 python -c "
-from opencode.permissions import get_tool_category, PermissionCategory
+from forge.permissions import get_tool_category, PermissionCategory
 
 assert get_tool_category('read') == PermissionCategory.READ
 assert get_tool_category('write') == PermissionCategory.WRITE
@@ -362,7 +362,7 @@ print('Tool categories: OK')
 
 # 14. Test prompt formatting
 python -c "
-from opencode.permissions import PermissionPrompt, ConfirmationRequest
+from forge.permissions import PermissionPrompt, ConfirmationRequest
 
 prompt = PermissionPrompt()
 request = ConfirmationRequest(
@@ -380,16 +380,16 @@ print('Prompt formatting: OK')
 "
 
 # 15. Run all unit tests
-pytest tests/unit/permissions/ -v --cov=opencode.permissions --cov-report=term-missing
+pytest tests/unit/permissions/ -v --cov=forge.permissions --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 16. Type checking
-mypy src/opencode/permissions/ --strict
+mypy src/forge/permissions/ --strict
 # Expected: No errors
 
 # 17. Linting
-ruff check src/opencode/permissions/
+ruff check src/forge/permissions/
 # Expected: No errors
 ```
 
@@ -410,12 +410,12 @@ ruff check src/opencode/permissions/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/permissions/__init__.py` | Package exports |
-| `src/opencode/permissions/models.py` | Permission data models |
-| `src/opencode/permissions/rules.py` | Rule definition and matching |
-| `src/opencode/permissions/checker.py` | Permission checker |
-| `src/opencode/permissions/prompt.py` | User confirmation prompts |
-| `src/opencode/permissions/config.py` | Permission configuration |
+| `src/forge/permissions/__init__.py` | Package exports |
+| `src/forge/permissions/models.py` | Permission data models |
+| `src/forge/permissions/rules.py` | Rule definition and matching |
+| `src/forge/permissions/checker.py` | Permission checker |
+| `src/forge/permissions/prompt.py` | User confirmation prompts |
+| `src/forge/permissions/config.py` | Permission configuration |
 | `tests/unit/permissions/__init__.py` | Test package |
 | `tests/unit/permissions/test_models.py` | Model tests |
 | `tests/unit/permissions/test_rules.py` | Pattern matching tests |

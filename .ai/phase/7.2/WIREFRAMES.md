@@ -99,7 +99,7 @@ You: /skill info pdf
 │  Description: Analyze and extract information from    │
 │               PDF documents                           │
 │                                                       │
-│  Author:      OpenCode Team                          │
+│  Author:      Code-Forge Team                          │
 │  Version:     1.0.0                                  │
 │  Tags:        documents, analysis, extraction        │
 │                                                       │
@@ -128,7 +128,7 @@ You: /skill info excel
 │  Description: Work with Excel and CSV spreadsheet     │
 │               files                                   │
 │                                                       │
-│  Author:      OpenCode Team                          │
+│  Author:      Code-Forge Team                          │
 │  Version:     1.0.0                                  │
 │  Tags:        data, spreadsheets, csv, xlsx          │
 │  Aliases:     xlsx, csv                              │
@@ -318,7 +318,7 @@ Would you like me to generate the migration scripts?
 ### User Skill File Example
 
 ```yaml
-# ~/.src/opencode/skills/react-expert.yaml
+# ~/.src/forge/skills/react-expert.yaml
 name: react-expert
 description: Expert React and TypeScript development assistance
 author: Your Name
@@ -483,7 +483,7 @@ Use /skill list to see all available skills.
 ```
 Startup: Loading skills...
 
-Warning: Failed to load skill from ~/.src/opencode/skills/broken.yaml
+Warning: Failed to load skill from ~/.src/forge/skills/broken.yaml
   Error: Invalid YAML syntax at line 15
   Skipping this skill.
 
@@ -508,26 +508,26 @@ Activated skill: custom-skill
 ### Skill Indicator in Prompt
 
 ```
-opencode> /skill pdf
+forge> /skill pdf
 Activated skill: pdf
 
-opencode [pdf]> Analyze the document structure
+forge [pdf]> Analyze the document structure
 
 [Reading document...]
 
 The document has the following structure:
 ...
 
-opencode [pdf]> /skill off
+forge [pdf]> /skill off
 Deactivated skill: pdf
 
-opencode>
+forge>
 ```
 
 ### Skill Context in Messages
 
 ```
-opencode [excel]> What formulas would help analyze this data?
+forge [excel]> What formulas would help analyze this data?
 
 [Context: Excel skill active - specialized spreadsheet assistance]
 
@@ -607,8 +607,8 @@ Skill System Commands:
 
 Creating Custom Skills:
 
-  User skills:    ~/.src/opencode/skills/*.yaml or *.md
-  Project skills: .src/opencode/skills/*.yaml or *.md
+  User skills:    ~/.src/forge/skills/*.yaml or *.md
+  Project skills: .src/forge/skills/*.yaml or *.md
 
   See documentation for skill file format.
 ```

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.cli.themes import (
+from code_forge.cli.themes import (
     DARK_THEME,
     LIGHT_THEME,
     Theme,

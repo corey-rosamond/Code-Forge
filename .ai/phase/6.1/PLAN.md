@@ -8,7 +8,7 @@
 
 ## Overview
 
-This plan details the implementation of the slash command system for OpenCode, providing built-in commands for session management, context control, and system configuration.
+This plan details the implementation of the slash command system for Code-Forge, providing built-in commands for session management, context control, and system configuration.
 
 ---
 
@@ -22,7 +22,7 @@ This plan details the implementation of the slash command system for OpenCode, p
 
 ---
 
-## File 1: src/opencode/commands/parser.py
+## File 1: src/forge/commands/parser.py
 
 ```python
 """Command parsing utilities."""
@@ -269,7 +269,7 @@ class CommandParser:
 
 ---
 
-## File 2: src/opencode/commands/base.py
+## File 2: src/forge/commands/base.py
 
 ```python
 """Base command classes and types."""
@@ -574,7 +574,7 @@ def _get_parsed_command_class():
 
 ---
 
-## File 3: src/opencode/commands/registry.py
+## File 3: src/forge/commands/registry.py
 
 ```python
 """Command registry for managing available commands."""
@@ -787,7 +787,7 @@ class CommandRegistry:
 
 ---
 
-## File 4: src/opencode/commands/executor.py
+## File 4: src/forge/commands/executor.py
 
 ```python
 """Command execution engine."""
@@ -961,7 +961,7 @@ def register_builtin_commands(registry: CommandRegistry | None = None) -> None:
 
 ---
 
-## File 5: src/opencode/commands/builtin/help.py
+## File 5: src/forge/commands/builtin/help.py
 
 ```python
 """Help and discovery commands."""
@@ -1007,7 +1007,7 @@ class HelpCommand(Command):
 
         # General help
         lines = [
-            "OpenCode Commands",
+            "Code-Forge Commands",
             "=" * 40,
             "",
         ]
@@ -1076,7 +1076,7 @@ def get_commands() -> list[Command]:
 
 ---
 
-## File 6: src/opencode/commands/builtin/session.py
+## File 6: src/forge/commands/builtin/session.py
 
 ```python
 """Session management commands."""
@@ -1296,7 +1296,7 @@ def get_commands() -> list[Command]:
 
 ---
 
-## File 7: src/opencode/commands/builtin/control.py
+## File 7: src/forge/commands/builtin/control.py
 
 ```python
 """Control commands for REPL operations."""
@@ -1409,16 +1409,16 @@ def get_commands() -> list[Command]:
 
 ---
 
-## File 8: src/opencode/commands/__init__.py
+## File 8: src/forge/commands/__init__.py
 
 ```python
 """Slash command system.
 
-This package provides the command parsing and execution system for OpenCode.
+This package provides the command parsing and execution system for Code-Forge.
 Commands are invoked with /command syntax in the REPL.
 
 Example:
-    from opencode.commands import CommandExecutor, CommandContext, register_builtin_commands
+    from forge.commands import CommandExecutor, CommandContext, register_builtin_commands
 
     # Register built-in commands
     register_builtin_commands()
@@ -1468,19 +1468,19 @@ __all__ = [
 
 ## Additional Built-in Commands (Summary)
 
-### src/opencode/commands/builtin/context.py
+### src/forge/commands/builtin/context.py
 - `/context` - Show context status
 - `/context compact` - Compact context
 - `/context reset` - Reset context
 - `/context mode <mode>` - Set truncation mode
 
-### src/opencode/commands/builtin/config.py
+### src/forge/commands/builtin/config.py
 - `/config` - Show configuration
 - `/config get <key>` - Get value
 - `/config set <key> <value>` - Set value
 - `/model` - Show/set model
 
-### src/opencode/commands/builtin/debug.py
+### src/forge/commands/builtin/debug.py
 - `/debug` - Toggle debug mode
 - `/tokens` - Show token usage
 - `/history` - Show message history
@@ -1492,7 +1492,7 @@ __all__ = [
 
 ```python
 # In REPL main loop
-from opencode.commands import CommandExecutor, CommandContext, register_builtin_commands
+from forge.commands import CommandExecutor, CommandContext, register_builtin_commands
 
 # Setup
 register_builtin_commands()

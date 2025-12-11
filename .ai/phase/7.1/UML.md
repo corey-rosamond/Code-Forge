@@ -241,7 +241,7 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    subgraph AgentsPkg["src/opencode/agents/"]
+    subgraph AgentsPkg["src/forge/agents/"]
         INIT["__init__.py"]
         BASE["base.py<br/>Agent, AgentConfig, AgentState"]
         RESULT["result.py<br/>AgentResult, AggregatedResult"]
@@ -257,11 +257,11 @@ flowchart TB
         end
     end
 
-    subgraph LLMPkg["src/opencode/llm/"]
+    subgraph LLMPkg["src/forge/llm/"]
         LLM["openrouter.py"]
     end
 
-    subgraph ToolsPkg["src/opencode/tools/"]
+    subgraph ToolsPkg["src/forge/tools/"]
         TOOLS["registry.py"]
     end
 

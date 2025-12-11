@@ -146,7 +146,7 @@ class SessionConfig(BaseModel):
     session_dir: Optional[Path] = None
     compress_after: int = Field(default=50, ge=10)  # Messages before compression
 
-class OpenCodeConfig(BaseModel):
+class Code-ForgeConfig(BaseModel):
     """Root configuration model."""
     model: ModelConfig = Field(default_factory=ModelConfig)
     permissions: PermissionConfig = Field(default_factory=PermissionConfig)
@@ -222,17 +222,17 @@ class YamlFileSource(IConfigSource):
 class EnvironmentSource(IConfigSource):
     """Load configuration from environment variables."""
 
-    PREFIX = "OPENCODE_"
+    PREFIX = "FORGE_"
 
     def load(self) -> Dict[str, Any]:
         config: Dict[str, Any] = {}
 
         # Direct mappings
         mappings = {
-            "OPENCODE_API_KEY": ("api_key", str),
-            "OPENCODE_MODEL": ("model", "default"),
-            "OPENCODE_MAX_TOKENS": ("model", "max_tokens"),
-            "OPENCODE_THEME": ("display", "theme"),
+            "FORGE_API_KEY": ("api_key", str),
+            "FORGE_MODEL": ("model", "default"),
+            "FORGE_MAX_TOKENS": ("model", "max_tokens"),
+            "FORGE_THEME": ("display", "theme"),
         }
 
         for env_var, path in mappings.items():
@@ -279,15 +279,15 @@ class ConfigLoader(IConfigLoader):
         project_dir: Path | None = None,
     ):
         import threading
-        self._user_dir = user_dir or Path.home() / ".opencode"
-        self._project_dir = project_dir or Path.cwd() / ".opencode"
-        self._config: OpenCodeConfig | None = None
-        self._observers: List[Callable[[OpenCodeConfig], None]] = []
+        self._user_dir = user_dir or Path.home() / ".forge"
+        self._project_dir = project_dir or Path.cwd() / ".forge"
+        self._config: Code-ForgeConfig | None = None
+        self._observers: List[Callable[[Code-ForgeConfig], None]] = []
         self._file_watcher: Observer | None = None
         self._lock = threading.Lock()  # Protect config during concurrent access
 
     @property
-    def config(self) -> OpenCodeConfig:
+    def config(self) -> Code-ForgeConfig:
         """Get current configuration, loading if necessary.
 
         Thread-safe: uses lock to prevent races during reload.
@@ -297,15 +297,15 @@ class ConfigLoader(IConfigLoader):
                 self._config = self.load_all()
             return self._config
 
-    def load_all(self) -> OpenCodeConfig:
+    def load_all(self) -> Code-ForgeConfig:
         """Load and merge all configuration sources."""
         config: Dict[str, Any] = {}
 
         # 1. Start with defaults
-        config = OpenCodeConfig().model_dump()
+        config = Code-ForgeConfig().model_dump()
 
         # 2. Load enterprise (if exists)
-        enterprise_path = Path("/etc/src/opencode/settings.json")
+        enterprise_path = Path("/etc/src/forge/settings.json")
         if enterprise_path.exists():
             enterprise = JsonFileSource(enterprise_path).load()
             config = self.merge(config, enterprise)
@@ -335,7 +335,7 @@ class ConfigLoader(IConfigLoader):
         config = self.merge(config, EnvironmentSource().load())
 
         # 7. Validate and return
-        return OpenCodeConfig.model_validate(config)
+        return Code-ForgeConfig.model_validate(config)
 
     def load(self, path: Path) -> Dict[str, Any]:
         """Load single configuration file."""
@@ -361,7 +361,7 @@ class ConfigLoader(IConfigLoader):
     def validate(self, config: Dict[str, Any]) -> tuple[bool, List[str]]:
         """Validate configuration against schema."""
         try:
-            OpenCodeConfig.model_validate(config)
+            Code-ForgeConfig.model_validate(config)
             return True, []
         except Exception as e:
             return False, [str(e)]
@@ -419,15 +419,15 @@ class ConfigLoader(IConfigLoader):
         """Cleanup: ensure file watcher is stopped."""
         self.stop_watching()
 
-    def add_observer(self, callback: Callable[[OpenCodeConfig], None]) -> None:
+    def add_observer(self, callback: Callable[[Code-ForgeConfig], None]) -> None:
         """Add observer for configuration changes."""
         self._observers.append(callback)
 
-    def remove_observer(self, callback: Callable[[OpenCodeConfig], None]) -> None:
+    def remove_observer(self, callback: Callable[[Code-ForgeConfig], None]) -> None:
         """Remove observer."""
         self._observers.remove(callback)
 
-    def _notify_observers(self, config: OpenCodeConfig) -> None:
+    def _notify_observers(self, config: Code-ForgeConfig) -> None:
         """Notify all observers of config change."""
         for observer in self._observers:
             try:
@@ -440,11 +440,11 @@ class ConfigLoader(IConfigLoader):
 
 ## Implementation Order
 
-1. Create configuration models in `src/opencode/config/models.py`
-2. Create config sources in `src/opencode/config/sources.py`
-3. Implement `ConfigLoader` in `src/opencode/config/loader.py`
+1. Create configuration models in `src/forge/config/models.py`
+2. Create config sources in `src/forge/config/sources.py`
+3. Implement `ConfigLoader` in `src/forge/config/loader.py`
 4. Add file watching support
-5. Create `src/opencode/config/__init__.py` with exports
+5. Create `src/forge/config/__init__.py` with exports
 6. Write comprehensive tests
 7. Integration with CLI (update `--help` to show config path)
 
@@ -453,8 +453,8 @@ class ConfigLoader(IConfigLoader):
 ## File Structure
 
 ```
-src/opencode/config/
-├── __init__.py       # Exports: ConfigLoader, OpenCodeConfig, etc.
+src/forge/config/
+├── __init__.py       # Exports: ConfigLoader, Code-ForgeConfig, etc.
 ├── models.py         # Pydantic configuration models
 ├── sources.py        # IConfigSource implementations
 └── loader.py         # ConfigLoader implementation

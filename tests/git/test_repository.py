@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.git.repository import (
+from code_forge.git.repository import (
     GitBranch,
     GitCommit,
     GitError,

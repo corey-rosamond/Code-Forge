@@ -10,7 +10,7 @@
 
 ### Creating Events
 ```python
-from opencode.hooks import HookEvent, EventType
+from forge.hooks import HookEvent, EventType
 
 # Using factory methods (recommended)
 event = HookEvent.tool_pre_execute(
@@ -58,11 +58,11 @@ event = HookEvent(
 env = event.to_env()
 print(env)
 # {
-#     "OPENCODE_EVENT": "tool:pre_execute",
-#     "OPENCODE_TIMESTAMP": "1699999999.123",
-#     "OPENCODE_SESSION_ID": "sess_abc123",
-#     "OPENCODE_TOOL_NAME": "bash",
-#     "OPENCODE_TOOL_ARGS": '{"command": "ls -la"}',
+#     "FORGE_EVENT": "tool:pre_execute",
+#     "FORGE_TIMESTAMP": "1699999999.123",
+#     "FORGE_SESSION_ID": "sess_abc123",
+#     "FORGE_TOOL_NAME": "bash",
+#     "FORGE_TOOL_ARGS": '{"command": "ls -la"}',
 # }
 
 # Serialize to JSON
@@ -83,12 +83,12 @@ print(json_str)
 
 ### Creating Hooks
 ```python
-from opencode.hooks import Hook
+from forge.hooks import Hook
 
 # Simple hook
 hook = Hook(
     event_pattern="tool:pre_execute",
-    command="echo 'Tool starting: $OPENCODE_TOOL_NAME'",
+    command="echo 'Tool starting: $FORGE_TOOL_NAME'",
 )
 
 # Hook with all options
@@ -97,7 +97,7 @@ hook = Hook(
     command="git add -A && git commit -m 'Auto-save'",
     timeout=30.0,
     working_dir="/path/to/project",
-    env={"GIT_AUTHOR_NAME": "OpenCode"},
+    env={"GIT_AUTHOR_NAME": "Code-Forge"},
     enabled=True,
     description="Auto-commit on file writes",
 )
@@ -106,7 +106,7 @@ hook = Hook(
 hook = Hook(
     event_pattern="tool:pre_execute:bash",
     command="""
-        if echo "$OPENCODE_TOOL_ARGS" | grep -q "sudo"; then
+        if echo "$FORGE_TOOL_ARGS" | grep -q "sudo"; then
             echo "Blocked: sudo not allowed"
             exit 1
         fi
@@ -137,7 +137,7 @@ hook = Hook(
 
 ### Registration and Lookup
 ```python
-from opencode.hooks import HookRegistry, Hook, HookEvent
+from forge.hooks import HookRegistry, Hook, HookEvent
 
 # Get singleton registry
 registry = HookRegistry.get_instance()
@@ -155,7 +155,7 @@ registry.register(Hook(
 
 registry.register(Hook(
     event_pattern="session:start",
-    command="notify-send 'OpenCode' 'Session started'",
+    command="notify-send 'Code-Forge' 'Session started'",
 ))
 
 # Get matching hooks for an event
@@ -173,7 +173,7 @@ registry.clear()
 
 ### Loading from Configuration
 ```python
-from opencode.hooks import HookConfig, HookRegistry
+from forge.hooks import HookConfig, HookRegistry
 
 # Load hooks from files
 global_hooks = HookConfig.load_global()
@@ -193,7 +193,7 @@ registry.load_hooks(all_hooks)
 
 ### Basic Execution
 ```python
-from opencode.hooks import HookExecutor, HookEvent, fire_event
+from forge.hooks import HookExecutor, HookEvent, fire_event
 
 # Create executor
 executor = HookExecutor()
@@ -214,7 +214,7 @@ for result in results:
 
 ### Convenience Function
 ```python
-from opencode.hooks import fire_event, HookEvent
+from forge.hooks import fire_event, HookEvent
 
 # Simple way to fire events
 event = HookEvent.tool_pre_execute("bash", {"command": "ls"})
@@ -226,7 +226,7 @@ results = await fire_event(event, stop_on_failure=False)
 
 ### Handling Blocking Hooks
 ```python
-from opencode.hooks import fire_event, HookBlockedError, HookEvent
+from forge.hooks import fire_event, HookBlockedError, HookEvent
 
 event = HookEvent.tool_pre_execute("bash", {"command": "sudo rm -rf /"})
 
@@ -251,7 +251,7 @@ except HookBlockedError as e:
 ## 5. Hook Result Structure
 
 ```python
-from opencode.hooks import HookResult
+from forge.hooks import HookResult
 
 result = HookResult(
     hook=hook,
@@ -298,30 +298,30 @@ result.should_continue  # False
 
 ## 6. Configuration Files
 
-### Global Configuration (~/.config/src/opencode/hooks.json)
+### Global Configuration (~/.config/src/forge/hooks.json)
 ```json
 {
   "hooks": [
     {
       "event": "session:start",
-      "command": "notify-send 'OpenCode' 'Session started'",
+      "command": "notify-send 'Code-Forge' 'Session started'",
       "description": "Desktop notification on session start"
     },
     {
       "event": "session:end",
-      "command": "notify-send 'OpenCode' 'Session ended'",
+      "command": "notify-send 'Code-Forge' 'Session ended'",
       "description": "Desktop notification on session end"
     },
     {
       "event": "*",
-      "command": "echo \"[$(date)] $OPENCODE_EVENT\" >> ~/.src/opencode/events.log",
+      "command": "echo \"[$(date)] $FORGE_EVENT\" >> ~/.src/forge/events.log",
       "description": "Log all events"
     }
   ]
 }
 ```
 
-### Project Configuration (.src/opencode/hooks.json)
+### Project Configuration (.src/forge/hooks.json)
 ```json
 {
   "hooks": [
@@ -332,7 +332,7 @@ result.should_continue  # False
     },
     {
       "event": "tool:post_execute:write",
-      "command": "git add -A && git diff --cached --quiet || git commit -m 'Auto-save: $OPENCODE_TOOL_NAME'",
+      "command": "git add -A && git diff --cached --quiet || git commit -m 'Auto-save: $FORGE_TOOL_NAME'",
       "timeout": 30.0,
       "description": "Auto-commit on file writes"
     },
@@ -349,7 +349,7 @@ result.should_continue  # False
 
 ### Configuration Management
 ```python
-from opencode.hooks import HookConfig, Hook
+from forge.hooks import HookConfig, Hook
 
 # Load
 global_hooks = HookConfig.load_global()
@@ -358,7 +358,7 @@ project_hooks = HookConfig.load_project(Path("/my/project"))
 # Modify
 global_hooks.append(Hook(
     event_pattern="tool:error",
-    command="notify-send 'OpenCode Error' '$OPENCODE_ERROR'",
+    command="notify-send 'Code-Forge Error' '$FORGE_ERROR'",
     description="Notify on errors",
 ))
 
@@ -373,13 +373,13 @@ HookConfig.save_project(Path("/my/project"), project_hooks)
 
 ### Available Templates
 ```python
-from opencode.hooks import HOOK_TEMPLATES
+from forge.hooks import HOOK_TEMPLATES
 
 # Log all events
 log_hook = HOOK_TEMPLATES["log_all"]
 # Hook(
 #     event_pattern="*",
-#     command='echo "[$(date)] $OPENCODE_EVENT" >> ~/.src/opencode/events.log',
+#     command='echo "[$(date)] $FORGE_EVENT" >> ~/.src/forge/events.log',
 #     description="Log all events to file",
 # )
 
@@ -387,7 +387,7 @@ log_hook = HOOK_TEMPLATES["log_all"]
 notify_hook = HOOK_TEMPLATES["notify_session_start"]
 # Hook(
 #     event_pattern="session:start",
-#     command="notify-send 'OpenCode' 'Session started'",
+#     command="notify-send 'Code-Forge' 'Session started'",
 #     description="Desktop notification on session start",
 # )
 
@@ -404,12 +404,12 @@ git_hook = HOOK_TEMPLATES["git_auto_commit"]
 block_hook = HOOK_TEMPLATES["block_sudo"]
 # Hook(
 #     event_pattern="tool:pre_execute:bash",
-#     command='if echo "$OPENCODE_TOOL_ARGS" | grep -q "sudo"; then exit 1; fi',
+#     command='if echo "$FORGE_TOOL_ARGS" | grep -q "sudo"; then exit 1; fi',
 #     description="Block sudo commands in bash",
 # )
 
 # Use a template
-from opencode.hooks import HookRegistry
+from forge.hooks import HookRegistry
 registry = HookRegistry.get_instance()
 registry.register(HOOK_TEMPLATES["log_all"])
 ```
@@ -420,8 +420,8 @@ registry.register(HOOK_TEMPLATES["log_all"])
 
 ### Tool Executor with Hooks
 ```python
-from opencode.tools import BaseTool, ToolResult, ExecutionContext
-from opencode.hooks import HookEvent, fire_event, HookBlockedError
+from forge.tools import BaseTool, ToolResult, ExecutionContext
+from forge.hooks import HookEvent, fire_event, HookBlockedError
 
 class ToolExecutor:
     async def execute(
@@ -482,8 +482,8 @@ class ToolExecutor:
 # Hook: *
 # Log all events to file
 
-LOG_FILE="$HOME/.src/opencode/events.log"
-echo "[$(date -Iseconds)] $OPENCODE_EVENT tool=$OPENCODE_TOOL_NAME" >> "$LOG_FILE"
+LOG_FILE="$HOME/.src/forge/events.log"
+echo "[$(date -Iseconds)] $FORGE_EVENT tool=$FORGE_TOOL_NAME" >> "$LOG_FILE"
 ```
 
 ### Validation Hook
@@ -492,7 +492,7 @@ echo "[$(date -Iseconds)] $OPENCODE_EVENT tool=$OPENCODE_TOOL_NAME" >> "$LOG_FIL
 # Hook: tool:post_execute:write
 # Validate files after writing
 
-FILE=$(echo "$OPENCODE_TOOL_RESULT" | jq -r '.file_path // empty')
+FILE=$(echo "$FORGE_TOOL_RESULT" | jq -r '.file_path // empty')
 
 if [[ "$FILE" == *.py ]]; then
     # Run Python linter
@@ -513,7 +513,7 @@ exit 0
 # Hook: tool:pre_execute:bash
 # Block dangerous commands
 
-COMMAND=$(echo "$OPENCODE_TOOL_ARGS" | jq -r '.command // empty')
+COMMAND=$(echo "$FORGE_TOOL_ARGS" | jq -r '.command // empty')
 
 # Check for dangerous patterns
 BLOCKED_PATTERNS=(
@@ -547,7 +547,7 @@ if [ ! -d .git ]; then
 fi
 
 # Get the file that was written
-FILE=$(echo "$OPENCODE_TOOL_RESULT" | jq -r '.file_path // empty')
+FILE=$(echo "$FORGE_TOOL_RESULT" | jq -r '.file_path // empty')
 
 if [ -n "$FILE" ]; then
     git add "$FILE"
@@ -570,7 +570,7 @@ exit 0
 import asyncio
 from pathlib import Path
 
-from opencode.hooks import (
+from forge.hooks import (
     HookRegistry,
     HookExecutor,
     HookEvent,
@@ -593,14 +593,14 @@ async def main():
     # Add some hooks programmatically
     registry.register(Hook(
         event_pattern="tool:pre_execute",
-        command="echo '>>> Executing: $OPENCODE_TOOL_NAME'",
+        command="echo '>>> Executing: $FORGE_TOOL_NAME'",
         description="Announce tool execution",
     ))
 
     registry.register(Hook(
         event_pattern="tool:pre_execute:bash",
         command="""
-            if echo "$OPENCODE_TOOL_ARGS" | grep -q "sudo"; then
+            if echo "$FORGE_TOOL_ARGS" | grep -q "sudo"; then
                 echo "BLOCKED: sudo not allowed"
                 exit 1
             fi
@@ -610,7 +610,7 @@ async def main():
 
     registry.register(Hook(
         event_pattern="tool:post_execute",
-        command="echo '<<< Completed: $OPENCODE_TOOL_NAME'",
+        command="echo '<<< Completed: $FORGE_TOOL_NAME'",
         description="Announce tool completion",
     ))
 

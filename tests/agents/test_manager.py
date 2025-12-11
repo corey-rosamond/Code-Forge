@@ -5,10 +5,10 @@ from uuid import uuid4
 
 import pytest
 
-from opencode.agents.base import AgentConfig, AgentContext, AgentState
-from opencode.agents.manager import AgentManager
-from opencode.agents.result import AgentResult, AggregatedResult
-from opencode.agents.types import AgentTypeRegistry
+from code_forge.agents.base import AgentConfig, AgentContext, AgentState
+from code_forge.agents.manager import AgentManager
+from code_forge.agents.result import AgentResult, AggregatedResult
+from code_forge.agents.types import AgentTypeRegistry
 
 
 class TestAgentManager:
@@ -138,7 +138,7 @@ class TestAgentManager:
         manager = AgentManager.get_instance()
 
         # Manually add an agent
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
         agent = create_agent("explore", "Test", config)
         manager._agents[agent.id] = agent
@@ -158,7 +158,7 @@ class TestAgentManager:
         manager = AgentManager.get_instance()
 
         # Add some agents
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
         agent1 = create_agent("explore", "Task 1", config)
         agent2 = create_agent("explore", "Task 2", config)
@@ -173,7 +173,7 @@ class TestAgentManager:
         """Test listing agents by state."""
         manager = AgentManager.get_instance()
 
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
 
         agent1 = create_agent("explore", "Task 1", config)
@@ -247,7 +247,7 @@ class TestAgentManager:
         """Test cancelling existing agent."""
         manager = AgentManager.get_instance()
 
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
         agent = create_agent("explore", "Task", config)
         manager._agents[agent.id] = agent
@@ -267,7 +267,7 @@ class TestAgentManager:
         """Test cancelling all agents."""
         manager = AgentManager.get_instance()
 
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
 
         agent1 = create_agent("explore", "Task 1", config)
@@ -304,7 +304,7 @@ class TestAgentManager:
         """Test stats with agents."""
         manager = AgentManager.get_instance()
 
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
 
         agent1 = create_agent("explore", "Task 1", config)
@@ -335,7 +335,7 @@ class TestAgentManager:
         """Test cleaning up completed agents."""
         manager = AgentManager.get_instance()
 
-        from opencode.agents.builtin import create_agent
+        from code_forge.agents.builtin import create_agent
         config = AgentConfig(agent_type="explore")
 
         agent1 = create_agent("explore", "Task 1", config)
@@ -382,7 +382,7 @@ class TestAgentManager:
 
         def add_agents() -> None:
             try:
-                from opencode.agents.builtin import create_agent
+                from code_forge.agents.builtin import create_agent
                 config = AgentConfig(agent_type="explore")
                 for _ in range(10):
                     agent = create_agent("explore", "Task", config)

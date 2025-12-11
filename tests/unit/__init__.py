@@ -1,1 +1,1 @@
-"""Unit tests for OpenCode."""
+"""Unit tests for Code-Forge."""

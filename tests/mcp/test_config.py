@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from opencode.mcp.config import (
+from code_forge.mcp.config import (
     MCPConfig,
     MCPConfigLoader,
     MCPServerConfig,
@@ -331,8 +331,8 @@ class TestMCPConfigLoader:
     def test_default_paths(self) -> None:
         """Test default configuration paths."""
         loader = MCPConfigLoader()
-        assert loader.user_path == Path.home() / ".opencode" / "mcp.yaml"
-        assert loader.project_path == Path(".opencode") / "mcp.yaml"
+        assert loader.user_path == Path.home() / ".forge" / "mcp.yaml"
+        assert loader.project_path == Path(".forge") / "mcp.yaml"
 
     def test_custom_paths(self) -> None:
         """Test custom configuration paths."""

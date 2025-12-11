@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
-from opencode.langchain.llm import OpenRouterLLM
-from opencode.llm.models import (
+from code_forge.langchain.llm import OpenRouterLLM
+from code_forge.llm.models import (
     CompletionChoice,
     CompletionResponse,
     Message,
@@ -124,7 +124,7 @@ class TestOpenRouterLLMGenerate:
     @pytest.mark.asyncio
     async def test_agenerate_with_tool_calls(self) -> None:
         """Test async generation with tool calls in response."""
-        from opencode.llm.models import ToolCall
+        from code_forge.llm.models import ToolCall
 
         mock_client = MagicMock()
 
@@ -369,7 +369,7 @@ class TestOpenRouterLLMStreaming:
     @pytest.mark.asyncio
     async def test_astream_basic(self) -> None:
         """Test basic async streaming."""
-        from opencode.llm.models import StreamChunk, StreamDelta
+        from code_forge.llm.models import StreamChunk, StreamDelta
 
         mock_client = MagicMock()
 
@@ -404,7 +404,7 @@ class TestOpenRouterLLMStreaming:
     @pytest.mark.asyncio
     async def test_astream_with_tool_calls(self) -> None:
         """Test async streaming with tool calls."""
-        from opencode.llm.models import StreamChunk, StreamDelta
+        from code_forge.llm.models import StreamChunk, StreamDelta
 
         mock_client = MagicMock()
 
@@ -455,7 +455,7 @@ class TestOpenRouterLLMStreaming:
     @pytest.mark.asyncio
     async def test_astream_with_run_manager(self) -> None:
         """Test async streaming calls run_manager callback."""
-        from opencode.llm.models import StreamChunk, StreamDelta
+        from code_forge.llm.models import StreamChunk, StreamDelta
 
         mock_client = MagicMock()
 

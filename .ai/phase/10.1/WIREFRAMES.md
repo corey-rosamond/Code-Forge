@@ -50,11 +50,11 @@ Installed Plugins
 No plugins installed.
 
 To install plugins:
-  1. Download plugin to ~/.src/opencode/plugins/
-  2. Restart OpenCode or run /plugin reload
+  1. Download plugin to ~/.src/forge/plugins/
+  2. Restart Code-Forge or run /plugin reload
 
 Example plugin structure:
-  ~/.src/opencode/plugins/my-plugin/
+  ~/.src/forge/plugins/my-plugin/
   ├── plugin.yaml
   └── my_plugin.py
 ```
@@ -292,7 +292,7 @@ Current settings:
     Description: Rules to ignore
 
 To change a setting, edit your config file:
-  ~/.src/opencode/config.yaml
+  ~/.src/forge/config.yaml
 
   plugins:
     code-review:
@@ -346,12 +346,12 @@ You: /plugin discover
 Scanning for plugins...
 ═══════════════════════════════════════════
 
-User plugins (~/.src/opencode/plugins/):
+User plugins (~/.src/forge/plugins/):
   ✓ code-review (loaded)
   ✓ sql-assistant (loaded)
   ● new-plugin (discovered)
 
-Project plugins (.src/opencode/plugins/):
+Project plugins (.src/forge/plugins/):
   ✓ project-helper (loaded)
 
 Package plugins:
@@ -470,7 +470,7 @@ You: /plugin create my-new-plugin
 Creating new plugin: my-new-plugin
 ═══════════════════════════════════════════
 
-Directory: ~/.src/opencode/plugins/my-new-plugin/
+Directory: ~/.src/forge/plugins/my-new-plugin/
 
 Creating files:
   ✓ plugin.yaml
@@ -485,17 +485,17 @@ Next steps:
 2. Implement your plugin in my_new_plugin.py
 3. Run '/plugin reload my-new-plugin' to test
 
-See documentation: https://opencode.dev/plugins
+See documentation: https://forge.dev/plugins
 ```
 
 ### Plugin Template Files
 
 ```yaml
-# ~/.src/opencode/plugins/my-new-plugin/plugin.yaml
+# ~/.src/forge/plugins/my-new-plugin/plugin.yaml
 
 name: my-new-plugin
 version: 0.1.0
-description: My custom OpenCode plugin
+description: My custom Code-Forge plugin
 
 author: Your Name
 email: your@email.com
@@ -510,10 +510,10 @@ capabilities:
 ```
 
 ```python
-# ~/.src/opencode/plugins/my-new-plugin/my_new_plugin.py
+# ~/.src/forge/plugins/my-new-plugin/my_new_plugin.py
 
-from opencode.plugins import Plugin, PluginMetadata, PluginCapabilities
-from opencode.tools.base import Tool
+from forge.plugins import Plugin, PluginMetadata, PluginCapabilities
+from forge.tools.base import Tool
 
 
 class MyTool(Tool):
@@ -531,7 +531,7 @@ class MyNewPlugin(Plugin):
         return PluginMetadata(
             name="my-new-plugin",
             version="0.1.0",
-            description="My custom OpenCode plugin",
+            description="My custom Code-Forge plugin",
             author="Your Name",
         )
 
@@ -563,10 +563,10 @@ Plugin Data Locations
 
 Each plugin has an isolated data directory:
 
-  ~/.src/opencode/plugin_data/<plugin-name>/
+  ~/.src/forge/plugin_data/<plugin-name>/
 
 For your plugin "code-review":
-  ~/.src/opencode/plugin_data/code-review/
+  ~/.src/forge/plugin_data/code-review/
   ├── cache/
   ├── config.json
   └── history.db
@@ -588,12 +588,12 @@ Status: Active
 Loaded: 2024-01-15 09:30:00
 Last activity: 2024-01-15 14:22:45
 
-Data directory: ~/.src/opencode/plugin_data/code-review/
+Data directory: ~/.src/forge/plugin_data/code-review/
   Size: 2.3 MB
   Files: 15
 
 Configuration:
-  Source: ~/.src/opencode/config.yaml
+  Source: ~/.src/forge/config.yaml
   Last modified: 2024-01-10 08:00:00
 
 Contributions:

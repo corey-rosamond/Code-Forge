@@ -11,15 +11,15 @@
 ```gherkin
 Feature: Configuration File Loading
   As a user
-  I want to configure OpenCode via files
+  I want to configure Code-Forge via files
   So that I can customize behavior
 
   Background:
-    Given the opencode package is installed
+    Given the forge package is installed
 
   @phase1.2 @config @json
   Scenario: Load JSON configuration file
-    Given a file ".src/opencode/settings.json" with content:
+    Given a file ".src/forge/settings.json" with content:
       """json
       {
         "model": {
@@ -33,7 +33,7 @@ Feature: Configuration File Loading
 
   @phase1.2 @config @yaml
   Scenario: Load YAML configuration file
-    Given a file ".src/opencode/settings.yaml" with content:
+    Given a file ".src/forge/settings.yaml" with content:
       """yaml
       model:
         default: gemini-2.5-pro
@@ -44,8 +44,8 @@ Feature: Configuration File Loading
 
   @phase1.2 @config @json
   Scenario: JSON takes precedence over YAML in same directory
-    Given a file ".src/opencode/settings.json" with model.default "from-json"
-    And a file ".src/opencode/settings.yaml" with model.default "from-yaml"
+    Given a file ".src/forge/settings.json" with model.default "from-json"
+    And a file ".src/forge/settings.yaml" with model.default "from-yaml"
     When I call load_all()
     Then the config model.default should be "from-json"
 
@@ -58,7 +58,7 @@ Feature: Configuration File Loading
 
   @phase1.2 @config @invalid
   Scenario: Handle invalid JSON syntax
-    Given a file ".src/opencode/settings.json" with invalid JSON
+    Given a file ".src/forge/settings.json" with invalid JSON
     When I call load_all()
     Then a ConfigError should be logged
     And the config should use default values
@@ -76,7 +76,7 @@ Feature: Configuration Hierarchy
 
   @phase1.2 @hierarchy @user
   Scenario: User settings are loaded
-    Given a file "~/.src/opencode/settings.json" with:
+    Given a file "~/.src/forge/settings.json" with:
       """json
       {"model": {"default": "user-model"}}
       """
@@ -85,36 +85,36 @@ Feature: Configuration Hierarchy
 
   @phase1.2 @hierarchy @project
   Scenario: Project settings override user settings
-    Given a file "~/.src/opencode/settings.json" with model.default "user-model"
-    And a file ".src/opencode/settings.json" with model.default "project-model"
+    Given a file "~/.src/forge/settings.json" with model.default "user-model"
+    And a file ".src/forge/settings.json" with model.default "project-model"
     When I call load_all()
     Then the config model.default should be "project-model"
 
   @phase1.2 @hierarchy @local
   Scenario: Local settings override project settings
-    Given a file ".src/opencode/settings.json" with model.default "project-model"
-    And a file ".src/opencode/settings.local.json" with model.default "local-model"
+    Given a file ".src/forge/settings.json" with model.default "project-model"
+    And a file ".src/forge/settings.local.json" with model.default "local-model"
     When I call load_all()
     Then the config model.default should be "local-model"
 
   @phase1.2 @hierarchy @enterprise
   Scenario: Enterprise settings have highest file priority
-    Given a file "/etc/src/opencode/settings.json" with model.default "enterprise-model"
-    And a file "~/.src/opencode/settings.json" with model.default "user-model"
-    And a file ".src/opencode/settings.json" with model.default "project-model"
+    Given a file "/etc/src/forge/settings.json" with model.default "enterprise-model"
+    And a file "~/.src/forge/settings.json" with model.default "user-model"
+    And a file ".src/forge/settings.json" with model.default "project-model"
     When I call load_all()
     Then the config model.default should be "enterprise-model"
 
   @phase1.2 @hierarchy @merge
   Scenario: Deep merge preserves nested values
-    Given a file "~/.src/opencode/settings.json" with:
+    Given a file "~/.src/forge/settings.json" with:
       """json
       {
         "model": {"default": "user-model", "max_tokens": 4096},
         "display": {"theme": "dark"}
       }
       """
-    And a file ".src/opencode/settings.json" with:
+    And a file ".src/forge/settings.json" with:
       """json
       {
         "model": {"default": "project-model"}
@@ -137,33 +137,33 @@ Feature: Environment Variable Configuration
   So that I can use secrets without files
 
   Background:
-    Given the opencode package is installed
+    Given the forge package is installed
 
   @phase1.2 @env @api-key
   Scenario: API key from environment
-    Given environment variable OPENCODE_API_KEY is set to "sk-test-123"
+    Given environment variable FORGE_API_KEY is set to "sk-test-123"
     When I call load_all()
     Then the config api_key should be "sk-test-123"
 
   @phase1.2 @env @model
   Scenario: Model from environment
-    Given environment variable OPENCODE_MODEL is set to "gpt-5"
+    Given environment variable FORGE_MODEL is set to "gpt-5"
     When I call load_all()
     Then the config model.default should be "gpt-5"
 
   @phase1.2 @env @override
   Scenario: Environment overrides file config
-    Given a file ".src/opencode/settings.json" with model.default "file-model"
-    And environment variable OPENCODE_MODEL is set to "env-model"
+    Given a file ".src/forge/settings.json" with model.default "file-model"
+    And environment variable FORGE_MODEL is set to "env-model"
     When I call load_all()
     Then the config model.default should be "env-model"
 
   @phase1.2 @env @precedence
   Scenario: Environment has highest precedence
-    Given a file "/etc/src/opencode/settings.json" with model.default "enterprise"
-    And a file "~/.src/opencode/settings.json" with model.default "user"
-    And a file ".src/opencode/settings.json" with model.default "project"
-    And environment variable OPENCODE_MODEL is set to "env-model"
+    Given a file "/etc/src/forge/settings.json" with model.default "enterprise"
+    And a file "~/.src/forge/settings.json" with model.default "user"
+    And a file ".src/forge/settings.json" with model.default "project"
+    And environment variable FORGE_MODEL is set to "env-model"
     When I call load_all()
     Then the config model.default should be "env-model"
 ```
@@ -179,7 +179,7 @@ Feature: Configuration Validation
   So that I catch errors early
 
   Background:
-    Given the opencode package is installed
+    Given the forge package is installed
 
   @phase1.2 @validation @model
   Scenario: Valid model configuration
@@ -234,21 +234,21 @@ Feature: Configuration Live Reload
   So that I don't need to restart
 
   Background:
-    Given the opencode package is installed
+    Given the forge package is installed
     And a ConfigLoader is created
 
   @phase1.2 @reload @watch
   Scenario: Start watching configuration files
     When I call watch()
     Then the file watcher should be running
-    And it should watch ".src/opencode/" directory
-    And it should watch "~/.src/opencode/" directory
+    And it should watch ".src/forge/" directory
+    And it should watch "~/.src/forge/" directory
 
   @phase1.2 @reload @detect
   Scenario: Detect configuration file change
     Given I am watching configuration files
     And the current config has model.default = "old-model"
-    When I modify ".src/opencode/settings.json" to set model.default = "new-model"
+    When I modify ".src/forge/settings.json" to set model.default = "new-model"
     Then reload should be triggered
     And the config model.default should be "new-model"
 
@@ -390,9 +390,9 @@ Feature: Configuration Model Defaults
 ```
 
 ### Environment Variables
-- OPENCODE_API_KEY=sk-test-123
-- OPENCODE_MODEL=gpt-5
-- OPENCODE_THEME=dark
+- FORGE_API_KEY=sk-test-123
+- FORGE_MODEL=gpt-5
+- FORGE_THEME=dark
 
 ---
 

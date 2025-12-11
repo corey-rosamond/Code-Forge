@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from opencode.context.limits import (
+from code_forge.context.limits import (
     ContextBudget,
     ContextLimits,
     ContextTracker,

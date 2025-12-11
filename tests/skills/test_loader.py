@@ -5,12 +5,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from opencode.skills.loader import (
+from code_forge.skills.loader import (
     SkillLoadError,
     SkillLoader,
     get_default_search_paths,
 )
-from opencode.skills.parser import SkillParser
+from code_forge.skills.parser import SkillParser
 
 
 class TestSkillLoader:
@@ -322,7 +322,7 @@ class TestGetDefaultSearchPaths:
         paths = get_default_search_paths()
         assert isinstance(paths, list)
 
-    @patch("opencode.skills.loader.Path.home")
+    @patch("code_forge.skills.loader.Path.home")
     def test_includes_user_dir_if_exists(self, mock_home: MagicMock) -> None:
         """Test that user dir is included if it exists."""
         mock_path = MagicMock()
@@ -334,8 +334,8 @@ class TestGetDefaultSearchPaths:
         # The mock should have been called
         mock_home.assert_called()
 
-    @patch("opencode.skills.loader.Path.home")
-    @patch("opencode.skills.loader.Path.cwd")
+    @patch("code_forge.skills.loader.Path.home")
+    @patch("code_forge.skills.loader.Path.cwd")
     def test_no_paths_if_dirs_dont_exist(
         self, mock_cwd: MagicMock, mock_home: MagicMock
     ) -> None:

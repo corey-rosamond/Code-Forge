@@ -1,4 +1,4 @@
-# OpenCode Wireframes
+# Code-Forge Wireframes
 ## Terminal UI Design Specifications
 
 **Version:** 1.0
@@ -91,7 +91,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ OpenCode v1.0.0                              Model: gpt-5   │
+│ Code-Forge v1.0.0                              Model: gpt-5   │
 │━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
 │                                                              │
 │ ╭─ User ─────────────────────────────────────────────────╮  │
@@ -130,7 +130,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ OpenCode v1.0.0                              Model: gpt-5   │
+│ Code-Forge v1.0.0                              Model: gpt-5   │
 │━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
 │                                                              │
 │ ╭─ User ─────────────────────────────────────────────────╮  │
@@ -165,7 +165,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ OpenCode v1.0.0                              Model: gpt-5   │
+│ Code-Forge v1.0.0                              Model: gpt-5   │
 │━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
 │                                                              │
 │ [Previous conversation...]                                   │
@@ -188,7 +188,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ OpenCode v1.0.0                    🔵 PLAN MODE │ Model: gpt-5│
+│ Code-Forge v1.0.0                    🔵 PLAN MODE │ Model: gpt-5│
 │═══════════════════════════════════════════════════════════════│
 │                                                              │
 │ ╔══════════════════════════════════════════════════════════╗ │
@@ -234,7 +234,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ OpenCode v1.0.0                 🧠 THINKING │ Model: gpt-5  │
+│ Code-Forge v1.0.0                 🧠 THINKING │ Model: gpt-5  │
 │━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
 │                                                              │
 │ ╭─ User ─────────────────────────────────────────────────╮  │
@@ -346,7 +346,7 @@ BACKGROUND TASKS:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         OPENCODE HELP                        │
+│                         FORGE HELP                        │
 │═════════════════════════════════════════════════════════════│
 │                                                              │
 │ BUILT-IN COMMANDS                                            │
@@ -371,7 +371,7 @@ BACKGROUND TASKS:
 │                                                              │
 │  Esc            Stop generation                              │
 │  Ctrl+C         Cancel current operation                     │
-│  Ctrl+D         Exit OpenCode                                │
+│  Ctrl+D         Exit Code-Forge                                │
 │  Shift+Tab      Cycle permission modes                       │
 │  Tab            Toggle extended thinking                     │
 │  Ctrl+R         Search command history                       │
@@ -407,7 +407,7 @@ BACKGROUND TASKS:
 │ ─────────                                                    │
 │                                                              │
 │ System Prompt:     2,100 tokens                              │
-│ OPENCODE.md:       1,500 tokens                              │
+│ FORGE.md:       1,500 tokens                              │
 │ Conversation:      8,456 tokens (12 messages)                │
 │ Tool Results:        400 tokens                              │
 │                                                              │
@@ -827,7 +827,7 @@ BACKGROUND TASKS:
 │                                                              │
 │ This operation is blocked by your security settings.         │
 │ If you believe this is an error, review your permission      │
-│ configuration in .opencode/settings.json                     │
+│ configuration in .forge/settings.json                     │
 │                                                              │
 │ ─────────────────────────────────────────────────────────── │
 │ [Enter] Continue  [P] View permissions  [?] Help            │
@@ -881,7 +881,7 @@ BACKGROUND TASKS:
 │                    SETTINGS EDITOR                           │
 │═════════════════════════════════════════════════════════════│
 │                                                              │
-│ File: .opencode/settings.json                                │
+│ File: .forge/settings.json                                │
 │                                                              │
 │ ┌─ General ──────────────────────────────────────────────┐  │
 │ │                                                        │  │
@@ -994,7 +994,7 @@ BACKGROUND TASKS:
 
 ```
 ┌───────────────────────────────────┐
-│ OpenCode v1.0 │ gpt-5             │
+│ Code-Forge v1.0 │ gpt-5             │
 │═══════════════════════════════════│
 │                                   │
 │ ╭─ User ───────────────────────╮ │
@@ -1024,7 +1024,7 @@ BACKGROUND TASKS:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ OpenCode v1.0.0                                                                                  Model: gpt-5   │
+│ Code-Forge v1.0.0                                                                                  Model: gpt-5   │
 │══════════════════════════════════════════════════════════════════════════════════════════════════════════════════│
 │                                                                                                                   │
 │ ╭─ User ───────────────────────────────────────────────────────────────────────────────────────────────────────╮ │

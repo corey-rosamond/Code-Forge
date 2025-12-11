@@ -2,8 +2,8 @@
 
 import pytest
 
-from opencode.core.errors import OpenCodeError
-from opencode.llm.errors import (
+from code_forge.core.errors import CodeForgeError
+from code_forge.llm.errors import (
     AuthenticationError,
     ContentPolicyError,
     ContextLengthError,
@@ -17,8 +17,8 @@ from opencode.llm.errors import (
 class TestLLMError:
     """Tests for LLMError base class."""
 
-    def test_inherits_from_opencode_error(self) -> None:
-        assert issubclass(LLMError, OpenCodeError)
+    def test_inherits_from_forge_error(self) -> None:
+        assert issubclass(LLMError, CodeForgeError)
 
     def test_basic_message(self) -> None:
         err = LLMError("Something went wrong")
@@ -148,7 +148,7 @@ class TestErrorHierarchy:
         for err in errors:
             assert isinstance(err, LLMError)
 
-    def test_all_errors_catchable_as_opencode_error(self) -> None:
+    def test_all_errors_catchable_as_forge_error(self) -> None:
         errors = [
             AuthenticationError(),
             RateLimitError(),
@@ -158,4 +158,4 @@ class TestErrorHierarchy:
             ProviderError("test"),
         ]
         for err in errors:
-            assert isinstance(err, OpenCodeError)
+            assert isinstance(err, CodeForgeError)

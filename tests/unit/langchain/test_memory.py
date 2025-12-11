@@ -3,12 +3,12 @@
 import pytest
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
-from opencode.langchain.memory import (
+from code_forge.langchain.memory import (
     ConversationMemory,
     SlidingWindowMemory,
     SummaryMemory,
 )
-from opencode.llm.models import Message, MessageRole
+from code_forge.llm.models import Message, MessageRole
 
 
 class TestConversationMemory:

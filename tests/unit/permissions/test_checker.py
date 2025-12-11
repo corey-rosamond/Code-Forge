@@ -4,13 +4,13 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from opencode.permissions.models import (
+from code_forge.permissions.models import (
     PermissionLevel,
     PermissionRule,
     PermissionResult,
 )
-from opencode.permissions.rules import RuleSet
-from opencode.permissions.checker import (
+from code_forge.permissions.rules import RuleSet
+from code_forge.permissions.checker import (
     PermissionChecker,
     ToolPermissionError,
 )
@@ -206,8 +206,8 @@ class TestPermissionCheckerAllowDeny:
 class TestPermissionCheckerFromConfig:
     """Tests for PermissionChecker.from_config."""
 
-    @patch("opencode.permissions.config.PermissionConfig.load_global")
-    @patch("opencode.permissions.config.PermissionConfig.load_project")
+    @patch("code_forge.permissions.config.PermissionConfig.load_global")
+    @patch("code_forge.permissions.config.PermissionConfig.load_project")
     def test_from_config_loads_rules(self, mock_load_project, mock_load_global):
         """Test that from_config loads global and project rules."""
         global_rules = RuleSet()
@@ -225,8 +225,8 @@ class TestPermissionCheckerFromConfig:
         assert checker.project_rules is not None
         assert len(checker.project_rules) == 1
 
-    @patch("opencode.permissions.config.PermissionConfig.load_global")
-    @patch("opencode.permissions.config.PermissionConfig.load_project")
+    @patch("code_forge.permissions.config.PermissionConfig.load_global")
+    @patch("code_forge.permissions.config.PermissionConfig.load_project")
     def test_from_config_no_project(self, mock_load_project, mock_load_global):
         """Test from_config when no project root specified."""
         global_rules = RuleSet()

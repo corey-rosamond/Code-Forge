@@ -9,10 +9,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.mcp.client import MCPClient, MCPClientError
-from opencode.mcp.config import MCPConfig, MCPServerConfig, MCPSettings
-from opencode.mcp.manager import MCPConnection, MCPManager
-from opencode.mcp.protocol import (
+from code_forge.mcp.client import MCPClient, MCPClientError
+from code_forge.mcp.config import MCPConfig, MCPServerConfig, MCPSettings
+from code_forge.mcp.manager import MCPConnection, MCPManager
+from code_forge.mcp.protocol import (
     MCPCapabilities,
     MCPPrompt,
     MCPResource,
@@ -168,8 +168,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport", return_value=mock_transport):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport", return_value=mock_transport):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 connection = await manager.connect("test")
 
                 assert connection.name == "test"
@@ -205,8 +205,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 conn1 = await manager.connect("test")
                 conn2 = await manager.connect("test")
 
@@ -255,8 +255,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 connections = await manager.connect_all()
 
                 assert len(connections) == 2
@@ -297,8 +297,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
                 assert len(manager.tool_registry.list_tools()) == 1
 
@@ -347,8 +347,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("server1")
                 await manager.connect("server2")
                 assert len(manager.list_connections()) == 2
@@ -385,8 +385,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
                 old_conn = manager.get_connection("test")
 
@@ -459,8 +459,8 @@ class TestMCPManager:
 
         mock_client.list_tools = mock_list_tools
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("server1")
                 await manager.connect("server2")
 
@@ -499,8 +499,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
 
                 resources = manager.get_all_resources()
@@ -539,8 +539,8 @@ class TestMCPManager:
         )
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
 
                 prompts = manager.get_all_prompts()
@@ -584,8 +584,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("configured1")
 
                 status = manager.get_status()
@@ -630,8 +630,8 @@ class TestMCPManager:
         )
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
 
                 result = await manager.read_resource("test", "file:///test")
@@ -661,7 +661,7 @@ class TestMCPManager:
         )
         manager = MCPManager(config)
 
-        from opencode.mcp.protocol import MCPPromptMessage
+        from code_forge.mcp.protocol import MCPPromptMessage
 
         mock_client = MagicMock(spec=MCPClient)
         mock_client.connect = AsyncMock(
@@ -680,8 +680,8 @@ class TestMCPManager:
         )
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
 
                 result = await manager.get_prompt("test", "summarize", {"length": "short"})
@@ -715,7 +715,7 @@ class TestMCPManager:
         )
         manager = MCPManager(config)
 
-        with patch("opencode.mcp.manager.StdioTransport") as mock_stdio:
+        with patch("code_forge.mcp.manager.StdioTransport") as mock_stdio:
             manager._create_transport(config.servers["test"])
             mock_stdio.assert_called_once_with(
                 command="python",
@@ -740,7 +740,7 @@ class TestMCPManager:
         )
         manager = MCPManager(config)
 
-        with patch("opencode.mcp.manager.HTTPTransport") as mock_http:
+        with patch("code_forge.mcp.manager.HTTPTransport") as mock_http:
             manager._create_transport(config.servers["test"])
             mock_http.assert_called_once_with(
                 url="https://example.com",
@@ -795,8 +795,8 @@ class TestMCPManager:
         mock_client.list_prompts = AsyncMock(return_value=[])
         mock_client.disconnect = AsyncMock()
 
-        with patch("opencode.mcp.manager.StdioTransport"):
-            with patch("opencode.mcp.manager.MCPClient", return_value=mock_client):
+        with patch("code_forge.mcp.manager.StdioTransport"):
+            with patch("code_forge.mcp.manager.MCPClient", return_value=mock_client):
                 await manager.connect("test")
 
                 tools = manager.tool_registry.list_tools()

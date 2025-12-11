@@ -3,13 +3,13 @@
 import pytest
 from pydantic import BaseModel
 
-from opencode.langchain.tools import (
+from code_forge.langchain.tools import (
     LangChainToolAdapter,
-    OpenCodeToolAdapter,
+    CodeForgeToolAdapter,
     adapt_tools_for_langchain,
-    adapt_tools_for_opencode,
+    adapt_tools_for_forge,
 )
-from opencode.tools.base import BaseTool, ToolParameter, ToolResult, ToolCategory, ExecutionContext
+from code_forge.tools.base import BaseTool, ToolParameter, ToolResult, ToolCategory, ExecutionContext
 
 
 class TestLangChainToolAdapter:
@@ -25,7 +25,7 @@ class TestLangChainToolAdapter:
             parameters: list[ToolParameter] = []
 
         tool = MockTool()
-        adapter = LangChainToolAdapter(opencode_tool=tool)
+        adapter = LangChainToolAdapter(forge_tool=tool)
 
         assert adapter.name == "mock_tool"
 
@@ -39,7 +39,7 @@ class TestLangChainToolAdapter:
             parameters: list[ToolParameter] = []
 
         tool = MockTool()
-        adapter = LangChainToolAdapter(opencode_tool=tool)
+        adapter = LangChainToolAdapter(forge_tool=tool)
 
         assert adapter.description == "A detailed description"
 
@@ -67,7 +67,7 @@ class TestLangChainToolAdapter:
             ]
 
         tool = MockTool()
-        adapter = LangChainToolAdapter(opencode_tool=tool)
+        adapter = LangChainToolAdapter(forge_tool=tool)
 
         # Access the args_schema - it's a dynamically created Pydantic model
         schema_class = adapter.args_schema
@@ -96,7 +96,7 @@ class TestLangChainToolAdapter:
             ]
 
         tool = MockTool()
-        adapter = LangChainToolAdapter(opencode_tool=tool)
+        adapter = LangChainToolAdapter(forge_tool=tool)
 
         # Access the args_schema - it's a dynamically created Pydantic model
         schema_class = adapter.args_schema
@@ -130,7 +130,7 @@ class TestLangChainToolAdapter:
         mock_context = ExecutionContext(working_dir="/tmp")
 
         adapter = LangChainToolAdapter(
-            opencode_tool=tool,
+            forge_tool=tool,
             context=mock_context,
         )
 
@@ -155,7 +155,7 @@ class TestLangChainToolAdapter:
         mock_context = ExecutionContext(working_dir="/tmp")
 
         adapter = LangChainToolAdapter(
-            opencode_tool=tool,
+            forge_tool=tool,
             context=mock_context,
         )
 
@@ -165,8 +165,8 @@ class TestLangChainToolAdapter:
         assert "Something went wrong" in result
 
 
-class TestOpenCodeToolAdapter:
-    """Tests for OpenCodeToolAdapter."""
+class TestCodeForgeToolAdapter:
+    """Tests for CodeForgeToolAdapter."""
 
     def test_adapter_name(self) -> None:
         """Test that adapter name matches wrapped tool."""
@@ -180,7 +180,7 @@ class TestOpenCodeToolAdapter:
                 return "ok"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         assert adapter.name == "lc_mock_tool"
 
@@ -196,7 +196,7 @@ class TestOpenCodeToolAdapter:
                 return "ok"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         assert adapter.description == "A detailed description for LC tool"
 
@@ -217,7 +217,7 @@ class TestOpenCodeToolAdapter:
                 return f"Query: {query}, Max: {max_results}"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         params = adapter.parameters
 
@@ -239,7 +239,7 @@ class TestOpenCodeToolAdapter:
                 return "success result"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         result = await adapter.execute({}, None)
 
@@ -259,7 +259,7 @@ class TestOpenCodeToolAdapter:
                 raise ValueError("Tool failed")
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         result = await adapter.execute({}, None)
 
@@ -282,7 +282,7 @@ class TestOpenCodeToolAdapter:
                 return "results"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         schema = adapter.to_openai_schema()
 
@@ -295,7 +295,7 @@ class TestBatchAdaptation:
     """Tests for batch tool adaptation."""
 
     def test_adapt_tools_for_langchain(self) -> None:
-        """Test adapting multiple OpenCode tools for LangChain."""
+        """Test adapting multiple Code-Forge tools for LangChain."""
 
         class MockTool1:
             name = "tool1"
@@ -317,8 +317,8 @@ class TestBatchAdaptation:
         assert adapted[0].name == "tool1"
         assert adapted[1].name == "tool2"
 
-    def test_adapt_tools_for_opencode(self) -> None:
-        """Test adapting multiple LangChain tools for OpenCode."""
+    def test_adapt_tools_for_forge(self) -> None:
+        """Test adapting multiple LangChain tools for Code-Forge."""
         from langchain_core.tools import BaseTool as LCBaseTool
 
         class MockLCTool1(LCBaseTool):
@@ -336,17 +336,17 @@ class TestBatchAdaptation:
                 return "ok"
 
         tools = [MockLCTool1(), MockLCTool2()]
-        adapted = adapt_tools_for_opencode(tools)
+        adapted = adapt_tools_for_forge(tools)
 
         assert len(adapted) == 2
-        assert all(isinstance(t, OpenCodeToolAdapter) for t in adapted)
+        assert all(isinstance(t, CodeForgeToolAdapter) for t in adapted)
         assert adapted[0].name == "lc_tool1"
         assert adapted[1].name == "lc_tool2"
 
     def test_empty_list_adaptation(self) -> None:
         """Test that empty lists return empty lists."""
         assert adapt_tools_for_langchain([]) == []
-        assert adapt_tools_for_opencode([]) == []
+        assert adapt_tools_for_forge([]) == []
 
 
 class TestLangChainToolAdapterSync:
@@ -370,7 +370,7 @@ class TestLangChainToolAdapterSync:
         mock_context = ExecutionContext(working_dir="/tmp")
 
         adapter = LangChainToolAdapter(
-            opencode_tool=tool,
+            forge_tool=tool,
             context=mock_context,
         )
 
@@ -380,8 +380,8 @@ class TestLangChainToolAdapterSync:
         assert result == "Sync result"
 
 
-class TestOpenCodeToolAdapterEdgeCases:
-    """Edge case tests for OpenCodeToolAdapter."""
+class TestCodeForgeToolAdapterEdgeCases:
+    """Edge case tests for CodeForgeToolAdapter."""
 
     def test_category_property(self) -> None:
         """Test category property returns OTHER."""
@@ -395,9 +395,9 @@ class TestOpenCodeToolAdapterEdgeCases:
                 return "ok"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
-        from opencode.tools.base import ToolCategory
+        from code_forge.tools.base import ToolCategory
         assert adapter.category == ToolCategory.OTHER
 
     def test_requires_confirmation_property(self) -> None:
@@ -412,6 +412,6 @@ class TestOpenCodeToolAdapterEdgeCases:
                 return "ok"
 
         tool = MockLCTool()
-        adapter = OpenCodeToolAdapter(langchain_tool=tool)
+        adapter = CodeForgeToolAdapter(langchain_tool=tool)
 
         assert adapter.requires_confirmation is False

@@ -16,15 +16,15 @@ Phase 1.1 has minimal UI - only CLI output for `--version` and `--help`. No inte
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode --version                                            │
-│ opencode 0.1.0                                                  │
+│ $ forge --version                                            │
+│ forge 0.1.0                                                  │
 │ $                                                               │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Specification
 - Single line output
-- Format: `opencode X.Y.Z`
+- Format: `forge X.Y.Z`
 - No color formatting required
 - Exit immediately after output
 
@@ -34,11 +34,11 @@ Phase 1.1 has minimal UI - only CLI output for `--version` and `--help`. No inte
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode --help                                               │
+│ $ forge --help                                               │
 │                                                                 │
-│ OpenCode - AI-powered CLI Development Assistant                 │
+│ Code-Forge - AI-powered CLI Development Assistant                 │
 │                                                                 │
-│ Usage: opencode [OPTIONS] [PROMPT]                              │
+│ Usage: forge [OPTIONS] [PROMPT]                              │
 │                                                                 │
 │ Options:                                                        │
 │   -v, --version     Show version and exit                       │
@@ -47,7 +47,7 @@ Phase 1.1 has minimal UI - only CLI output for `--version` and `--help`. No inte
 │   --resume          Select session to resume                    │
 │   -p, --print       Run in headless mode with prompt            │
 │                                                                 │
-│ For more information, visit: https://github.com/opencode        │
+│ For more information, visit: https://github.com/forge        │
 │                                                                 │
 │ $                                                               │
 └─────────────────────────────────────────────────────────────────┘
@@ -66,8 +66,8 @@ Phase 1.1 has minimal UI - only CLI output for `--version` and `--help`. No inte
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode                                                      │
-│ OpenCode - AI Development Assistant                             │
+│ $ forge                                                      │
+│ Code-Forge - AI Development Assistant                             │
 │ Run with --help for usage information                           │
 │ $                                                               │
 └─────────────────────────────────────────────────────────────────┘
@@ -84,9 +84,9 @@ Phase 1.1 has minimal UI - only CLI output for `--version` and `--help`. No inte
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode --invalid-flag                                       │
+│ $ forge --invalid-flag                                       │
 │ Error: Unknown option '--invalid-flag'                          │
-│ Run 'opencode --help' for usage information                     │
+│ Run 'forge --help' for usage information                     │
 │ $                                                               │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -124,8 +124,8 @@ The following UI elements are NOT part of Phase 1.1 but will be added in later p
 ### Phase 1.3: Basic REPL
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ $ opencode                                                      │
-│ OpenCode v0.1.0 - AI Development Assistant                      │
+│ $ forge                                                      │
+│ Code-Forge v0.1.0 - AI Development Assistant                      │
 │ Type /help for commands, Ctrl+D to exit                         │
 │                                                                 │
 │ > _                                                             │
@@ -135,7 +135,7 @@ The following UI elements are NOT part of Phase 1.1 but will be added in later p
 ### Phase 6.1+: Full TUI
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ OpenCode v0.1.0          gpt-5         Tokens: 1.2k/128k   Ready│
+│ Code-Forge v0.1.0          gpt-5         Tokens: 1.2k/128k   Ready│
 ├─────────────────────────────────────────────────────────────────┤
 │ You: How do I implement a binary search?                        │
 │                                                                 │

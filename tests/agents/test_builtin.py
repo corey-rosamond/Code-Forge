@@ -2,8 +2,8 @@
 
 import pytest
 
-from opencode.agents.base import AgentConfig, AgentContext, AgentState
-from opencode.agents.builtin import (
+from code_forge.agents.base import AgentConfig, AgentContext, AgentState
+from code_forge.agents.builtin import (
     AGENT_CLASSES,
     CodeReviewAgent,
     ExploreAgent,
@@ -14,7 +14,7 @@ from opencode.agents.builtin import (
     register_agent_class,
     unregister_agent_class,
 )
-from opencode.agents.result import AgentResult
+from code_forge.agents.result import AgentResult
 
 
 class TestExploreAgent:
@@ -220,7 +220,7 @@ class TestAgentClassRegistry:
 
     def test_register_custom_class(self) -> None:
         """Test registering custom agent class."""
-        from opencode.agents.base import Agent
+        from code_forge.agents.base import Agent
 
         class CustomAgent(Agent):
             @property
@@ -240,7 +240,7 @@ class TestAgentClassRegistry:
 
     def test_unregister_class(self) -> None:
         """Test unregistering agent class."""
-        from opencode.agents.base import Agent
+        from code_forge.agents.base import Agent
 
         class TempAgent(Agent):
             @property
@@ -264,7 +264,7 @@ class TestAgentClassRegistry:
 
     def test_create_agent_uses_custom_class(self) -> None:
         """Test create_agent uses custom registered class."""
-        from opencode.agents.base import Agent
+        from code_forge.agents.base import Agent
 
         class SpecialAgent(Agent):
             @property

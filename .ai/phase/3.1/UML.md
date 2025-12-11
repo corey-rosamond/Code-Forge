@@ -150,7 +150,7 @@ classDiagram
 
 ```mermaid
 classDiagram
-    class OpenCodeError {
+    class Code-ForgeError {
         <<abstract>>
         +message: str
     }
@@ -184,7 +184,7 @@ classDiagram
         +provider: str?
     }
 
-    OpenCodeError <|-- LLMError
+    Code-ForgeError <|-- LLMError
     LLMError <|-- AuthenticationError
     LLMError <|-- RateLimitError
     LLMError <|-- ModelNotFoundError
@@ -456,7 +456,7 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TB
-    subgraph LLMPackage["src/opencode/llm/"]
+    subgraph LLMPackage["src/forge/llm/"]
         INIT["__init__.py"]
         CLIENT["client.py"]
         MODELS["models.py"]
@@ -465,7 +465,7 @@ flowchart TB
         STREAMING["streaming.py"]
     end
 
-    subgraph Core["src/opencode/core/"]
+    subgraph Core["src/forge/core/"]
         CORE_ERRORS["errors.py"]
         LOGGING["logging.py"]
     end
@@ -531,7 +531,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph opencode_llm["src/opencode/llm/"]
+    subgraph forge_llm["src/forge/llm/"]
         INIT["__init__.py"]
         CLIENT["client.py<br/>OpenRouterClient"]
         MODELS["models.py<br/>Message, Request, Response"]

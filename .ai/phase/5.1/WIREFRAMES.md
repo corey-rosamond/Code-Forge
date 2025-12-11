@@ -11,7 +11,7 @@
 ### Creating a Session
 
 ```python
-from opencode.sessions import SessionManager
+from forge.sessions import SessionManager
 
 # Get singleton manager
 manager = SessionManager.get_instance()
@@ -112,7 +112,7 @@ print(f"Total tokens: {session.total_tokens}")
 ### Resume Session
 
 ```python
-from opencode.sessions import SessionManager
+from forge.sessions import SessionManager
 
 manager = SessionManager.get_instance()
 
@@ -150,7 +150,7 @@ if manager.has_current:
 ### List Sessions
 
 ```python
-from opencode.sessions import SessionManager
+from forge.sessions import SessionManager
 
 manager = SessionManager.get_instance()
 
@@ -225,7 +225,7 @@ if deleted:
 ### Create Session Directly
 
 ```python
-from opencode.sessions import Session, SessionMessage, ToolInvocation
+from forge.sessions import Session, SessionMessage, ToolInvocation
 from datetime import datetime, timezone
 
 # Create session
@@ -285,7 +285,7 @@ session = Session.from_json(json_str)
 ### Using SessionStorage Directly
 
 ```python
-from opencode.sessions import SessionStorage, Session
+from forge.sessions import SessionStorage, Session
 from pathlib import Path
 
 # Default storage
@@ -321,7 +321,7 @@ for sid in storage.list_session_ids():
 ### Error Handling
 
 ```python
-from opencode.sessions import (
+from forge.sessions import (
     SessionStorage,
     SessionNotFoundError,
     SessionCorruptedError,
@@ -370,7 +370,7 @@ print(f"Storage size: {size_bytes / 1024:.1f} KB")
 ### Using SessionIndex Directly
 
 ```python
-from opencode.sessions import SessionStorage, SessionIndex
+from forge.sessions import SessionStorage, SessionIndex
 
 storage = SessionStorage()
 index = SessionIndex(storage)
@@ -403,7 +403,7 @@ index.save_if_dirty()
 ### Register Custom Hooks
 
 ```python
-from opencode.sessions import SessionManager, Session
+from forge.sessions import SessionManager, Session
 
 def on_session_start(session: Session):
     print(f"Session started: {session.id}")
@@ -443,14 +443,14 @@ manager.unregister_hook("session:start", on_session_start)
 ### Fire Session Events via Hooks System
 
 ```python
-from opencode.sessions import SessionManager
-from opencode.hooks import fire_event, HookEvent, HookRegistry, Hook
+from forge.sessions import SessionManager
+from forge.hooks import fire_event, HookEvent, HookRegistry, Hook
 
 # Register a shell hook for session events
 registry = HookRegistry.get_instance()
 registry.register(Hook(
     event_pattern="session:start",
-    command='echo "Session $OPENCODE_SESSION_ID started" >> /tmp/sessions.log',
+    command='echo "Session $FORGE_SESSION_ID started" >> /tmp/sessions.log',
 ))
 
 # Session manager integration
@@ -469,8 +469,8 @@ manager.register_hook("session:start", lambda s: asyncio.run(on_session_start(s)
 ### Session Command Flow
 
 ```
-$ opencode
-OpenCode v1.0.0
+$ forge
+Code-Forge v1.0.0
 Starting new session...
 Session: 550e8400-e29b-41d4-a716-446655440000
 
@@ -482,8 +482,8 @@ Assistant: I'll help you refactor the API client. Let me read the current code..
 You: /quit
 Session saved. Goodbye!
 
-$ opencode --resume
-OpenCode v1.0.0
+$ forge --resume
+Code-Forge v1.0.0
 Resuming session: 550e8400-e29b-41d4-a716-446655440000
 (Refactoring API client - 3 messages)
 
@@ -493,7 +493,7 @@ You: Continue where we left off
 ### Session Listing
 
 ```
-$ opencode --list-sessions
+$ forge --list-sessions
 
 Recent Sessions:
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -504,7 +504,7 @@ Recent Sessions:
 │ e5f6g7h8... │ Bug fix in parser          │ 8        │ 3 days ago    │
 └──────────────────────────────────────────────────────────────────────┘
 
-$ opencode --resume 550e8400
+$ forge --resume 550e8400
 ```
 
 ---
@@ -611,7 +611,7 @@ $ opencode --resume 550e8400
 ### Session Status in Prompt
 
 ```python
-from opencode.sessions import SessionManager
+from forge.sessions import SessionManager
 
 def get_prompt() -> str:
     """Build REPL prompt with session info."""

@@ -1,6 +1,6 @@
 # Development Guardrails
 
-Guidelines for maintaining code quality, honesty, and consistency throughout the OpenCode project.
+Guidelines for maintaining code quality, honesty, and consistency throughout the Code-Forge project.
 
 ---
 
@@ -93,10 +93,10 @@ ls tests/
 pytest tests/ -v
 
 # Before saying "the module exists"
-ls opencode/core/
+ls forge/core/
 
 # Before saying "the function works"
-python -c "from opencode.core import Result; print(Result.ok('test'))"
+python -c "from forge.core import Result; print(Result.ok('test'))"
 ```
 
 ### ❌ Don't
@@ -109,7 +109,7 @@ The OpenRouterClient is implemented and working.
 
 ```
 Let me check if OpenRouterClient exists:
-- File exists: [check opencode/llm/client.py]
+- File exists: [check forge/llm/client.py]
 - Can import: [try importing]
 - Tests pass: [run tests]
 

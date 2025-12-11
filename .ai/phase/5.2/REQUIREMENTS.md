@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 5.2 implements context window management for OpenCode, providing token counting, context truncation, and message compaction strategies. This ensures conversations stay within model context limits while preserving important information.
+Phase 5.2 implements context window management for Code-Forge, providing token counting, context truncation, and message compaction strategies. This ensures conversations stay within model context limits while preserving important information.
 
 ---
 
@@ -161,7 +161,7 @@ Phase 5.2 implements context window management for OpenCode, providing token cou
 ### Package Structure
 
 ```
-src/opencode/context/
+src/forge/context/
 ├── __init__.py           # Package exports
 ├── tokens.py             # Token counting
 ├── limits.py             # Context limits

@@ -15,7 +15,7 @@ $ pytest tests/unit/ -v
 
 ================================ test session starts ================================
 platform linux -- Python 3.11.0, pytest-8.0.0, pluggy-1.0.0
-rootdir: /home/user/opencode
+rootdir: /home/user/forge
 plugins: asyncio-0.23.0, cov-4.1.0
 collected 245 items
 
@@ -44,7 +44,7 @@ $ pytest tests/integration/ -v
 
 ================================ test session starts ================================
 platform linux -- Python 3.11.0, pytest-8.0.0, pluggy-1.0.0
-rootdir: /home/user/opencode
+rootdir: /home/user/forge
 plugins: asyncio-0.23.0, cov-4.1.0
 collected 78 items
 
@@ -152,7 +152,7 @@ tests/performance/test_memory.py::TestMemoryUsage::test_session_memory_growth PA
 ### Coverage Summary
 
 ```
-$ pytest tests/ --cov=opencode --cov-report=term-missing
+$ pytest tests/ --cov=forge --cov-report=term-missing
 
 ================================ test session starts ================================
 collected 338 items
@@ -164,34 +164,34 @@ collected 338 items
 ---------- coverage: platform linux, python 3.11.0 -----------
 Name                                    Stmts   Miss  Cover   Missing
 ---------------------------------------------------------------------
-src/opencode/__init__.py                        5      0   100%
-src/opencode/cli.py                            45      2    96%   78-79
-src/opencode/core/app.py                      123      5    96%   234-238
-src/opencode/core/config.py                    89      3    97%   145-147
-src/opencode/tools/__init__.py                 12      0   100%
-src/opencode/tools/base.py                     67      2    97%   89-90
-src/opencode/tools/read.py                     45      0   100%
-src/opencode/tools/write.py                    52      1    98%   67
-src/opencode/tools/edit.py                     78      3    96%   102-104
-src/opencode/tools/glob.py                     34      0   100%
-src/opencode/tools/grep.py                     56      2    96%   78-79
-src/opencode/tools/bash.py                     89      4    96%   145-148
-src/opencode/session/__init__.py                8      0   100%
-src/opencode/session/manager.py               112      5    96%   189-193
-src/opencode/session/context.py                87      3    97%   134-136
-src/opencode/permissions/__init__.py            6      0   100%
-src/opencode/permissions/system.py             78      3    96%   112-114
-src/opencode/hooks/__init__.py                  5      0   100%
-src/opencode/hooks/manager.py                  56      2    96%   89-90
-src/opencode/plugins/__init__.py               15      0   100%
-src/opencode/plugins/base.py                   67      2    97%   98-99
-src/opencode/plugins/manager.py                98      4    96%   167-170
-src/opencode/plugins/loader.py                 54      2    96%   78-79
-src/opencode/plugins/registry.py               45      1    98%   67
-src/opencode/git/__init__.py                    8      0   100%
-src/opencode/git/operations.py                 89      4    96%   145-148
-src/opencode/github/__init__.py                10      0   100%
-src/opencode/github/client.py                 123      6    95%   189-194
+src/forge/__init__.py                        5      0   100%
+src/forge/cli.py                            45      2    96%   78-79
+src/forge/core/app.py                      123      5    96%   234-238
+src/forge/core/config.py                    89      3    97%   145-147
+src/forge/tools/__init__.py                 12      0   100%
+src/forge/tools/base.py                     67      2    97%   89-90
+src/forge/tools/read.py                     45      0   100%
+src/forge/tools/write.py                    52      1    98%   67
+src/forge/tools/edit.py                     78      3    96%   102-104
+src/forge/tools/glob.py                     34      0   100%
+src/forge/tools/grep.py                     56      2    96%   78-79
+src/forge/tools/bash.py                     89      4    96%   145-148
+src/forge/session/__init__.py                8      0   100%
+src/forge/session/manager.py               112      5    96%   189-193
+src/forge/session/context.py                87      3    97%   134-136
+src/forge/permissions/__init__.py            6      0   100%
+src/forge/permissions/system.py             78      3    96%   112-114
+src/forge/hooks/__init__.py                  5      0   100%
+src/forge/hooks/manager.py                  56      2    96%   89-90
+src/forge/plugins/__init__.py               15      0   100%
+src/forge/plugins/base.py                   67      2    97%   98-99
+src/forge/plugins/manager.py                98      4    96%   167-170
+src/forge/plugins/loader.py                 54      2    96%   78-79
+src/forge/plugins/registry.py               45      1    98%   67
+src/forge/git/__init__.py                    8      0   100%
+src/forge/git/operations.py                 89      4    96%   145-148
+src/forge/github/__init__.py                10      0   100%
+src/forge/github/client.py                 123      6    95%   189-194
 ---------------------------------------------------------------------
 TOTAL                                    1678     54    97%
 
@@ -206,35 +206,35 @@ Actual coverage: 97% ✓
 ### MyPy Results
 
 ```
-$ mypy src/opencode/
+$ mypy src/forge/
 
-src/opencode/cli.py: Success: no issues found in 1 source file
-src/opencode/core/app.py: Success: no issues found in 1 source file
-src/opencode/core/config.py: Success: no issues found in 1 source file
-src/opencode/tools/__init__.py: Success: no issues found in 1 source file
-src/opencode/tools/base.py: Success: no issues found in 1 source file
-src/opencode/tools/read.py: Success: no issues found in 1 source file
-src/opencode/tools/write.py: Success: no issues found in 1 source file
-src/opencode/tools/edit.py: Success: no issues found in 1 source file
-src/opencode/tools/glob.py: Success: no issues found in 1 source file
-src/opencode/tools/grep.py: Success: no issues found in 1 source file
-src/opencode/tools/bash.py: Success: no issues found in 1 source file
-src/opencode/session/__init__.py: Success: no issues found in 1 source file
-src/opencode/session/manager.py: Success: no issues found in 1 source file
-src/opencode/session/context.py: Success: no issues found in 1 source file
-src/opencode/permissions/__init__.py: Success: no issues found in 1 source file
-src/opencode/permissions/system.py: Success: no issues found in 1 source file
-src/opencode/hooks/__init__.py: Success: no issues found in 1 source file
-src/opencode/hooks/manager.py: Success: no issues found in 1 source file
-src/opencode/plugins/__init__.py: Success: no issues found in 1 source file
-src/opencode/plugins/base.py: Success: no issues found in 1 source file
-src/opencode/plugins/manager.py: Success: no issues found in 1 source file
-src/opencode/plugins/loader.py: Success: no issues found in 1 source file
-src/opencode/plugins/registry.py: Success: no issues found in 1 source file
-src/opencode/git/__init__.py: Success: no issues found in 1 source file
-src/opencode/git/operations.py: Success: no issues found in 1 source file
-src/opencode/github/__init__.py: Success: no issues found in 1 source file
-src/opencode/github/client.py: Success: no issues found in 1 source file
+src/forge/cli.py: Success: no issues found in 1 source file
+src/forge/core/app.py: Success: no issues found in 1 source file
+src/forge/core/config.py: Success: no issues found in 1 source file
+src/forge/tools/__init__.py: Success: no issues found in 1 source file
+src/forge/tools/base.py: Success: no issues found in 1 source file
+src/forge/tools/read.py: Success: no issues found in 1 source file
+src/forge/tools/write.py: Success: no issues found in 1 source file
+src/forge/tools/edit.py: Success: no issues found in 1 source file
+src/forge/tools/glob.py: Success: no issues found in 1 source file
+src/forge/tools/grep.py: Success: no issues found in 1 source file
+src/forge/tools/bash.py: Success: no issues found in 1 source file
+src/forge/session/__init__.py: Success: no issues found in 1 source file
+src/forge/session/manager.py: Success: no issues found in 1 source file
+src/forge/session/context.py: Success: no issues found in 1 source file
+src/forge/permissions/__init__.py: Success: no issues found in 1 source file
+src/forge/permissions/system.py: Success: no issues found in 1 source file
+src/forge/hooks/__init__.py: Success: no issues found in 1 source file
+src/forge/hooks/manager.py: Success: no issues found in 1 source file
+src/forge/plugins/__init__.py: Success: no issues found in 1 source file
+src/forge/plugins/base.py: Success: no issues found in 1 source file
+src/forge/plugins/manager.py: Success: no issues found in 1 source file
+src/forge/plugins/loader.py: Success: no issues found in 1 source file
+src/forge/plugins/registry.py: Success: no issues found in 1 source file
+src/forge/git/__init__.py: Success: no issues found in 1 source file
+src/forge/git/operations.py: Success: no issues found in 1 source file
+src/forge/github/__init__.py: Success: no issues found in 1 source file
+src/forge/github/client.py: Success: no issues found in 1 source file
 
 Success: no issues found in 27 source files ✓
 ```
@@ -246,11 +246,11 @@ Success: no issues found in 27 source files ✓
 ### Ruff Results
 
 ```
-$ ruff check src/opencode/
+$ ruff check src/forge/
 
 All checks passed! ✓
 
-$ ruff format --check src/opencode/
+$ ruff format --check src/forge/
 
 27 files would be left unchanged ✓
 ```
@@ -258,7 +258,7 @@ $ ruff format --check src/opencode/
 ### Complexity Check
 
 ```
-$ flake8 src/opencode/ --max-complexity=10 --select=C901
+$ flake8 src/forge/ --max-complexity=10 --select=C901
 
 All complexity checks passed! ✓
 
@@ -339,14 +339,14 @@ You can also try /offline mode to work without network features.
 ### Getting Started Page
 
 ```markdown
-# Getting Started with OpenCode
+# Getting Started with Code-Forge
 
 ## Installation
 
-Install OpenCode using pip:
+Install Code-Forge using pip:
 
 ```bash
-pip install opencode
+pip install forge
 ```
 
 ## Quick Start
@@ -357,10 +357,10 @@ pip install opencode
    export OPENROUTER_API_KEY="your-api-key"
    ```
 
-2. **Start OpenCode:**
+2. **Start Code-Forge:**
 
    ```bash
-   opencode
+   forge
    ```
 
 3. **Try a simple command:**
@@ -457,7 +457,7 @@ Edit file_path="/home/user/project/main.py" old_string="TODO" new_string="DONE" 
 
 ## Highlights
 
-OpenCode 1.0.0 is the first stable release, featuring a complete
+Code-Forge 1.0.0 is the first stable release, featuring a complete
 AI-powered coding assistant with support for 400+ models via OpenRouter.
 
 ### Key Features
@@ -555,13 +555,13 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Run linting
-        run: ruff check src/opencode/
+        run: ruff check src/forge/
 
       - name: Run type checking
-        run: mypy src/opencode/
+        run: mypy src/forge/
 
       - name: Run tests
-        run: pytest tests/ --cov=opencode --cov-fail-under=90
+        run: pytest tests/ --cov=forge --cov-fail-under=90
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
@@ -607,10 +607,10 @@ Total time: 3m 42s
 ### Installing from PyPI
 
 ```
-$ pip install opencode
+$ pip install forge
 
-Collecting opencode
-  Downloading opencode-1.0.0-py3-none-any.whl (125 kB)
+Collecting forge
+  Downloading forge-1.0.0-py3-none-any.whl (125 kB)
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 125.3/125.3 kB 2.1 MB/s eta 0:00:00
 Collecting langchain>=0.3.0
   Using cached langchain-0.3.1-py3-none-any.whl (234 kB)
@@ -619,17 +619,17 @@ Collecting pydantic>=2.0.0
 Collecting rich>=13.0.0
   Using cached rich-13.7.0-py3-none-any.whl (240 kB)
 ...
-Successfully installed opencode-1.0.0 langchain-0.3.1 pydantic-2.5.0 rich-13.7.0 ...
+Successfully installed forge-1.0.0 langchain-0.3.1 pydantic-2.5.0 rich-13.7.0 ...
 ```
 
 ### Verifying Installation
 
 ```
-$ opencode --version
-OpenCode 1.0.0
+$ forge --version
+Code-Forge 1.0.0
 
-$ opencode --help
-Usage: opencode [OPTIONS] [COMMAND]
+$ forge --help
+Usage: forge [OPTIONS] [COMMAND]
 
   AI-powered coding assistant with OpenRouter and LangChain.
 
@@ -642,7 +642,7 @@ Options:
   --help              Show this message and exit
 
 Commands:
-  init     Initialize OpenCode in current directory
+  init     Initialize Code-Forge in current directory
   config   Manage configuration
   session  Manage sessions
 ```
@@ -650,10 +650,10 @@ Commands:
 ### First Run
 
 ```
-$ opencode
+$ forge
 
 ╭──────────────────────────────────────────────────────────────╮
-│                     Welcome to OpenCode                       │
+│                     Welcome to Code-Forge                       │
 │         AI-powered coding assistant with 400+ models          │
 ╰──────────────────────────────────────────────────────────────╯
 

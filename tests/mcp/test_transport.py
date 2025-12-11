@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.mcp.transport.base import MCPTransport
-from opencode.mcp.transport.stdio import StdioTransport
+from code_forge.mcp.transport.base import MCPTransport
+from code_forge.mcp.transport.stdio import StdioTransport
 
 
 class TestMCPTransportInterface:
@@ -223,7 +223,7 @@ class TestHTTPTransport:
 
     def test_initialization(self) -> None:
         """Test transport initialization."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(
             url="https://example.com/mcp/",
@@ -236,7 +236,7 @@ class TestHTTPTransport:
 
     def test_initialization_defaults(self) -> None:
         """Test transport initialization with defaults."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
         assert transport.headers == {}
@@ -244,7 +244,7 @@ class TestHTTPTransport:
 
     def test_is_connected_false_initially(self) -> None:
         """Test that transport is not connected initially."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
         assert transport.is_connected is False
@@ -252,7 +252,7 @@ class TestHTTPTransport:
     @pytest.mark.asyncio
     async def test_disconnect_when_not_connected(self) -> None:
         """Test disconnecting when not connected does not raise."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
         await transport.disconnect()
@@ -261,7 +261,7 @@ class TestHTTPTransport:
     @pytest.mark.asyncio
     async def test_send_not_connected(self) -> None:
         """Test sending when not connected."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
         with pytest.raises(ConnectionError, match="Not connected"):
@@ -270,7 +270,7 @@ class TestHTTPTransport:
     @pytest.mark.asyncio
     async def test_receive_not_connected(self) -> None:
         """Test receiving when not connected."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
         with pytest.raises(ConnectionError, match="Not connected"):
@@ -279,7 +279,7 @@ class TestHTTPTransport:
     @pytest.mark.asyncio
     async def test_connect_requires_aiohttp(self) -> None:
         """Test that connect fails gracefully without aiohttp."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
 
@@ -291,7 +291,7 @@ class TestHTTPTransport:
     @pytest.mark.asyncio
     async def test_connect_and_disconnect(self) -> None:
         """Test connecting and disconnecting (mocked)."""
-        from opencode.mcp.transport.http import HTTPTransport
+        from code_forge.mcp.transport.http import HTTPTransport
 
         transport = HTTPTransport(url="https://example.com")
 

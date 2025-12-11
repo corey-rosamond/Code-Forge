@@ -20,11 +20,11 @@ And definition.prompt should contain "PDF documents"
 
 ### Scenario: Create skill with optional fields
 ```gherkin
-Given a SkillMetadata with author="OpenCode Team"
+Given a SkillMetadata with author="Code-Forge Team"
 And version="1.0.0"
 And tags=["documents", "analysis"]
 When I create a SkillDefinition
-Then definition.metadata.author should be "OpenCode Team"
+Then definition.metadata.author should be "Code-Forge Team"
 And definition.metadata.version should be "1.0.0"
 And definition.metadata.tags should contain "documents"
 ```
@@ -121,7 +121,7 @@ Then result should contain warning "unknown tool: nonexistent_tool"
 
 ### Scenario: Load skill from YAML file
 ```gherkin
-Given a file at ~/.src/opencode/skills/custom.yaml
+Given a file at ~/.src/forge/skills/custom.yaml
 And the file contains valid skill YAML
 When I call loader.load_from_file(path)
 Then result should be a SkillDefinition
@@ -130,7 +130,7 @@ And result.source_path should be the file path
 
 ### Scenario: Load skill from Markdown file
 ```gherkin
-Given a file at ~/.src/opencode/skills/custom.md
+Given a file at ~/.src/forge/skills/custom.md
 And the file has YAML frontmatter and markdown body
 When I call loader.load_from_file(path)
 Then result should be a SkillDefinition
@@ -155,8 +155,8 @@ Then result should have 3 skills total
 
 ### Scenario: Project skill overrides user skill
 ```gherkin
-Given user skill "custom" in ~/.src/opencode/skills/
-And project skill "custom" in .src/opencode/skills/
+Given user skill "custom" in ~/.src/forge/skills/
+And project skill "custom" in .src/forge/skills/
 When I load both directories
 Then project skill should take precedence
 ```
@@ -419,7 +419,7 @@ And should suggest "/skill list"
 
 ### Scenario: Create custom skill file
 ```gherkin
-Given user creates ~/.src/opencode/skills/my-skill.yaml
+Given user creates ~/.src/forge/skills/my-skill.yaml
 With valid skill YAML content
 When SkillLoader discovers skills
 Then "my-skill" should be available
@@ -580,14 +580,14 @@ Then option value should be True
 
 ### Scenario: Discover user skills
 ```gherkin
-Given ~/.src/opencode/skills/ contains 2 skill files
+Given ~/.src/forge/skills/ contains 2 skill files
 When loader.discover_skills() is called
 Then both skills should be discovered
 ```
 
 ### Scenario: Discover project skills
 ```gherkin
-Given .src/opencode/skills/ contains 1 skill file
+Given .src/forge/skills/ contains 1 skill file
 When loader.discover_skills() is called
 Then project skill should be discovered
 ```
@@ -602,7 +602,7 @@ And only .yaml and .md files should be loaded
 
 ### Scenario: Handle empty skills directory
 ```gherkin
-Given empty ~/.src/opencode/skills/ directory
+Given empty ~/.src/forge/skills/ directory
 When loader.discover_skills() is called
 Then result should be empty list
 And no error should occur
@@ -610,7 +610,7 @@ And no error should occur
 
 ### Scenario: Handle missing skills directory
 ```gherkin
-Given ~/.src/opencode/skills/ does not exist
+Given ~/.src/forge/skills/ does not exist
 When loader.discover_skills() is called
 Then result should be empty list
 And no error should occur

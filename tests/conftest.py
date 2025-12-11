@@ -1,4 +1,4 @@
-"""Shared test fixtures for OpenCode tests.
+"""Shared test fixtures for Code-Forge tests.
 
 This module provides comprehensive fixtures for:
 - Unit tests (temp directories, sample files)
@@ -19,11 +19,11 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 if TYPE_CHECKING:
-    from opencode.config import OpenCodeConfig
-    from opencode.hooks import HookRegistry
-    from opencode.plugins import PluginManager
-    from opencode.sessions import Session, SessionManager
-    from opencode.tools import ToolExecutor, ToolRegistry
+    from code_forge.config import CodeForgeConfig
+    from code_forge.hooks import HookRegistry
+    from code_forge.plugins import PluginManager
+    from code_forge.sessions import Session, SessionManager
+    from code_forge.tools import ToolExecutor, ToolRegistry
 
 
 # ============================================================
@@ -98,31 +98,31 @@ def temp_project(temp_dir: Path) -> Path:
 
 
 @pytest.fixture
-def opencode_data_dir(temp_home: Path) -> Path:
-    """Create OpenCode data directory.
+def forge_data_dir(temp_home: Path) -> Path:
+    """Create Code-Forge data directory.
 
     Args:
         temp_home: Temporary home directory.
 
     Returns:
-        Path to OpenCode data directory.
+        Path to Code-Forge data directory.
     """
-    data_dir = temp_home / ".local" / "share" / "opencode"
+    data_dir = temp_home / ".local" / "share" / "forge"
     data_dir.mkdir(parents=True)
     return data_dir
 
 
 @pytest.fixture
-def opencode_config_dir(temp_home: Path) -> Path:
-    """Create OpenCode config directory.
+def forge_config_dir(temp_home: Path) -> Path:
+    """Create Code-Forge config directory.
 
     Args:
         temp_home: Temporary home directory.
 
     Returns:
-        Path to OpenCode config directory.
+        Path to Code-Forge config directory.
     """
-    config_dir = temp_home / ".config" / "opencode"
+    config_dir = temp_home / ".config" / "forge"
     config_dir.mkdir(parents=True)
     return config_dir
 
@@ -372,7 +372,7 @@ def tool_registry() -> Generator["ToolRegistry", None, None]:
     Yields:
         Fresh ToolRegistry instance.
     """
-    from opencode.tools import ToolRegistry
+    from code_forge.tools import ToolRegistry
 
     registry = ToolRegistry()  # Singleton via __new__
     # Store original tools
@@ -395,7 +395,7 @@ def tool_registry_with_tools(tool_registry: "ToolRegistry") -> "ToolRegistry":
     Returns:
         Registry with tools registered.
     """
-    from opencode.tools import register_all_tools
+    from code_forge.tools import register_all_tools
 
     # Only register if not already registered (singleton may have tools)
     if not tool_registry.exists("Read"):
@@ -413,7 +413,7 @@ def tool_executor(tool_registry_with_tools: "ToolRegistry") -> "ToolExecutor":
     Returns:
         ToolExecutor instance.
     """
-    from opencode.tools import ToolExecutor
+    from code_forge.tools import ToolExecutor
 
     return ToolExecutor(tool_registry_with_tools)
 
@@ -428,7 +428,7 @@ def execution_context(temp_project: Path):
     Returns:
         ExecutionContext instance.
     """
-    from opencode.tools import ExecutionContext
+    from code_forge.tools import ExecutionContext
 
     return ExecutionContext(
         working_dir=str(temp_project),
@@ -442,18 +442,18 @@ def execution_context(temp_project: Path):
 
 
 @pytest.fixture
-def session_storage(opencode_data_dir: Path):
+def session_storage(forge_data_dir: Path):
     """Create a session storage instance.
 
     Args:
-        opencode_data_dir: OpenCode data directory.
+        forge_data_dir: Code-Forge data directory.
 
     Returns:
         SessionStorage instance.
     """
-    from opencode.sessions import SessionStorage
+    from code_forge.sessions import SessionStorage
 
-    return SessionStorage(opencode_data_dir / "sessions")
+    return SessionStorage(forge_data_dir / "sessions")
 
 
 @pytest.fixture
@@ -467,7 +467,7 @@ def session_manager(session_storage, monkeypatch) -> Generator["SessionManager",
     Yields:
         SessionManager instance.
     """
-    from opencode.sessions import SessionManager
+    from code_forge.sessions import SessionManager
 
     # Reset singleton and create fresh instance with custom storage
     SessionManager._instance = None
@@ -511,7 +511,7 @@ def hook_registry() -> Generator["HookRegistry", None, None]:
     Yields:
         Fresh HookRegistry instance.
     """
-    from opencode.hooks import HookRegistry
+    from code_forge.hooks import HookRegistry
 
     registry = HookRegistry.get_instance()
     # Store original hooks
@@ -539,7 +539,7 @@ def sample_plugin_dir(temp_home: Path) -> Path:
     Returns:
         Path to plugin directory.
     """
-    plugin_dir = temp_home / ".opencode" / "plugins" / "test-plugin"
+    plugin_dir = temp_home / ".forge" / "plugins" / "test-plugin"
     plugin_dir.mkdir(parents=True)
 
     # Create manifest
@@ -560,8 +560,8 @@ capabilities:
     module = plugin_dir / "test_plugin.py"
     module.write_text('''"""Test plugin for integration tests."""
 
-from opencode.plugins import Plugin, PluginMetadata, PluginCapabilities
-from opencode.tools import BaseTool, ToolParameter, ToolResult, ToolCategory
+from code_forge.plugins import Plugin, PluginMetadata, PluginCapabilities
+from code_forge.tools import BaseTool, ToolParameter, ToolResult, ToolCategory
 
 
 class EchoTool(BaseTool):
@@ -631,7 +631,7 @@ def broken_plugin_dir(temp_home: Path) -> Path:
     Returns:
         Path to broken plugin directory.
     """
-    plugin_dir = temp_home / ".opencode" / "plugins" / "broken-plugin"
+    plugin_dir = temp_home / ".forge" / "plugins" / "broken-plugin"
     plugin_dir.mkdir(parents=True)
 
     # Create manifest
@@ -705,7 +705,7 @@ def mock_openrouter_client():
 
 
 @pytest.fixture
-def minimal_config(temp_home: Path, temp_project: Path) -> "OpenCodeConfig":
+def minimal_config(temp_home: Path, temp_project: Path) -> "CodeForgeConfig":
     """Create a minimal configuration.
 
     Args:
@@ -713,11 +713,11 @@ def minimal_config(temp_home: Path, temp_project: Path) -> "OpenCodeConfig":
         temp_project: Temporary project directory.
 
     Returns:
-        Minimal OpenCodeConfig instance.
+        Minimal CodeForgeConfig instance.
     """
-    from opencode.config import OpenCodeConfig
+    from code_forge.config import CodeForgeConfig
 
-    return OpenCodeConfig()
+    return CodeForgeConfig()
 
 
 # ============================================================

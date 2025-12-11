@@ -815,7 +815,7 @@ And the tool should no longer be available after deregistration
 
 ### Scenario: Tool system initialization
 ```gherkin
-Given the OpenCode application starts
+Given the Code-Forge application starts
 When the tool system initializes
 Then the ToolRegistry should be available
 And the ToolExecutor should be available

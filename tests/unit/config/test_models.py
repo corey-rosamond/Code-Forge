@@ -5,14 +5,14 @@ from pathlib import Path
 import pytest
 from pydantic import SecretStr, ValidationError
 
-from opencode.config.models import (
+from code_forge.config.models import (
     DisplayConfig,
     HookConfig,
     HooksConfig,
     HookType,
     MCPServerConfig,
     ModelConfig,
-    OpenCodeConfig,
+    CodeForgeConfig,
     PermissionConfig,
     RoutingVariant,
     SessionConfig,
@@ -304,19 +304,19 @@ class TestSessionConfig:
             SessionConfig(max_history=20000)
 
 
-class TestOpenCodeConfig:
-    """Tests for OpenCodeConfig."""
+class TestCodeForgeConfig:
+    """Tests for CodeForgeConfig."""
 
     def test_default_values(self) -> None:
         """Test default root config values."""
-        config = OpenCodeConfig()
+        config = CodeForgeConfig()
         assert config.model.default == "anthropic/claude-3.5-sonnet"
         assert config.display.theme == "dark"
         assert config.api_key is None
 
     def test_nested_config(self) -> None:
         """Test nested configuration."""
-        config = OpenCodeConfig(
+        config = CodeForgeConfig(
             model=ModelConfig(default="custom-model"),
             display=DisplayConfig(theme="light"),
         )
@@ -325,40 +325,40 @@ class TestOpenCodeConfig:
 
     def test_api_key_is_secret(self) -> None:
         """Test API key is stored as SecretStr."""
-        config = OpenCodeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
+        config = CodeForgeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
         assert isinstance(config.api_key, SecretStr)
 
     def test_api_key_not_in_repr(self) -> None:
         """Test API key is not exposed in repr."""
-        config = OpenCodeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
+        config = CodeForgeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
         repr_str = repr(config)
         assert "sk-secret-123" not in repr_str
 
     def test_api_key_not_in_str(self) -> None:
         """Test API key is not exposed in str."""
-        config = OpenCodeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
+        config = CodeForgeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
         str_repr = str(config)
         assert "sk-secret-123" not in str_repr
 
     def test_get_api_key(self) -> None:
         """Test get_api_key returns the value."""
-        config = OpenCodeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
+        config = CodeForgeConfig(api_key="sk-secret-123")  # type: ignore[arg-type]
         assert config.get_api_key() == "sk-secret-123"
 
     def test_get_api_key_none(self) -> None:
         """Test get_api_key returns None when not set."""
-        config = OpenCodeConfig()
+        config = CodeForgeConfig()
         assert config.get_api_key() is None
 
     def test_extra_fields_ignored(self) -> None:
         """Test extra fields are ignored."""
         # Should not raise
-        config = OpenCodeConfig.model_validate({"unknown_field": "value"})
+        config = CodeForgeConfig.model_validate({"unknown_field": "value"})
         assert not hasattr(config, "unknown_field")
 
     def test_mcp_servers(self) -> None:
         """Test MCP servers configuration."""
-        config = OpenCodeConfig(
+        config = CodeForgeConfig(
             mcp_servers={
                 "my-server": MCPServerConfig(
                     transport=TransportType.STDIO,
@@ -372,7 +372,7 @@ class TestOpenCodeConfig:
 
     def test_validate_assignment(self) -> None:
         """Test validation on assignment."""
-        config = OpenCodeConfig()
+        config = CodeForgeConfig()
         with pytest.raises(ValidationError):
             config.model.max_tokens = 500000  # type: ignore[assignment]
 

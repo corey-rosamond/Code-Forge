@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from opencode.sessions.manager import SessionManager
-from opencode.sessions.storage import SessionNotFoundError, SessionStorage
+from code_forge.sessions.manager import SessionManager
+from code_forge.sessions.storage import SessionNotFoundError, SessionStorage
 
 if TYPE_CHECKING:
-    from opencode.sessions.models import Session, SessionMessage
+    from code_forge.sessions.models import Session, SessionMessage
 
 
 class TestSessionManagerSingleton:

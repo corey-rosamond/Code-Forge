@@ -6,15 +6,15 @@ import time
 import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 
-from opencode.langchain.agent import (
+from code_forge.langchain.agent import (
     AgentEvent,
     AgentEventType,
     AgentResult,
-    OpenCodeAgent,
+    CodeForgeAgent,
     ToolCallRecord,
 )
-from opencode.langchain.memory import ConversationMemory
-from opencode.llm.models import Message, TokenUsage
+from code_forge.langchain.memory import ConversationMemory
+from code_forge.llm.models import Message, TokenUsage
 
 
 class TestAgentEventType:
@@ -120,15 +120,15 @@ class TestAgentResult:
         assert result.tool_calls[0].name == "write_file"
 
 
-class TestOpenCodeAgentInit:
-    """Tests for OpenCodeAgent initialization."""
+class TestCodeForgeAgentInit:
+    """Tests for CodeForgeAgent initialization."""
 
     def test_basic_initialization(self) -> None:
         """Test basic agent initialization."""
         mock_llm = MagicMock()
         mock_llm.bind_tools = MagicMock(return_value=mock_llm)
 
-        agent = OpenCodeAgent(
+        agent = CodeForgeAgent(
             llm=mock_llm,
             tools=[],
         )
@@ -143,7 +143,7 @@ class TestOpenCodeAgentInit:
         mock_llm.bind_tools = MagicMock(return_value=mock_llm)
         memory = ConversationMemory()
 
-        agent = OpenCodeAgent(
+        agent = CodeForgeAgent(
             llm=mock_llm,
             tools=[],
             memory=memory,
@@ -163,7 +163,7 @@ class TestOpenCodeAgentInit:
         class MockTool:
             name = "test_tool"
 
-        agent = OpenCodeAgent(
+        agent = CodeForgeAgent(
             llm=mock_llm,
             tools=[MockTool()],
         )
@@ -171,8 +171,8 @@ class TestOpenCodeAgentInit:
         assert "test_tool" in agent._tool_map
 
 
-class TestOpenCodeAgentRun:
-    """Tests for OpenCodeAgent.run() method."""
+class TestCodeForgeAgentRun:
+    """Tests for CodeForgeAgent.run() method."""
 
     @pytest.mark.asyncio
     async def test_simple_completion(self) -> None:
@@ -183,7 +183,7 @@ class TestOpenCodeAgentRun:
             return_value=AIMessage(content="The answer is 42.")
         )
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
         result = await agent.run("What is the answer?")
 
         assert result.output == "The answer is 42."
@@ -204,7 +204,7 @@ class TestOpenCodeAgentRun:
             )
         )
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[], max_iterations=3)
+        agent = CodeForgeAgent(llm=mock_llm, tools=[], max_iterations=3)
         result = await agent.run("Do something")
 
         assert result.iterations == 3
@@ -223,7 +223,7 @@ class TestOpenCodeAgentRun:
 
         mock_llm.ainvoke = slow_invoke
 
-        agent = OpenCodeAgent(
+        agent = CodeForgeAgent(
             llm=mock_llm,
             tools=[],
             iteration_timeout=0.1,  # Very short timeout
@@ -258,7 +258,7 @@ class TestOpenCodeAgentRun:
 
         tool = MockTool()
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[tool])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[tool])
         result = await agent.run("Use the tool")
 
         assert result.output == "Tool executed successfully."
@@ -283,7 +283,7 @@ class TestOpenCodeAgentRun:
             ]
         )
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
         result = await agent.run("Use unknown tool")
 
         assert len(result.tool_calls) == 1
@@ -291,8 +291,8 @@ class TestOpenCodeAgentRun:
         assert "Unknown tool" in result.tool_calls[0].result
 
 
-class TestOpenCodeAgentReset:
-    """Tests for OpenCodeAgent.reset() method."""
+class TestCodeForgeAgentReset:
+    """Tests for CodeForgeAgent.reset() method."""
 
     def test_reset_clears_history(self) -> None:
         """Test that reset clears memory history."""
@@ -303,7 +303,7 @@ class TestOpenCodeAgentReset:
         memory.add_message(Message.user("Hello"))
         memory.add_message(Message.assistant("Hi"))
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[], memory=memory)
+        agent = CodeForgeAgent(llm=mock_llm, tools=[], memory=memory)
 
         assert len(agent.memory.get_history()) == 2
 
@@ -320,15 +320,15 @@ class TestOpenCodeAgentReset:
         memory.set_system_message(Message.system("Be helpful"))
         memory.add_message(Message.user("Hello"))
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[], memory=memory)
+        agent = CodeForgeAgent(llm=mock_llm, tools=[], memory=memory)
         agent.reset()
 
         assert agent.memory.system_message is not None
         assert agent.memory.system_message.content == "Be helpful"
 
 
-class TestOpenCodeAgentStream:
-    """Tests for OpenCodeAgent.stream() method."""
+class TestCodeForgeAgentStream:
+    """Tests for CodeForgeAgent.stream() method."""
 
     @pytest.mark.asyncio
     async def test_stream_yields_events(self) -> None:
@@ -345,7 +345,7 @@ class TestOpenCodeAgentStream:
         mock_llm.astream = mock_stream
         mock_llm.ainvoke = AsyncMock(return_value=AIMessage(content="Hello World"))
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
 
         events = []
         async for event in agent.stream("Say hello"):
@@ -371,7 +371,7 @@ class TestOpenCodeAgentStream:
         mock_llm.astream = mock_stream
         mock_llm.ainvoke = AsyncMock(return_value=AIMessage(content="Done"))
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
 
         events = []
         async for event in agent.stream("Test"):
@@ -420,7 +420,7 @@ class TestOpenCodeAgentStream:
             async def ainvoke(self, args):
                 return "tool result"
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[MockTool()])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[MockTool()])
 
         events = []
         async for event in agent.stream("Use tool"):
@@ -444,7 +444,7 @@ class TestOpenCodeAgentStream:
 
         mock_llm.astream = slow_stream
 
-        agent = OpenCodeAgent(
+        agent = CodeForgeAgent(
             llm=mock_llm,
             tools=[],
             timeout=0.1,  # Very short timeout
@@ -469,7 +469,7 @@ class TestOpenCodeAgentStream:
 
         mock_llm.astream = error_stream
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
 
         events = []
         async for event in agent.stream("Test"):
@@ -493,7 +493,7 @@ class TestOpenCodeAgentStream:
         mock_llm.astream = mock_stream
         mock_llm.ainvoke = AsyncMock(return_value=AIMessage(content="Hello World"))
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
 
         events = []
         async for event in agent.stream("Test"):
@@ -504,8 +504,8 @@ class TestOpenCodeAgentStream:
         assert len(chunk_events) >= 1
 
 
-class TestOpenCodeAgentRunEdgeCases:
-    """Edge case tests for OpenCodeAgent.run() method."""
+class TestCodeForgeAgentRunEdgeCases:
+    """Edge case tests for CodeForgeAgent.run() method."""
 
     @pytest.mark.asyncio
     async def test_run_with_tool_error(self) -> None:
@@ -529,7 +529,7 @@ class TestOpenCodeAgentRunEdgeCases:
             async def ainvoke(self, args):
                 raise RuntimeError("Tool crashed!")
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[FailingTool()])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[FailingTool()])
         result = await agent.run("Use failing tool")
 
         assert len(result.tool_calls) == 1
@@ -562,7 +562,7 @@ class TestOpenCodeAgentRunEdgeCases:
             async def ainvoke(self, args):
                 return "ok"
 
-        agent = OpenCodeAgent(
+        agent = CodeForgeAgent(
             llm=mock_llm,
             tools=[SlowTool()],
             timeout=0.3,  # Short overall timeout
@@ -585,7 +585,7 @@ class TestOpenCodeAgentRunEdgeCases:
             )
         )
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
         result = await agent.run("Test multimodal")
 
         assert result.output == "Hello World"
@@ -593,8 +593,8 @@ class TestOpenCodeAgentRunEdgeCases:
     @pytest.mark.asyncio
     async def test_run_with_langchain_tool_adapter(self) -> None:
         """Test agent with LangChainToolAdapter."""
-        from opencode.langchain.tools import LangChainToolAdapter
-        from opencode.tools.base import ToolResult, ExecutionContext
+        from code_forge.langchain.tools import LangChainToolAdapter
+        from code_forge.tools.base import ToolResult, ExecutionContext
 
         mock_llm = MagicMock()
         mock_llm.bind_tools = MagicMock(return_value=mock_llm)
@@ -609,8 +609,8 @@ class TestOpenCodeAgentRunEdgeCases:
             ]
         )
 
-        # Create mock OpenCode tool with execute method
-        class MockOpenCodeTool:
+        # Create mock Code-Forge tool with execute method
+        class MockCodeForgeTool:
             name = "adapter_tool"
             description = "A test tool"
             category = "file"
@@ -620,11 +620,11 @@ class TestOpenCodeAgentRunEdgeCases:
                 return ToolResult(success=True, output="Adapter result")
 
         adapter = LangChainToolAdapter(
-            opencode_tool=MockOpenCodeTool(),
+            forge_tool=MockCodeForgeTool(),
             context=ExecutionContext(working_dir="/tmp"),
         )
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[adapter])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[adapter])
         result = await agent.run("Use adapter tool")
 
         assert len(result.tool_calls) == 1
@@ -652,7 +652,7 @@ class TestOpenCodeAgentRunEdgeCases:
             def invoke(self, args):
                 return "sync result"
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[SyncTool()])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[SyncTool()])
         result = await agent.run("Use sync tool")
 
         assert len(result.tool_calls) == 1
@@ -667,7 +667,7 @@ class TestOpenCodeAgentRunEdgeCases:
 
         mock_llm.ainvoke = AsyncMock(side_effect=RuntimeError("Unexpected error"))
 
-        agent = OpenCodeAgent(llm=mock_llm, tools=[])
+        agent = CodeForgeAgent(llm=mock_llm, tools=[])
         result = await agent.run("Cause error")
 
         assert "error" in result.stopped_reason

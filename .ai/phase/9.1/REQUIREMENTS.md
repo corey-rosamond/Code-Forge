@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 9.1 implements Git integration for OpenCode, enabling the assistant to work with Git repositories, understand version control context, and perform common Git operations safely. This provides awareness of the codebase state and enables collaborative workflows.
+Phase 9.1 implements Git integration for Code-Forge, enabling the assistant to work with Git repositories, understand version control context, and perform common Git operations safely. This provides awareness of the codebase state and enables collaborative workflows.
 
 ---
 
@@ -178,7 +178,7 @@ Phase 9.1 implements Git integration for OpenCode, enabling the assistant to wor
 ### Package Structure
 
 ```
-src/opencode/git/
+src/forge/git/
 ├── __init__.py           # Package exports
 ├── repository.py         # Git repository interface
 ├── status.py             # Status operations

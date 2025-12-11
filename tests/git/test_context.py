@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.git.context import GitContext
-from opencode.git.repository import GitCommit, GitRemote, GitRepository, RepositoryInfo
-from opencode.git.status import FileStatus, GitStatus
+from code_forge.git.context import GitContext
+from code_forge.git.repository import GitCommit, GitRemote, GitRepository, RepositoryInfo
+from code_forge.git.status import FileStatus, GitStatus
 
 
 class TestGitContext:

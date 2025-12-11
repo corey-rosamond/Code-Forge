@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.git.history import GitHistory, LogEntry
-from opencode.git.repository import GitCommit, GitError, GitRepository
+from code_forge.git.history import GitHistory, LogEntry
+from code_forge.git.repository import GitCommit, GitError, GitRepository
 
 
 class TestLogEntry:

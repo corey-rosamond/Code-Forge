@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 10.2 is the final phase focused on polishing the OpenCode implementation, ensuring all components work together seamlessly, comprehensive integration testing, documentation, and release preparation. This phase ensures production readiness.
+Phase 10.2 is the final phase focused on polishing the Code-Forge implementation, ensuring all components work together seamlessly, comprehensive integration testing, documentation, and release preparation. This phase ensures production readiness.
 
 ---
 
@@ -263,8 +263,8 @@ class TestStartupPerformance:
     def test_cold_start_under_2s(self):
         """Cold start should be under 2 seconds."""
         start = time.perf_counter()
-        # Initialize OpenCode
-        app = OpenCode()
+        # Initialize Code-Forge
+        app = Code-Forge()
         elapsed = time.perf_counter() - start
 
         assert elapsed < 2.0, f"Startup took {elapsed:.2f}s"

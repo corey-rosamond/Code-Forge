@@ -384,7 +384,7 @@ Would you like more details about any of these users?
 ### Basic Configuration File
 
 ```yaml
-# ~/.src/opencode/mcp.yaml
+# ~/.src/forge/mcp.yaml
 
 servers:
   # Local filesystem access
@@ -414,7 +414,7 @@ settings:
 ### Advanced Configuration
 
 ```yaml
-# .src/opencode/mcp.yaml (project-specific)
+# .src/forge/mcp.yaml (project-specific)
 
 servers:
   # Project database (overrides user config)
@@ -597,9 +597,9 @@ Use /tools <name> for details.
 ### Startup with MCP
 
 ```
-$ opencode
+$ forge
 
-OpenCode v1.0.0
+Code-Forge v1.0.0
 
 Loading configuration...
   ✓ Settings loaded
@@ -612,13 +612,13 @@ Connecting MCP servers...
 
 Ready. Type /help for commands.
 
-opencode>
+forge>
 ```
 
 ### Session Resume with MCP
 
 ```
-$ opencode --resume
+$ forge --resume
 
 Resuming session: abc123...
 
@@ -632,7 +632,7 @@ Reconnecting MCP servers...
 
 Session resumed. 15 messages in history.
 
-opencode>
+forge>
 ```
 
 ---

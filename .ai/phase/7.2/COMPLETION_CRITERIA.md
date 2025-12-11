@@ -94,8 +94,8 @@
   - [ ] Handles file read errors gracefully
 
 - [ ] Discovery
-  - [ ] Searches user directory (~/.src/opencode/skills/)
-  - [ ] Searches project directory (.src/opencode/skills/)
+  - [ ] Searches user directory (~/.src/forge/skills/)
+  - [ ] Searches project directory (.src/forge/skills/)
   - [ ] Project skills override user skills
   - [ ] Ignores non-skill files
 
@@ -269,16 +269,16 @@
 pytest tests/skills/ -v
 
 # Run with coverage
-pytest tests/skills/ --cov=src/opencode/skills --cov-report=term-missing
+pytest tests/skills/ --cov=src/forge/skills --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/skills/ --cov=src/opencode/skills --cov-fail-under=90
+pytest tests/skills/ --cov=src/forge/skills --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/skills/
+mypy src/forge/skills/
 
 # Complexity check
-flake8 src/opencode/skills/ --max-complexity=10
+flake8 src/forge/skills/ --max-complexity=10
 ```
 
 ---

@@ -6,10 +6,10 @@ import asyncio
 
 import pytest
 
-from opencode.tools.base import ExecutionContext, ToolCategory
-from opencode.tools.execution.bash import BashTool
-from opencode.tools.execution.bash_output import BashOutputTool
-from opencode.tools.execution.shell_manager import ShellManager, ShellStatus
+from code_forge.tools.base import ExecutionContext, ToolCategory
+from code_forge.tools.execution.bash import BashTool
+from code_forge.tools.execution.bash_output import BashOutputTool
+from code_forge.tools.execution.shell_manager import ShellManager, ShellStatus
 
 
 @pytest.fixture(autouse=True)

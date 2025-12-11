@@ -10,7 +10,7 @@
 
 ```mermaid
 flowchart TB
-    subgraph opencode["opencode (Main Package)"]
+    subgraph forge["forge (Main Package)"]
         direction TB
 
         subgraph cli["cli"]
@@ -166,7 +166,7 @@ classDiagram
         <<builtin>>
     }
 
-    class OpenCodeError {
+    class Code-ForgeError {
         +message: str
         +cause: Exception?
         +__str__() str
@@ -191,12 +191,12 @@ classDiagram
     class SessionError {
     }
 
-    Exception <|-- OpenCodeError
-    OpenCodeError <|-- ConfigError
-    OpenCodeError <|-- ToolError
-    OpenCodeError <|-- ProviderError
-    OpenCodeError <|-- PermissionError
-    OpenCodeError <|-- SessionError
+    Exception <|-- Code-ForgeError
+    Code-ForgeError <|-- ConfigError
+    Code-ForgeError <|-- ToolError
+    Code-ForgeError <|-- ProviderError
+    Code-ForgeError <|-- PermissionError
+    Code-ForgeError <|-- SessionError
 ```
 
 ---
@@ -288,20 +288,20 @@ sequenceDiagram
     participant CLI as cli/main.py
     participant Log as core/logging.py
 
-    U->>CLI: opencode --version
+    U->>CLI: forge --version
     CLI->>CLI: Parse arguments
     CLI->>CLI: Check for --version flag
     CLI-->>U: Print version
     CLI-->>U: Exit code 0
 
-    U->>CLI: opencode --help
+    U->>CLI: forge --help
     CLI->>CLI: Parse arguments
     CLI->>CLI: Check for --help flag
     CLI->>CLI: print_help()
     CLI-->>U: Print help text
     CLI-->>U: Exit code 0
 
-    U->>CLI: opencode
+    U->>CLI: forge
     CLI->>CLI: Parse arguments
     CLI->>Log: setup_logging()
     Log-->>CLI: Logging configured
@@ -353,7 +353,7 @@ flowchart TD
 ## 10. File Structure Diagram
 
 ```
-src/opencode/
+src/forge/
 │
 ├── __init__.py           # __version__ = "0.1.0"
 ├── __main__.py           # from cli.main import main; main()
@@ -366,7 +366,7 @@ src/opencode/
 │   ├── __init__.py       # Export all public symbols
 │   ├── interfaces.py     # ITool, IModelProvider, IConfigLoader, ISessionRepository
 │   ├── types.py          # AgentId, SessionId, ProjectId, Message, etc.
-│   ├── errors.py         # OpenCodeError hierarchy
+│   ├── errors.py         # Code-ForgeError hierarchy
 │   └── logging.py        # setup_logging(), get_logger()
 │
 ├── utils/

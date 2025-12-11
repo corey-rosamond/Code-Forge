@@ -6,13 +6,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.github.auth import GitHubAuth, GitHubAuthenticator
-from opencode.github.client import GitHubClient
-from opencode.github.repository import RepositoryService
-from opencode.github.issues import IssueService
-from opencode.github.pull_requests import PullRequestService
-from opencode.github.actions import ActionsService
-from opencode.github.context import GitHubContext
+from code_forge.github.auth import GitHubAuth, GitHubAuthenticator
+from code_forge.github.client import GitHubClient
+from code_forge.github.repository import RepositoryService
+from code_forge.github.issues import IssueService
+from code_forge.github.pull_requests import PullRequestService
+from code_forge.github.actions import ActionsService
+from code_forge.github.context import GitHubContext
 
 
 @pytest.fixture

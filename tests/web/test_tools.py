@@ -4,12 +4,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.web.cache import WebCache
-from opencode.web.fetch.fetcher import FetchError, URLFetcher
-from opencode.web.fetch.parser import HTMLParser
-from opencode.web.search.base import SearchError, SearchProvider
-from opencode.web.tools import WebFetchTool, WebSearchTool
-from opencode.web.types import FetchResponse, SearchResponse, SearchResult
+from code_forge.web.cache import WebCache
+from code_forge.web.fetch.fetcher import FetchError, URLFetcher
+from code_forge.web.fetch.parser import HTMLParser
+from code_forge.web.search.base import SearchError, SearchProvider
+from code_forge.web.tools import WebFetchTool, WebSearchTool
+from code_forge.web.types import FetchResponse, SearchResponse, SearchResult
 
 
 class MockSearchProvider(SearchProvider):

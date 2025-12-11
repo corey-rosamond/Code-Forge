@@ -6,13 +6,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.github.actions import (
+from code_forge.github.actions import (
     Workflow,
     WorkflowRun,
     WorkflowJob,
     ActionsService,
 )
-from opencode.github.client import GitHubClient
+from code_forge.github.client import GitHubClient
 
 
 class TestWorkflow:

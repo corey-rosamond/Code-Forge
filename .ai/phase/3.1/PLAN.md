@@ -15,7 +15,7 @@ Phase 3.1 implements the OpenRouter API client that provides unified access to 4
 ## Architecture
 
 ```
-src/opencode/llm/
+src/forge/llm/
 ├── __init__.py           # Package exports
 ├── client.py             # OpenRouterClient
 ├── models.py             # Data models (Message, Response, etc.)
@@ -31,11 +31,11 @@ src/opencode/llm/
 ### Step 1: Create LLM Package and Models
 
 ```python
-# src/opencode/llm/__init__.py
-"""LLM client package for OpenCode."""
+# src/forge/llm/__init__.py
+"""LLM client package for Code-Forge."""
 
-from opencode.llm.client import OpenRouterClient
-from opencode.llm.models import (
+from forge.llm.client import OpenRouterClient
+from forge.llm.models import (
     Message,
     MessageRole,
     ToolDefinition,
@@ -45,7 +45,7 @@ from opencode.llm.models import (
     TokenUsage,
     StreamChunk,
 )
-from opencode.llm.errors import (
+from forge.llm.errors import (
     LLMError,
     AuthenticationError,
     RateLimitError,
@@ -53,7 +53,7 @@ from opencode.llm.errors import (
     ContextLengthError,
     ContentPolicyError,
 )
-from opencode.llm.routing import RouteVariant, apply_variant
+from forge.llm.routing import RouteVariant, apply_variant
 
 __all__ = [
     "OpenRouterClient",
@@ -79,7 +79,7 @@ __all__ = [
 ### Step 2: Implement Data Models
 
 ```python
-# src/opencode/llm/models.py
+# src/forge/llm/models.py
 """Data models for LLM interactions."""
 
 from __future__ import annotations
@@ -379,13 +379,13 @@ class StreamChunk:
 ### Step 3: Implement Error Classes
 
 ```python
-# src/opencode/llm/errors.py
+# src/forge/llm/errors.py
 """LLM-specific error classes."""
 
-from opencode.core.errors import opencodeError
+from forge.core.errors import forgeError
 
 
-class LLMError(OpenCodeError):
+class LLMError(Code-ForgeError):
     """Base class for LLM errors."""
     pass
 
@@ -443,7 +443,7 @@ class ProviderError(LLMError):
 ### Step 4: Implement Routing
 
 ```python
-# src/opencode/llm/routing.py
+# src/forge/llm/routing.py
 """Model routing and variants for OpenRouter."""
 
 from enum import Enum
@@ -536,7 +536,7 @@ def resolve_model_alias(model_id: str) -> str:
 ### Step 5: Implement OpenRouter Client
 
 ```python
-# src/opencode/llm/client.py
+# src/forge/llm/client.py
 """OpenRouter API client."""
 
 from __future__ import annotations
@@ -548,14 +548,14 @@ from typing import Any, AsyncIterator, Dict, List, Optional
 
 import httpx
 
-from opencode.core.logging import get_logger
-from opencode.llm.models import (
+from forge.core.logging import get_logger
+from forge.llm.models import (
     CompletionRequest,
     CompletionResponse,
     StreamChunk,
     TokenUsage,
 )
-from opencode.llm.errors import (
+from forge.llm.errors import (
     LLMError,
     AuthenticationError,
     RateLimitError,
@@ -564,7 +564,7 @@ from opencode.llm.errors import (
     ContentPolicyError,
     ProviderError,
 )
-from opencode.llm.routing import resolve_model_alias
+from forge.llm.routing import resolve_model_alias
 
 logger = get_logger("llm")
 
@@ -608,8 +608,8 @@ class OpenRouterClient:
         self,
         api_key: str,
         base_url: Optional[str] = None,
-        app_name: str = "OpenCode",
-        app_url: str = "https://github.com/opencode",
+        app_name: str = "Code-Forge",
+        app_url: str = "https://github.com/forge",
         timeout: float = 120.0,
         max_retries: int = 3,
         retry_delay: float = 1.0,
@@ -912,7 +912,7 @@ class OpenRouterClient:
 ### Step 6: Create Streaming Helper
 
 ```python
-# src/opencode/llm/streaming.py
+# src/forge/llm/streaming.py
 """Streaming response utilities."""
 
 from __future__ import annotations
@@ -920,7 +920,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from opencode.llm.models import (
+from forge.llm.models import (
     Message,
     MessageRole,
     StreamChunk,

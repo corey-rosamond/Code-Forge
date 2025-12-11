@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.plugins.exceptions import PluginManifestError
-from opencode.plugins.manifest import ManifestParser, PluginManifest
+from code_forge.plugins.exceptions import PluginManifestError
+from code_forge.plugins.manifest import ManifestParser, PluginManifest
 
 
 class TestPluginManifest:
@@ -83,14 +83,14 @@ version: 1.0.0
         """Test loading manifest from pyproject.toml."""
         pyproject_path = tmp_path / "pyproject.toml"
         pyproject_path.write_text("""
-[tool.opencode.plugin]
+[tool.forge.plugin]
 name = "pyproject-plugin"
 version = "2.0.0"
 description = "A pyproject plugin"
 entry_point = "pyproject_plugin:Plugin"
 author = "Pyproject Author"
 
-[tool.opencode.plugin.capabilities]
+[tool.forge.plugin.capabilities]
 tools = true
 """)
         manifest = PluginManifest.from_pyproject(pyproject_path)
@@ -112,7 +112,7 @@ tools = true
 [tool.other]
 key = "value"
 """)
-        with pytest.raises(PluginManifestError, match=r"No \[tool.opencode.plugin\]"):
+        with pytest.raises(PluginManifestError, match=r"No \[tool.forge.plugin\]"):
             PluginManifest.from_pyproject(pyproject_path)
 
     def test_from_dict_with_dependencies(self, tmp_path: Path) -> None:
@@ -188,7 +188,7 @@ class TestManifestParser:
 
     def test_find_manifest_pyproject(self, tmp_path: Path) -> None:
         """Test finding pyproject.toml."""
-        (tmp_path / "pyproject.toml").write_text("[tool.opencode.plugin]")
+        (tmp_path / "pyproject.toml").write_text("[tool.forge.plugin]")
         parser = ManifestParser()
         result = parser.find_manifest(tmp_path)
         assert result == tmp_path / "pyproject.toml"
@@ -197,7 +197,7 @@ class TestManifestParser:
         """Test manifest priority (yaml > yml > toml)."""
         (tmp_path / "plugin.yaml").write_text("name: yaml")
         (tmp_path / "plugin.yml").write_text("name: yml")
-        (tmp_path / "pyproject.toml").write_text("[tool.opencode.plugin]")
+        (tmp_path / "pyproject.toml").write_text("[tool.forge.plugin]")
         parser = ManifestParser()
         result = parser.find_manifest(tmp_path)
         assert result == tmp_path / "plugin.yaml"

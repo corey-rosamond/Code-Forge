@@ -14,7 +14,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.agents import (
+from code_forge.agents import (
     Agent,
     AgentConfig,
     AgentContext,
@@ -25,7 +25,7 @@ from opencode.agents import (
     ResourceLimits,
     ResourceUsage,
 )
-from opencode.agents.builtin import (
+from code_forge.agents.builtin import (
     CodeReviewAgent,
     ExploreAgent,
     GeneralAgent,

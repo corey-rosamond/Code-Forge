@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from opencode.plugins.config import PluginConfig, PluginConfigManager
+from code_forge.plugins.config import PluginConfig, PluginConfigManager
 
 
 class TestPluginConfig:

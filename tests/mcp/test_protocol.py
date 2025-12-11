@@ -7,7 +7,7 @@ import uuid
 
 import pytest
 
-from opencode.mcp.protocol import (
+from code_forge.mcp.protocol import (
     MCPCapabilities,
     MCPError,
     MCPNotification,

@@ -11,7 +11,7 @@
 ### Creating a Context Manager
 
 ```python
-from opencode.context import ContextManager, TruncationMode
+from forge.context import ContextManager, TruncationMode
 
 # Create manager for a model
 manager = ContextManager(
@@ -62,7 +62,7 @@ print(f"Available: {manager.available_tokens} tokens")
 ### Direct Token Counting
 
 ```python
-from opencode.context import get_counter, TiktokenCounter, ApproximateCounter
+from forge.context import get_counter, TiktokenCounter, ApproximateCounter
 
 # Get counter for model
 counter = get_counter("claude-3-opus")
@@ -99,7 +99,7 @@ tokens = approx_counter.count("Approximate counting for unknown models")
 ### Working with Limits
 
 ```python
-from opencode.context import ContextLimits, ContextTracker
+from forge.context import ContextLimits, ContextTracker
 
 # Get limits for a model
 limits = ContextLimits.for_model("claude-3-opus")
@@ -125,7 +125,7 @@ print(f"Usage: {tracker.usage_percentage():.1f}%")
 ### Budget Allocation
 
 ```python
-from opencode.context import ContextBudget
+from forge.context import ContextBudget
 
 budget = ContextBudget(
     total=200_000,
@@ -149,7 +149,7 @@ print(f"After conversation: {budget.available}")
 ### Sliding Window Strategy
 
 ```python
-from opencode.context import SlidingWindowStrategy, get_counter
+from forge.context import SlidingWindowStrategy, get_counter
 
 counter = get_counter("claude-3-opus")
 strategy = SlidingWindowStrategy(
@@ -171,7 +171,7 @@ print(f"Before: {len(messages)}, After: {len(truncated)}")
 ### Token Budget Strategy
 
 ```python
-from opencode.context import TokenBudgetStrategy
+from forge.context import TokenBudgetStrategy
 
 strategy = TokenBudgetStrategy(preserve_system=True)
 
@@ -186,7 +186,7 @@ truncated = strategy.truncate(
 ### Smart Truncation
 
 ```python
-from opencode.context import SmartTruncationStrategy
+from forge.context import SmartTruncationStrategy
 
 strategy = SmartTruncationStrategy(
     preserve_first=2,   # Keep first 2 messages
@@ -207,7 +207,7 @@ truncated = strategy.truncate(messages, target_tokens, counter)
 ### Composite Strategy
 
 ```python
-from opencode.context import CompositeStrategy, SmartTruncationStrategy, TokenBudgetStrategy
+from forge.context import CompositeStrategy, SmartTruncationStrategy, TokenBudgetStrategy
 
 # Chain strategies
 strategy = CompositeStrategy([
@@ -226,8 +226,8 @@ truncated = strategy.truncate(messages, target_tokens, counter)
 ### Summarization-based Compaction
 
 ```python
-from opencode.context import ContextCompactor
-from opencode.langchain import OpenRouterLLM
+from forge.context import ContextCompactor
+from forge.langchain import OpenRouterLLM
 
 llm = OpenRouterLLM(model="anthropic/claude-3-haiku")  # Use fast model
 
@@ -254,7 +254,7 @@ compacted = await compactor.compact(
 ### Tool Result Compaction
 
 ```python
-from opencode.context import ToolResultCompactor
+from forge.context import ToolResultCompactor
 
 compactor = ToolResultCompactor(
     max_result_tokens=1000,
@@ -277,8 +277,8 @@ compacted_message = compactor.compact_message(message, counter)
 ### Complete Workflow
 
 ```python
-from opencode.context import ContextManager, TruncationMode
-from opencode.langchain import OpenRouterLLM
+from forge.context import ContextManager, TruncationMode
+from forge.langchain import OpenRouterLLM
 
 # Create with summarization support
 llm = OpenRouterLLM(model="anthropic/claude-3-opus")
@@ -321,8 +321,8 @@ response = await llm.ainvoke(messages)
 ### Integration with Session
 
 ```python
-from opencode.sessions import SessionManager
-from opencode.context import ContextManager, TruncationMode
+from forge.sessions import SessionManager
+from forge.context import ContextManager, TruncationMode
 
 session_manager = SessionManager.get_instance()
 session = session_manager.current_session
@@ -399,7 +399,7 @@ if manager.is_near_limit:
 ### Context Status Display
 
 ```
-$ opencode
+$ forge
 
 [claude-3-opus | 15 msgs | 12.5K tokens (6.3%)]
 You: Can you help me understand this codebase?
@@ -444,7 +444,7 @@ Tokens: 156,340 → 45,230 (22.6%)
 ### Default Settings
 
 ```python
-# In opencode configuration
+# In forge configuration
 
 context:
   # Default truncation mode
@@ -482,7 +482,7 @@ context:
 ### Handling Truncation Edge Cases
 
 ```python
-from opencode.context import ContextManager
+from forge.context import ContextManager
 
 manager = ContextManager(model="claude-3-opus")
 

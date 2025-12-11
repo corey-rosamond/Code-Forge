@@ -41,7 +41,7 @@ classDiagram
     }
 
     class LangChainToolAdapter {
-        +opencode_tool: BaseTool
+        +forge_tool: BaseTool
         +executor: ToolExecutor?
         +context: ExecutionContext?
         +name: str
@@ -51,7 +51,7 @@ classDiagram
         +_arun(**kwargs) str
     }
 
-    class OpenCodeToolAdapter {
+    class Code-ForgeToolAdapter {
         +langchain_tool: LangChainBaseTool
         +name: str
         +description: str
@@ -75,7 +75,7 @@ classDiagram
         +to_langchain_messages() list~BaseMessage~
     }
 
-    class OpenCodeAgent {
+    class Code-ForgeAgent {
         +llm: OpenRouterLLM
         +tools: list
         +memory: ConversationMemory
@@ -91,9 +91,9 @@ classDiagram
     BaseChatModel <|-- OpenRouterLLM
     OpenRouterLLM --> OpenRouterClient : uses
     OpenRouterLLM --> LangChainToolAdapter : binds
-    OpenCodeAgent --> OpenRouterLLM : uses
-    OpenCodeAgent --> ConversationMemory : manages
-    OpenCodeAgent --> LangChainToolAdapter : executes
+    Code-ForgeAgent --> OpenRouterLLM : uses
+    Code-ForgeAgent --> ConversationMemory : manages
+    Code-ForgeAgent --> LangChainToolAdapter : executes
 ```
 
 ---
@@ -156,7 +156,7 @@ classDiagram
         +on_tool_error()
     }
 
-    class OpenCodeCallbackHandler {
+    class Code-ForgeCallbackHandler {
         +name: str
         +raise_error: bool
         -_safe_call(func, args) void
@@ -201,11 +201,11 @@ classDiagram
         +on_tool_end() void
     }
 
-    BaseCallbackHandler <|-- OpenCodeCallbackHandler
-    OpenCodeCallbackHandler <|-- TokenTrackingCallback
-    OpenCodeCallbackHandler <|-- LoggingCallback
-    OpenCodeCallbackHandler <|-- StreamingCallback
-    OpenCodeCallbackHandler <|-- CompositeCallback
+    BaseCallbackHandler <|-- Code-ForgeCallbackHandler
+    Code-ForgeCallbackHandler <|-- TokenTrackingCallback
+    Code-ForgeCallbackHandler <|-- LoggingCallback
+    Code-ForgeCallbackHandler <|-- StreamingCallback
+    Code-ForgeCallbackHandler <|-- CompositeCallback
     CompositeCallback o-- BaseCallbackHandler : contains
 ```
 
@@ -270,7 +270,7 @@ sequenceDiagram
     App->>LLM: invoke([HumanMessage("Hello")])
     LLM->>LLM: _agenerate()
 
-    LLM->>Conv: langchain_messages_to_opencode()
+    LLM->>Conv: langchain_messages_to_forge()
     Conv-->>LLM: [Message]
 
     LLM->>LLM: _build_request()
@@ -279,7 +279,7 @@ sequenceDiagram
     API-->>Client: Response JSON
     Client-->>LLM: CompletionResponse
 
-    LLM->>Conv: opencode_to_langchain(message)
+    LLM->>Conv: forge_to_langchain(message)
     Conv-->>LLM: AIMessage
 
     LLM->>LLM: Create ChatResult
@@ -329,7 +329,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant App as Application
-    participant Agent as OpenCodeAgent
+    participant Agent as Code-ForgeAgent
     participant Memory as ConversationMemory
     participant LLM as OpenRouterLLM
     participant Tool as LangChainToolAdapter
@@ -376,7 +376,7 @@ sequenceDiagram
     participant App as Application
     participant Adapter as LangChainToolAdapter
     participant Executor as ToolExecutor
-    participant OCTool as OpenCode BaseTool
+    participant OCTool as Code-Forge BaseTool
 
     App->>Adapter: invoke({"path": "/tmp/file"})
 
@@ -468,22 +468,22 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TB
-    subgraph LangChainPkg["src/opencode/langchain/"]
+    subgraph LangChainPkg["src/forge/langchain/"]
         INIT["__init__.py"]
         LLM["llm.py<br/>OpenRouterLLM"]
         TOOLS["tools.py<br/>Tool Adapters"]
         MEMORY["memory.py<br/>ConversationMemory"]
-        AGENT["agent.py<br/>OpenCodeAgent"]
+        AGENT["agent.py<br/>Code-ForgeAgent"]
         CALLBACKS["callbacks.py<br/>Callback Handlers"]
         MESSAGES["messages.py<br/>Message Conversion"]
     end
 
-    subgraph LLMPkg["src/opencode/llm/"]
+    subgraph LLMPkg["src/forge/llm/"]
         CLIENT["client.py"]
         MODELS["models.py"]
     end
 
-    subgraph ToolsPkg["src/opencode/tools/"]
+    subgraph ToolsPkg["src/forge/tools/"]
         BASE["base.py"]
         EXECUTOR["executor.py"]
     end
@@ -575,11 +575,11 @@ flowchart LR
     end
 
     subgraph Convert["messages.py"]
-        L2O[langchain_to_opencode]
-        O2L[opencode_to_langchain]
+        L2O[langchain_to_forge]
+        O2L[forge_to_langchain]
     end
 
-    subgraph OpenCode["OpenCode Messages"]
+    subgraph Code-Forge["Code-Forge Messages"]
         SYS_OC[Message role=SYSTEM]
         USR_OC[Message role=USER]
         ASST_OC[Message role=ASSISTANT]
@@ -608,15 +608,15 @@ flowchart TB
     end
 
     subgraph LangChainLayer["LangChain Integration Layer"]
-        AGENT[OpenCodeAgent]
+        AGENT[Code-ForgeAgent]
         LLM[OpenRouterLLM]
         MEMORY[ConversationMemory]
         TOOLS_LC[LangChain Tools]
     end
 
-    subgraph OpenCodeCore["OpenCode Core"]
+    subgraph Code-ForgeCore["Code-Forge Core"]
         CLIENT[OpenRouterClient]
-        TOOLS_OC[OpenCode Tools]
+        TOOLS_OC[Code-Forge Tools]
         EXECUTOR[ToolExecutor]
     end
 
@@ -641,7 +641,7 @@ flowchart TB
 ## Notes
 
 - OpenRouterLLM extends LangChain's BaseChatModel for compatibility
-- Tool adapters work bidirectionally (OpenCode ↔ LangChain)
+- Tool adapters work bidirectionally (Code-Forge ↔ LangChain)
 - Memory supports multiple strategies (basic, sliding window, summary)
 - Agent implements ReAct-style tool-calling loop
 - Callbacks integrate with LangChain's callback system

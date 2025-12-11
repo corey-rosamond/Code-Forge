@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 9.2 implements GitHub integration for OpenCode, enabling the assistant to interact with GitHub repositories, issues, pull requests, and other GitHub features. This builds on Git integration to provide full GitHub workflow support.
+Phase 9.2 implements GitHub integration for Code-Forge, enabling the assistant to interact with GitHub repositories, issues, pull requests, and other GitHub features. This builds on Git integration to provide full GitHub workflow support.
 
 ---
 
@@ -182,7 +182,7 @@ Phase 9.2 implements GitHub integration for OpenCode, enabling the assistant to 
 ### Package Structure
 
 ```
-src/opencode/github/
+src/forge/github/
 ├── __init__.py           # Package exports
 ├── client.py             # GitHub API client
 ├── auth.py               # Authentication

@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools.base import ExecutionContext
-from opencode.tools.file.edit import EditTool
+from code_forge.tools.base import ExecutionContext
+from code_forge.tools.file.edit import EditTool
 
 
 @pytest.fixture
@@ -52,7 +52,7 @@ class TestEditToolProperties:
         assert "old_string" in edit_tool.description
 
     def test_category(self, edit_tool: EditTool) -> None:
-        from opencode.tools.base import ToolCategory
+        from code_forge.tools.base import ToolCategory
 
         assert edit_tool.category == ToolCategory.FILE
 

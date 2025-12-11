@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from opencode.git.repository import GitRepository
-from opencode.git.status import FileStatus, GitStatus, GitStatusTool
+from code_forge.git.repository import GitRepository
+from code_forge.git.status import FileStatus, GitStatus, GitStatusTool
 
 
 class TestFileStatus:

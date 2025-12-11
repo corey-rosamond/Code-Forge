@@ -210,8 +210,8 @@ class OpenRouterClient:
         self,
         api_key: str,
         base_url: str | None = None,
-        app_name: str = "OpenCode",
-        app_url: str = "https://github.com/opencode",
+        app_name: str = "Code-Forge",
+        app_url: str = "https://github.com/forge",
         timeout: float = 120.0,
         max_retries: int = 3,
     ):
@@ -492,7 +492,7 @@ Response:
 ## Configuration
 
 ```yaml
-# .src/opencode/settings.yaml
+# .src/forge/settings.yaml
 llm:
   provider: openrouter
   api_key: ${OPENROUTER_API_KEY}

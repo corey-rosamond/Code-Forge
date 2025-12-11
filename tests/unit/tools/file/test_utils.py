@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools.file.utils import validate_path_security
+from code_forge.tools.file.utils import validate_path_security
 
 
 class TestValidatePathSecurity:

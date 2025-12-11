@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 6.2 implements operating modes for OpenCode, allowing the assistant to operate in different behavioral modes: Plan Mode for structured planning, Thinking Mode for extended reasoning, and Headless Mode for non-interactive automation. Each mode modifies the assistant's behavior, prompts, and interaction patterns.
+Phase 6.2 implements operating modes for Code-Forge, allowing the assistant to operate in different behavioral modes: Plan Mode for structured planning, Thinking Mode for extended reasoning, and Headless Mode for non-interactive automation. Each mode modifies the assistant's behavior, prompts, and interaction patterns.
 
 ---
 
@@ -188,7 +188,7 @@ Phase 6.2 implements operating modes for OpenCode, allowing the assistant to ope
 ### Package Structure
 
 ```
-src/opencode/modes/
+src/forge/modes/
 ├── __init__.py           # Package exports
 ├── base.py               # Mode base class
 ├── manager.py            # Mode manager

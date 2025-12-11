@@ -11,13 +11,13 @@
 ### Using pip
 
 ```bash
-pip install opencode
+pip install forge
 ```
 
 ### Using pipx (Recommended)
 
 ```bash
-pipx install opencode
+pipx install forge
 ```
 
 pipx installs in an isolated environment, avoiding dependency conflicts.
@@ -25,8 +25,8 @@ pipx installs in an isolated environment, avoiding dependency conflicts.
 ### From Source
 
 ```bash
-git clone https://github.com/anthropics/opencode.git
-cd opencode
+git clone https://github.com/anthropics/forge.git
+cd forge
 pip install -e ".[dev]"
 ```
 
@@ -44,7 +44,7 @@ You can get an API key from [OpenRouter](https://openrouter.ai).
 
 ### Configuration File
 
-Create a configuration file at `~/.config/opencode/config.yaml`:
+Create a configuration file at `~/.config/forge/config.yaml`:
 
 ```yaml
 model:
@@ -65,7 +65,7 @@ See [Configuration Reference](../reference/configuration.md) for all options.
 ## Verify Installation
 
 ```bash
-opencode --version
+forge --version
 ```
 
 You should see the version number printed.
@@ -73,7 +73,7 @@ You should see the version number printed.
 ## First Run
 
 ```bash
-opencode
+forge
 ```
 
 This starts the interactive REPL. Type `/help` to see available commands.
@@ -85,7 +85,7 @@ This starts the interactive REPL. Type `/help` to see available commands.
 If you encounter import errors:
 
 ```bash
-pip install opencode[all]
+pip install forge[all]
 ```
 
 ### Permission Errors
@@ -93,7 +93,7 @@ pip install opencode[all]
 On Linux/macOS, if you get permission errors:
 
 ```bash
-pip install --user opencode
+pip install --user forge
 ```
 
 ### API Key Not Found
@@ -107,6 +107,6 @@ If you see "API key not configured":
 
 2. Or set it in the config file:
    ```yaml
-   # ~/.config/opencode/config.yaml
+   # ~/.config/forge/config.yaml
    api_key: "your-api-key"  # Not recommended for security
    ```

@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 
 ## Checklist
 
-### Event Types (src/opencode/hooks/events.py)
+### Event Types (src/forge/hooks/events.py)
 - [ ] EventType enum defined with all event types
 - [ ] Tool events: pre_execute, post_execute, error
 - [ ] LLM events: pre_request, post_response, stream_start, stream_end
@@ -26,7 +26,7 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 - [ ] HookEvent.to_json() serializes to JSON
 - [ ] Factory methods for common events
 
-### Hook Definition (src/opencode/hooks/registry.py)
+### Hook Definition (src/forge/hooks/registry.py)
 - [ ] Hook dataclass with pattern, command, timeout
 - [ ] Hook.matches() for exact event match
 - [ ] Hook.matches() for glob patterns (tool:*)
@@ -36,7 +36,7 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 - [ ] Hook.to_dict() serialization
 - [ ] Hook.from_dict() deserialization
 
-### Hook Registry (src/opencode/hooks/registry.py)
+### Hook Registry (src/forge/hooks/registry.py)
 - [ ] HookRegistry class implemented
 - [ ] Singleton pattern via get_instance()
 - [ ] register() adds hooks
@@ -45,7 +45,7 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 - [ ] clear() removes all hooks
 - [ ] load_hooks() adds multiple hooks
 
-### Hook Executor (src/opencode/hooks/executor.py)
+### Hook Executor (src/forge/hooks/executor.py)
 - [ ] HookResult dataclass with exit_code, stdout, stderr
 - [ ] HookResult.success property
 - [ ] HookResult.should_continue property
@@ -59,7 +59,7 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 - [ ] HookBlockedError exception class
 - [ ] fire_event() convenience function
 
-### Configuration (src/opencode/hooks/config.py)
+### Configuration (src/forge/hooks/config.py)
 - [ ] HookConfig.load_global() loads from user config
 - [ ] HookConfig.load_project() loads from project config
 - [ ] HookConfig.save_global() saves hooks
@@ -70,7 +70,7 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 - [ ] Handle corrupted config files gracefully
 
 ### Package Structure
-- [ ] src/opencode/hooks/__init__.py exports all public classes
+- [ ] src/forge/hooks/__init__.py exports all public classes
 - [ ] All imports work correctly
 - [ ] No circular dependencies
 
@@ -94,12 +94,12 @@ All of the following criteria must be met before Phase 4.2 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/hooks/
+ls -la src/forge/hooks/
 # Expected: __init__.py, events.py, registry.py, executor.py, config.py
 
 # 2. Test imports
 python -c "
-from opencode.hooks import (
+from forge.hooks import (
     EventType,
     HookEvent,
     Hook,
@@ -116,7 +116,7 @@ print('All hooks imports successful')
 
 # 3. Test EventType enum
 python -c "
-from opencode.hooks import EventType
+from forge.hooks import EventType
 
 assert EventType.TOOL_PRE_EXECUTE.value == 'tool:pre_execute'
 assert EventType.LLM_POST_RESPONSE.value == 'llm:post_response'
@@ -129,7 +129,7 @@ print('EventType enum: OK')
 
 # 4. Test HookEvent creation
 python -c "
-from opencode.hooks import HookEvent, EventType
+from forge.hooks import HookEvent, EventType
 
 # Factory method
 event = HookEvent.tool_pre_execute('bash', {'command': 'ls'}, 'sess_123')
@@ -139,9 +139,9 @@ assert 'tool_args' in event.data
 
 # Environment variables
 env = event.to_env()
-assert env['OPENCODE_EVENT'] == 'tool:pre_execute'
-assert env['OPENCODE_TOOL_NAME'] == 'bash'
-assert 'OPENCODE_TOOL_ARGS' in env
+assert env['FORGE_EVENT'] == 'tool:pre_execute'
+assert env['FORGE_TOOL_NAME'] == 'bash'
+assert 'FORGE_TOOL_ARGS' in env
 
 # JSON serialization
 json_str = event.to_json()
@@ -154,7 +154,7 @@ print('HookEvent: OK')
 
 # 5. Test Hook pattern matching
 python -c "
-from opencode.hooks import Hook, HookEvent
+from forge.hooks import Hook, HookEvent
 
 # Exact match
 hook = Hook(event_pattern='tool:pre_execute', command='echo test')
@@ -194,7 +194,7 @@ print('Hook pattern matching: OK')
 
 # 6. Test HookRegistry
 python -c "
-from opencode.hooks import HookRegistry, Hook, HookEvent
+from forge.hooks import HookRegistry, Hook, HookEvent
 
 # Reset singleton
 HookRegistry.reset_instance()
@@ -223,7 +223,7 @@ print('HookRegistry: OK')
 
 # 7. Test Hook serialization
 python -c "
-from opencode.hooks import Hook
+from forge.hooks import Hook
 
 hook = Hook(
     event_pattern='tool:pre_execute',
@@ -246,7 +246,7 @@ print('Hook serialization: OK')
 
 # 8. Test HookResult properties
 python -c "
-from opencode.hooks import HookResult, Hook
+from forge.hooks import HookResult, Hook
 
 hook = Hook(event_pattern='test', command='test')
 
@@ -271,7 +271,7 @@ print('HookResult: OK')
 # 9. Test hook execution
 python -c "
 import asyncio
-from opencode.hooks import HookExecutor, HookRegistry, Hook, HookEvent
+from forge.hooks import HookExecutor, HookRegistry, Hook, HookEvent
 
 async def test():
     HookRegistry.reset_instance()
@@ -294,7 +294,7 @@ asyncio.run(test())
 # 10. Test blocking hook
 python -c "
 import asyncio
-from opencode.hooks import HookExecutor, HookRegistry, Hook, HookEvent
+from forge.hooks import HookExecutor, HookRegistry, Hook, HookEvent
 
 async def test():
     HookRegistry.reset_instance()
@@ -317,7 +317,7 @@ asyncio.run(test())
 # 11. Test timeout
 python -c "
 import asyncio
-from opencode.hooks import HookExecutor, HookRegistry, Hook, HookEvent
+from forge.hooks import HookExecutor, HookRegistry, Hook, HookEvent
 
 async def test():
     HookRegistry.reset_instance()
@@ -340,7 +340,7 @@ asyncio.run(test())
 # 12. Test fire_event convenience function
 python -c "
 import asyncio
-from opencode.hooks import fire_event, HookRegistry, Hook, HookEvent
+from forge.hooks import fire_event, HookRegistry, Hook, HookEvent
 
 async def test():
     HookRegistry.reset_instance()
@@ -360,7 +360,7 @@ asyncio.run(test())
 
 # 13. Test disabled hooks filtered
 python -c "
-from opencode.hooks import HookRegistry, Hook, HookEvent
+from forge.hooks import HookRegistry, Hook, HookEvent
 
 HookRegistry.reset_instance()
 registry = HookRegistry.get_instance()
@@ -377,14 +377,14 @@ print('Disabled hooks filtered: OK')
 # 14. Test environment variables in hook
 python -c "
 import asyncio
-from opencode.hooks import HookExecutor, HookRegistry, Hook, HookEvent
+from forge.hooks import HookExecutor, HookRegistry, Hook, HookEvent
 
 async def test():
     HookRegistry.reset_instance()
     registry = HookRegistry.get_instance()
     registry.register(Hook(
         event_pattern='tool:pre_execute',
-        command='echo \"Tool: \$OPENCODE_TOOL_NAME\"',
+        command='echo \"Tool: \$FORGE_TOOL_NAME\"',
     ))
 
     executor = HookExecutor(registry=registry)
@@ -399,16 +399,16 @@ asyncio.run(test())
 "
 
 # 15. Run all unit tests
-pytest tests/unit/hooks/ -v --cov=opencode.hooks --cov-report=term-missing
+pytest tests/unit/hooks/ -v --cov=forge.hooks --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 16. Type checking
-mypy src/opencode/hooks/ --strict
+mypy src/forge/hooks/ --strict
 # Expected: No errors
 
 # 17. Linting
-ruff check src/opencode/hooks/
+ruff check src/forge/hooks/
 # Expected: No errors
 ```
 
@@ -429,11 +429,11 @@ ruff check src/opencode/hooks/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/hooks/__init__.py` | Package exports |
-| `src/opencode/hooks/events.py` | Event types and data |
-| `src/opencode/hooks/registry.py` | Hook registration |
-| `src/opencode/hooks/executor.py` | Hook execution |
-| `src/opencode/hooks/config.py` | Hook configuration |
+| `src/forge/hooks/__init__.py` | Package exports |
+| `src/forge/hooks/events.py` | Event types and data |
+| `src/forge/hooks/registry.py` | Hook registration |
+| `src/forge/hooks/executor.py` | Hook execution |
+| `src/forge/hooks/config.py` | Hook configuration |
 | `tests/unit/hooks/__init__.py` | Test package |
 | `tests/unit/hooks/test_events.py` | Event tests |
 | `tests/unit/hooks/test_registry.py` | Registry tests |

@@ -5,11 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from opencode.plugins.base import Plugin, PluginCapabilities, PluginMetadata
-from opencode.plugins.config import PluginConfig
-from opencode.plugins.exceptions import PluginNotFoundError
-from opencode.plugins.manager import PluginManager
-from opencode.plugins.registry import PluginRegistry
+from code_forge.plugins.base import Plugin, PluginCapabilities, PluginMetadata
+from code_forge.plugins.config import PluginConfig
+from code_forge.plugins.exceptions import PluginNotFoundError
+from code_forge.plugins.manager import PluginManager
+from code_forge.plugins.registry import PluginRegistry
 
 
 class SamplePlugin(Plugin):
@@ -81,7 +81,7 @@ capabilities:
 """)
 
         (plugin_dir / "test_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata, PluginCapabilities
+from code_forge.plugins.base import Plugin, PluginMetadata, PluginCapabilities
 
 class TestPlugin(Plugin):
     @property
@@ -149,7 +149,7 @@ entry_point: my_plugin:MyPlugin
 """)
 
         (plugin_dir / "my_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class MyPlugin(Plugin):
     @property
@@ -192,7 +192,7 @@ entry_point: disabled_plugin:DisabledPlugin
 """)
 
         (plugin_dir / "disabled_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class DisabledPlugin(Plugin):
     @property
@@ -237,7 +237,7 @@ entry_point: enabled_plugin:Plugin
 """)
 
         (plugin_dir / "enabled_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class Plugin(Plugin):
     @property
@@ -272,7 +272,7 @@ entry_point: to_disable:Plugin
 """)
 
         (plugin_dir / "to_disable.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class Plugin(Plugin):
     @property
@@ -317,7 +317,7 @@ entry_point: {name}:Plugin
 """)
 
             (plugin_dir / f"{name}.py").write_text(f"""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class Plugin(Plugin):
     @property
@@ -361,7 +361,7 @@ entry_point: shutdown_test:Plugin
 """)
 
         (plugin_dir / "shutdown_test.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class Plugin(Plugin):
     @property
@@ -396,7 +396,7 @@ entry_point: reload_test:Plugin
 """)
 
         (plugin_dir / "reload_test.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class Plugin(Plugin):
     @property
@@ -437,7 +437,7 @@ entry_point: failing_plugin:FailingPlugin
 """)
 
         (plugin_dir / "failing_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class FailingPlugin(Plugin):
     @property
@@ -476,7 +476,7 @@ entry_point: activate_fail:ActivateFailPlugin
 """)
 
         (plugin_dir / "activate_fail.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class ActivateFailPlugin(Plugin):
     @property
@@ -515,7 +515,7 @@ entry_point: deactivate_fail:DeactivateFailPlugin
 """)
 
         (plugin_dir / "deactivate_fail.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class DeactivateFailPlugin(Plugin):
     @property
@@ -560,7 +560,7 @@ entry_point: already_disabled:AlreadyDisabledPlugin
 """)
 
         (plugin_dir / "already_disabled.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class AlreadyDisabledPlugin(Plugin):
     @property
@@ -599,7 +599,7 @@ entry_point: shutdown_error:ShutdownErrorPlugin
 """)
 
         (plugin_dir / "shutdown_error.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata
+from code_forge.plugins.base import Plugin, PluginMetadata
 
 class ShutdownErrorPlugin(Plugin):
     @property
@@ -642,7 +642,7 @@ capabilities:
 """)
 
         (plugin_dir / "tools_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata, PluginCapabilities
+from code_forge.plugins.base import Plugin, PluginMetadata, PluginCapabilities
 
 class MockTool:
     name = "mock-tool"
@@ -691,7 +691,7 @@ capabilities:
 """)
 
         (plugin_dir / "commands_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata, PluginCapabilities
+from code_forge.plugins.base import Plugin, PluginMetadata, PluginCapabilities
 
 class MockCommand:
     name = "mock-cmd"
@@ -740,7 +740,7 @@ capabilities:
 """)
 
         (plugin_dir / "hooks_plugin.py").write_text("""
-from opencode.plugins.base import Plugin, PluginMetadata, PluginCapabilities
+from code_forge.plugins.base import Plugin, PluginMetadata, PluginCapabilities
 
 class HooksPlugin(Plugin):
     @property

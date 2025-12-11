@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opencode.plugins.commands import (
+from code_forge.plugins.commands import (
     PluginDisableCommand,
     PluginEnableCommand,
     PluginInfoCommand,

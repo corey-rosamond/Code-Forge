@@ -1,1 +1,1 @@
-"""Test suite for OpenCode."""
+"""Test suite for Code-Forge."""

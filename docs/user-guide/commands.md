@@ -1,6 +1,6 @@
 # Slash Commands
 
-OpenCode provides slash commands for quick actions during your session.
+Code-Forge provides slash commands for quick actions during your session.
 
 ## Help Commands
 
@@ -82,7 +82,7 @@ Clear the terminal screen.
 
 ### /exit
 
-Exit OpenCode.
+Exit Code-Forge.
 
 ```
 /exit

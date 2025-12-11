@@ -246,16 +246,16 @@
 pytest tests/agents/ -v
 
 # Run with coverage
-pytest tests/agents/ --cov=src/opencode/agents --cov-report=term-missing
+pytest tests/agents/ --cov=src/forge/agents --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/agents/ --cov=src/opencode/agents --cov-fail-under=90
+pytest tests/agents/ --cov=src/forge/agents --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/agents/
+mypy src/forge/agents/
 
 # Complexity check
-flake8 src/opencode/agents/ --max-complexity=10
+flake8 src/forge/agents/ --max-complexity=10
 ```
 
 ---

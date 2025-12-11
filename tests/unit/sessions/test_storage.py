@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.sessions.models import Session
-from opencode.sessions.storage import (
+from code_forge.sessions.models import Session
+from code_forge.sessions.storage import (
     SessionCorruptedError,
     SessionNotFoundError,
     SessionStorage,
@@ -49,14 +49,14 @@ class TestSessionStorage:
         # Don't actually create it, just check the path
         storage = SessionStorage.__new__(SessionStorage)
         storage.storage_dir = SessionStorage.get_default_dir()
-        assert "opencode" in str(storage.storage_dir)
+        assert "forge" in str(storage.storage_dir)
         assert "sessions" in str(storage.storage_dir)
 
     def test_get_default_dir(self) -> None:
         """Test default directory location."""
         default_dir = SessionStorage.get_default_dir()
         assert default_dir.name == "sessions"
-        assert "opencode" in str(default_dir)
+        assert "forge" in str(default_dir)
 
     def test_get_default_dir_with_xdg(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test default dir respects XDG_DATA_HOME."""
@@ -67,7 +67,7 @@ class TestSessionStorage:
     def test_get_project_dir(self) -> None:
         """Test project-local directory."""
         project_dir = SessionStorage.get_project_dir("/home/user/project")
-        assert project_dir == Path("/home/user/project/.opencode/sessions")
+        assert project_dir == Path("/home/user/project/.forge/sessions")
 
     def test_get_path(self, storage: SessionStorage) -> None:
         """Test getting session file path."""
@@ -440,4 +440,4 @@ class TestSessionStorageEdgeCases:
     def test_get_project_dir_string(self) -> None:
         """Test get_project_dir accepts string path."""
         project_dir = SessionStorage.get_project_dir("/some/project")
-        assert project_dir == Path("/some/project/.opencode/sessions")
+        assert project_dir == Path("/some/project/.forge/sessions")

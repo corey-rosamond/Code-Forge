@@ -5,12 +5,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.context.manager import (
+from code_forge.context.manager import (
     ContextManager,
     TruncationMode,
     get_strategy,
 )
-from opencode.context.strategies import (
+from code_forge.context.strategies import (
     CompositeStrategy,
     SlidingWindowStrategy,
     SmartTruncationStrategy,

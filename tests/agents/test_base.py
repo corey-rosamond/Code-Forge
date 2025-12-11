@@ -5,7 +5,7 @@ from uuid import UUID
 
 import pytest
 
-from opencode.agents.base import (
+from code_forge.agents.base import (
     Agent,
     AgentConfig,
     AgentContext,
@@ -13,7 +13,7 @@ from opencode.agents.base import (
     ResourceLimits,
     ResourceUsage,
 )
-from opencode.agents.result import AgentResult
+from code_forge.agents.result import AgentResult
 
 
 # Concrete implementation for testing

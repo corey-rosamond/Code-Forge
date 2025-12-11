@@ -10,8 +10,8 @@
 
 ### Basic Invocation
 ```python
-from opencode.llm import OpenRouterClient
-from opencode.langchain import OpenRouterLLM
+from forge.llm import OpenRouterClient
+from forge.langchain import OpenRouterLLM
 from langchain_core.messages import HumanMessage, SystemMessage
 
 # Create client and LLM
@@ -36,10 +36,10 @@ print(response.content)
 
 ### With Tool Binding
 ```python
-from opencode.tools import ReadTool, WriteTool
-from opencode.langchain import adapt_tools_for_langchain
+from forge.tools import ReadTool, WriteTool
+from forge.langchain import adapt_tools_for_langchain
 
-# Adapt OpenCode tools for LangChain
+# Adapt Code-Forge tools for LangChain
 tools = adapt_tools_for_langchain([ReadTool(), WriteTool()])
 
 # Bind tools to LLM
@@ -59,22 +59,22 @@ if response.tool_calls:
 
 ## 2. Message Conversion Examples
 
-### LangChain to OpenCode
+### LangChain to Code-Forge
 ```python
 from langchain_core.messages import (
     SystemMessage, HumanMessage, AIMessage, ToolMessage
 )
-from opencode.langchain import langchain_to_opencode
+from forge.langchain import langchain_to_forge
 
 # System message
 lc_sys = SystemMessage(content="Be helpful.")
-oc_sys = langchain_to_opencode(lc_sys)
+oc_sys = langchain_to_forge(lc_sys)
 print(oc_sys.to_dict())
 # Output: {"role": "system", "content": "Be helpful."}
 
 # Human message
 lc_human = HumanMessage(content="Hello!")
-oc_human = langchain_to_opencode(lc_human)
+oc_human = langchain_to_forge(lc_human)
 print(oc_human.to_dict())
 # Output: {"role": "user", "content": "Hello!"}
 
@@ -87,7 +87,7 @@ lc_ai = AIMessage(
         "args": {"path": "/tmp/test.txt"}
     }]
 )
-oc_ai = langchain_to_opencode(lc_ai)
+oc_ai = langchain_to_forge(lc_ai)
 print(oc_ai.to_dict())
 # Output:
 # {
@@ -105,29 +105,29 @@ print(oc_ai.to_dict())
 
 # Tool message
 lc_tool = ToolMessage(content="file contents", tool_call_id="call_abc123")
-oc_tool = langchain_to_opencode(lc_tool)
+oc_tool = langchain_to_forge(lc_tool)
 print(oc_tool.to_dict())
 # Output: {"role": "tool", "tool_call_id": "call_abc123", "content": "file contents"}
 ```
 
-### OpenCode to LangChain
+### Code-Forge to LangChain
 ```python
-from opencode.llm import Message
-from opencode.langchain import opencode_to_langchain
+from forge.llm import Message
+from forge.langchain import forge_to_langchain
 
 # System message
 oc_sys = Message.system("Be helpful.")
-lc_sys = opencode_to_langchain(oc_sys)
+lc_sys = forge_to_langchain(oc_sys)
 print(type(lc_sys).__name__)  # SystemMessage
 print(lc_sys.content)  # "Be helpful."
 
 # User message
 oc_user = Message.user("Hello!")
-lc_user = opencode_to_langchain(oc_user)
+lc_user = forge_to_langchain(oc_user)
 print(type(lc_user).__name__)  # HumanMessage
 
 # Assistant with tool calls
-from opencode.llm.models import ToolCall
+from forge.llm.models import ToolCall
 oc_asst = Message.assistant(
     content=None,
     tool_calls=[
@@ -138,7 +138,7 @@ oc_asst = Message.assistant(
         )
     ]
 )
-lc_asst = opencode_to_langchain(oc_asst)
+lc_asst = forge_to_langchain(oc_asst)
 print(lc_asst.tool_calls)
 # Output: [{"id": "call_123", "name": "read_file", "args": {"path": "/tmp"}}]
 ```
@@ -147,14 +147,14 @@ print(lc_asst.tool_calls)
 
 ## 3. Tool Adapter Examples
 
-### OpenCode Tool to LangChain
+### Code-Forge Tool to LangChain
 ```python
-from opencode.tools import ReadTool
-from opencode.langchain import LangChainToolAdapter
+from forge.tools import ReadTool
+from forge.langchain import LangChainToolAdapter
 
 # Create adapter
 read_tool = ReadTool()
-lc_adapter = LangChainToolAdapter(opencode_tool=read_tool)
+lc_adapter = LangChainToolAdapter(forge_tool=read_tool)
 
 # Check properties
 print(f"Name: {lc_adapter.name}")  # "read"
@@ -176,24 +176,24 @@ print(result)
 # Output: "     1→Hello, World!\n     2→This is a test file."
 ```
 
-### LangChain Tool to OpenCode
+### LangChain Tool to Code-Forge
 ```python
 from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
-from opencode.langchain import opencodeToolAdapter
+from forge.langchain import forgeToolAdapter
 
 # Create LangChain tool
 wiki = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
 
-# Adapt for OpenCode
-oc_adapter = OpenCodeToolAdapter(langchain_tool=wiki)
+# Adapt for Code-Forge
+oc_adapter = Code-ForgeToolAdapter(langchain_tool=wiki)
 
-# Use in OpenCode
+# Use in Code-Forge
 print(f"Name: {oc_adapter.name}")
 print(f"Category: {oc_adapter.category}")
 
 # Execute
-from opencode.tools.models import ExecutionContext
+from forge.tools.models import ExecutionContext
 ctx = ExecutionContext(working_dir="/tmp")
 result = await oc_adapter.execute({"query": "Python programming"}, ctx)
 print(result.success)  # True
@@ -202,12 +202,12 @@ print(result.output[:100])  # First 100 chars of Wikipedia content
 
 ### Batch Conversion
 ```python
-from opencode.tools import ReadTool, WriteTool, BashTool
-from opencode.langchain import adapt_tools_for_langchain
+from forge.tools import ReadTool, WriteTool, BashTool
+from forge.langchain import adapt_tools_for_langchain
 
 # Convert all tools at once
-opencode_tools = [ReadTool(), WriteTool(), BashTool()]
-langchain_tools = adapt_tools_for_langchain(opencode_tools)
+forge_tools = [ReadTool(), WriteTool(), BashTool()]
+langchain_tools = adapt_tools_for_langchain(forge_tools)
 
 # Use with LangChain agent
 print(f"Converted {len(langchain_tools)} tools")
@@ -221,8 +221,8 @@ for tool in langchain_tools:
 
 ### Basic Memory Operations
 ```python
-from opencode.langchain import ConversationMemory
-from opencode.llm import Message
+from forge.langchain import ConversationMemory
+from forge.llm import Message
 
 memory = ConversationMemory()
 
@@ -269,7 +269,7 @@ print(f"Messages after trim: {len(memory)}")
 
 ### Sliding Window Memory
 ```python
-from opencode.langchain import SlidingWindowMemory
+from forge.langchain import SlidingWindowMemory
 
 # Keep only last 3 conversation exchanges
 memory = SlidingWindowMemory(window_size=3)
@@ -292,7 +292,7 @@ print(f"Total messages: {len(messages)}")  # 7 (1 system + 3 pairs × 2)
 
 ### Token Tracking
 ```python
-from opencode.langchain import OpenRouterLLM, TokenTrackingCallback
+from forge.langchain import OpenRouterLLM, TokenTrackingCallback
 
 tracker = TokenTrackingCallback()
 
@@ -319,7 +319,7 @@ tracker.reset()
 ### Logging Callback
 ```python
 import logging
-from opencode.langchain import LoggingCallback
+from forge.langchain import LoggingCallback
 
 logging.basicConfig(level=logging.INFO)
 
@@ -331,13 +331,13 @@ response = await llm.ainvoke(
 )
 
 # Console output:
-# INFO:opencode.langchain:LLM start: model=anthropic/claude-3-opus, prompts=2
-# INFO:opencode.langchain:LLM end: duration=1.23s, tokens=150
+# INFO:forge.langchain:LLM start: model=anthropic/claude-3-opus, prompts=2
+# INFO:forge.langchain:LLM end: duration=1.23s, tokens=150
 ```
 
 ### Streaming Callback
 ```python
-from opencode.langchain import StreamingCallback
+from forge.langchain import StreamingCallback
 
 def print_token(token: str):
     print(token, end="", flush=True)
@@ -364,7 +364,7 @@ async for chunk in llm.astream(
 
 ### Composite Callback
 ```python
-from opencode.langchain import (
+from forge.langchain import (
     CompositeCallback, TokenTrackingCallback, LoggingCallback
 )
 
@@ -383,11 +383,11 @@ response = await llm.ainvoke(messages, config={"callbacks": [composite]})
 
 ### Simple Agent Run
 ```python
-from opencode.langchain import (
-    OpenRouterLLM, OpenCodeAgent, ConversationMemory,
+from forge.langchain import (
+    OpenRouterLLM, Code-ForgeAgent, ConversationMemory,
     adapt_tools_for_langchain
 )
-from opencode.tools import ReadTool, WriteTool, BashTool
+from forge.tools import ReadTool, WriteTool, BashTool
 
 # Setup
 client = OpenRouterClient(api_key="sk-or-xxx")
@@ -397,7 +397,7 @@ memory = ConversationMemory()
 memory.set_system_message(Message.system("You are a coding assistant."))
 
 # Create agent
-agent = OpenCodeAgent(
+agent = Code-ForgeAgent(
     llm=llm,
     tools=tools,
     memory=memory,
@@ -449,7 +449,7 @@ result = AgentResult(
 
 ### Streaming Agent
 ```python
-from opencode.langchain import AgentEventType
+from forge.langchain import AgentEventType
 
 async for event in agent.stream("Analyze the codebase structure"):
     if event.type == AgentEventType.LLM_START:
@@ -628,27 +628,27 @@ restored_memory = load_memory("/tmp/session.json")
 ## 10. Complete Usage Example
 
 ```python
-"""Complete example of OpenCode LangChain integration."""
+"""Complete example of Code-Forge LangChain integration."""
 
 import asyncio
-from opencode.llm import OpenRouterClient
-from opencode.langchain import (
+from forge.llm import OpenRouterClient
+from forge.langchain import (
     OpenRouterLLM,
-    OpenCodeAgent,
+    Code-ForgeAgent,
     ConversationMemory,
     TokenTrackingCallback,
     LoggingCallback,
     adapt_tools_for_langchain,
     AgentEventType,
 )
-from opencode.tools import ReadTool, WriteTool, EditTool, BashTool, GlobTool
-from opencode.llm import Message
+from forge.tools import ReadTool, WriteTool, EditTool, BashTool, GlobTool
+from forge.llm import Message
 
 async def main():
     # Initialize client
     client = OpenRouterClient(
         api_key="sk-or-xxx",
-        app_name="OpenCode",
+        app_name="Code-Forge",
         timeout=120.0,
     )
 
@@ -672,7 +672,7 @@ async def main():
     # Setup memory
     memory = ConversationMemory(max_messages=50)
     memory.set_system_message(Message.system(
-        "You are OpenCode, an AI coding assistant. "
+        "You are Code-Forge, an AI coding assistant. "
         "You have access to tools for reading, writing, and executing code. "
         "Be helpful, concise, and accurate."
     ))
@@ -682,7 +682,7 @@ async def main():
     logger = LoggingCallback()
 
     # Create agent
-    agent = OpenCodeAgent(
+    agent = Code-ForgeAgent(
         llm=llm,
         tools=tools,
         memory=memory,
@@ -691,7 +691,7 @@ async def main():
     )
 
     # Run with streaming
-    print("OpenCode Agent Ready\n")
+    print("Code-Forge Agent Ready\n")
     print("=" * 50)
 
     async for event in agent.stream(
@@ -727,7 +727,7 @@ if __name__ == "__main__":
 
 Output:
 ```
-OpenCode Agent Ready
+Code-Forge Agent Ready
 
 ==================================================
 I'll help you find Python files and show the first 10 lines of files containing 'def main'. Let me start by finding all Python files.
@@ -748,11 +748,11 @@ Found 3 files with 'def main'. Let me show you the first 10 lines of each:
 **src/main.py:**
 ```python
 #!/usr/bin/env python3
-"""Main entry point for OpenCode."""
+"""Main entry point for Code-Forge."""
 
 import asyncio
 import sys
-from opencode.cli import run
+from forge.cli import run
 
 def main():
     """Run the CLI application."""

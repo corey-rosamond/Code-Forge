@@ -6,12 +6,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-from opencode.config.sources import (
+from code_forge.config.sources import (
     EnvironmentSource,
     JsonFileSource,
     YamlFileSource,
 )
-from opencode.core import ConfigError
+from code_forge.core import ConfigError
 
 
 class TestJsonFileSource:
@@ -246,7 +246,7 @@ class TestEnvironmentSource:
 
     def test_load_api_key(self) -> None:
         """Test loading API key from environment."""
-        environ = {"OPENCODE_API_KEY": "sk-test-123"}
+        environ = {"FORGE_API_KEY": "sk-test-123"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -255,7 +255,7 @@ class TestEnvironmentSource:
 
     def test_load_model(self) -> None:
         """Test loading model from environment."""
-        environ = {"OPENCODE_MODEL": "custom-model"}
+        environ = {"FORGE_MODEL": "custom-model"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -264,7 +264,7 @@ class TestEnvironmentSource:
 
     def test_load_max_tokens(self) -> None:
         """Test loading max_tokens as integer."""
-        environ = {"OPENCODE_MAX_TOKENS": "4096"}
+        environ = {"FORGE_MAX_TOKENS": "4096"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -273,7 +273,7 @@ class TestEnvironmentSource:
 
     def test_load_temperature(self) -> None:
         """Test loading temperature as float."""
-        environ = {"OPENCODE_TEMPERATURE": "0.7"}
+        environ = {"FORGE_TEMPERATURE": "0.7"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -282,7 +282,7 @@ class TestEnvironmentSource:
 
     def test_load_theme(self) -> None:
         """Test loading theme from environment."""
-        environ = {"OPENCODE_THEME": "light"}
+        environ = {"FORGE_THEME": "light"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -292,7 +292,7 @@ class TestEnvironmentSource:
     def test_load_vim_mode_true(self) -> None:
         """Test loading vim_mode boolean true."""
         for value in ("true", "1", "yes", "on"):
-            environ = {"OPENCODE_VIM_MODE": value}
+            environ = {"FORGE_VIM_MODE": value}
             source = EnvironmentSource(environ)
             data = source.load()
             assert data["display"]["vim_mode"] is True
@@ -300,14 +300,14 @@ class TestEnvironmentSource:
     def test_load_vim_mode_false(self) -> None:
         """Test loading vim_mode boolean false."""
         for value in ("false", "0", "no", "off"):
-            environ = {"OPENCODE_VIM_MODE": value}
+            environ = {"FORGE_VIM_MODE": value}
             source = EnvironmentSource(environ)
             data = source.load()
             assert data["display"]["vim_mode"] is False
 
     def test_load_streaming_boolean(self) -> None:
         """Test loading streaming boolean."""
-        environ = {"OPENCODE_STREAMING": "false"}
+        environ = {"FORGE_STREAMING": "false"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -317,9 +317,9 @@ class TestEnvironmentSource:
     def test_load_multiple_vars(self) -> None:
         """Test loading multiple environment variables."""
         environ = {
-            "OPENCODE_API_KEY": "sk-123",
-            "OPENCODE_MODEL": "gpt-5",
-            "OPENCODE_THEME": "dark",
+            "FORGE_API_KEY": "sk-123",
+            "FORGE_MODEL": "gpt-5",
+            "FORGE_THEME": "dark",
         }
 
         source = EnvironmentSource(environ)
@@ -336,8 +336,8 @@ class TestEnvironmentSource:
 
         assert data == {}
 
-    def test_load_ignores_non_opencode_vars(self) -> None:
-        """Test non-OPENCODE_ vars are ignored."""
+    def test_load_ignores_non_forge_vars(self) -> None:
+        """Test non-FORGE_ vars are ignored."""
         environ = {
             "PATH": "/usr/bin",
             "HOME": "/home/user",
@@ -356,7 +356,7 @@ class TestEnvironmentSource:
 
     def test_invalid_integer_keeps_string(self) -> None:
         """Test invalid integer value keeps string."""
-        environ = {"OPENCODE_MAX_TOKENS": "not-a-number"}
+        environ = {"FORGE_MAX_TOKENS": "not-a-number"}
 
         source = EnvironmentSource(environ)
         data = source.load()
@@ -366,7 +366,7 @@ class TestEnvironmentSource:
 
     def test_invalid_float_keeps_string(self) -> None:
         """Test invalid float value keeps string."""
-        environ = {"OPENCODE_TEMPERATURE": "not-a-float"}
+        environ = {"FORGE_TEMPERATURE": "not-a-float"}
 
         source = EnvironmentSource(environ)
         data = source.load()

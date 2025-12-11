@@ -33,7 +33,7 @@ from typing import TYPE_CHECKING, AsyncGenerator, Generator
 import pytest
 
 if TYPE_CHECKING:
-    from opencode.core.app import opencode
+    from forge.core.app import forge
 
 
 # ============================================================
@@ -72,17 +72,17 @@ def temp_project(temp_dir: Path) -> Path:
 
 
 @pytest.fixture
-async def app(temp_home: Path, temp_project: Path) -> AsyncGenerator["OpenCode", None]:
-    """Create an OpenCode application instance for testing."""
-    from opencode.core.app import opencode
-    from opencode.core.config import Config
+async def app(temp_home: Path, temp_project: Path) -> AsyncGenerator["Code-Forge", None]:
+    """Create an Code-Forge application instance for testing."""
+    from forge.core.app import forge
+    from forge.core.config import Config
 
     config = Config(
         home_dir=temp_home,
         project_dir=temp_project,
     )
 
-    app = OpenCode(config=config)
+    app = Code-Forge(config=config)
     await app.initialize()
 
     yield app
@@ -172,7 +172,7 @@ def add(a: int, b: int) -> int:
 
 
 @pytest.fixture
-async def session(app: "OpenCode"):
+async def session(app: "Code-Forge"):
     """Create a test session."""
     session = await app.session_manager.create_session()
     yield session
@@ -187,7 +187,7 @@ async def session(app: "OpenCode"):
 @pytest.fixture
 def sample_plugin(temp_home: Path) -> Path:
     """Create a sample plugin for testing."""
-    plugin_dir = temp_home / ".opencode" / "plugins" / "test-plugin"
+    plugin_dir = temp_home / ".forge" / "plugins" / "test-plugin"
     plugin_dir.mkdir(parents=True)
 
     # Create manifest
@@ -204,8 +204,8 @@ capabilities:
     # Create plugin module
     module = plugin_dir / "test_plugin.py"
     module.write_text('''
-from opencode.plugins import Plugin, PluginMetadata, PluginCapabilities
-from opencode.tools.base import Tool
+from forge.plugins import Plugin, PluginMetadata, PluginCapabilities
+from forge.tools.base import Tool
 
 
 class EchoTool(Tool):
@@ -253,14 +253,14 @@ from pathlib import Path
 
 import pytest
 
-from opencode.core.app import opencode
+from forge.core.app import forge
 
 
 class TestToolExecutionFlow:
     """Test tool execution with all components."""
 
     @pytest.mark.asyncio
-    async def test_read_file_flow(self, app: OpenCode, sample_file: Path):
+    async def test_read_file_flow(self, app: Code-Forge, sample_file: Path):
         """Test Read tool through full pipeline."""
         # Get tool from registry
         read_tool = app.tool_registry.get("Read")
@@ -278,7 +278,7 @@ class TestToolExecutionFlow:
 
     @pytest.mark.asyncio
     async def test_edit_file_with_permission(
-        self, app: OpenCode, sample_file: Path, monkeypatch
+        self, app: Code-Forge, sample_file: Path, monkeypatch
     ):
         """Test Edit tool with permission check."""
         # Auto-approve for testing
@@ -300,7 +300,7 @@ class TestToolExecutionFlow:
         assert "Greetings" in content
 
     @pytest.mark.asyncio
-    async def test_bash_with_hooks(self, app: OpenCode, temp_project: Path):
+    async def test_bash_with_hooks(self, app: Code-Forge, temp_project: Path):
         """Test Bash tool with hook execution."""
         hook_called = False
 
@@ -320,7 +320,7 @@ class TestToolExecutionFlow:
         assert "test" in result.output
 
     @pytest.mark.asyncio
-    async def test_glob_search(self, app: OpenCode, temp_project: Path):
+    async def test_glob_search(self, app: Code-Forge, temp_project: Path):
         """Test Glob tool for file searching."""
         # Create test files
         (temp_project / "file1.py").write_text("# Python file 1")
@@ -344,7 +344,7 @@ class TestToolExecutionFlow:
         assert "file3.txt" not in result.output
 
     @pytest.mark.asyncio
-    async def test_grep_search(self, app: OpenCode, sample_file: Path):
+    async def test_grep_search(self, app: Code-Forge, sample_file: Path):
         """Test Grep tool for content searching."""
         result = await app.execute_tool(
             tool_name="Grep",
@@ -359,7 +359,7 @@ class TestToolExecutionFlow:
         assert "add" in result.output
 
     @pytest.mark.asyncio
-    async def test_write_creates_file(self, app: OpenCode, temp_project: Path, monkeypatch):
+    async def test_write_creates_file(self, app: Code-Forge, temp_project: Path, monkeypatch):
         """Test Write tool creates new file."""
         monkeypatch.setattr(app.permission_system, "auto_approve", True)
 
@@ -383,7 +383,7 @@ class TestToolPermissions:
     """Test tool permission integration."""
 
     @pytest.mark.asyncio
-    async def test_read_allowed_by_default(self, app: OpenCode, sample_file: Path):
+    async def test_read_allowed_by_default(self, app: Code-Forge, sample_file: Path):
         """Read should be allowed without approval."""
         result = await app.execute_tool(
             tool_name="Read",
@@ -393,7 +393,7 @@ class TestToolPermissions:
         assert result.success
 
     @pytest.mark.asyncio
-    async def test_write_requires_permission(self, app: OpenCode, temp_project: Path):
+    async def test_write_requires_permission(self, app: Code-Forge, temp_project: Path):
         """Write should require permission."""
         new_file = temp_project / "test.txt"
 
@@ -411,7 +411,7 @@ class TestToolPermissions:
         assert result.requires_permission or result.success
 
     @pytest.mark.asyncio
-    async def test_bash_respects_allowlist(self, app: OpenCode, temp_project: Path):
+    async def test_bash_respects_allowlist(self, app: Code-Forge, temp_project: Path):
         """Bash should respect command allowlist."""
         # Add to allowlist
         app.permission_system.add_allowlist("Bash", "echo:*")
@@ -442,15 +442,15 @@ from pathlib import Path
 
 import pytest
 
-from opencode.core.app import opencode
-from opencode.session.manager import Session
+from forge.core.app import forge
+from forge.session.manager import Session
 
 
 class TestSessionFlow:
     """Test session lifecycle."""
 
     @pytest.mark.asyncio
-    async def test_create_save_resume(self, app: OpenCode):
+    async def test_create_save_resume(self, app: Code-Forge):
         """Test session persistence cycle."""
         # Create session
         session = await app.session_manager.create_session()
@@ -472,7 +472,7 @@ class TestSessionFlow:
         assert len(resumed.messages) == 2
 
     @pytest.mark.asyncio
-    async def test_context_compaction(self, app: OpenCode, session: Session):
+    async def test_context_compaction(self, app: Code-Forge, session: Session):
         """Test context management integration."""
         # Add many messages to trigger compaction
         for i in range(100):
@@ -484,7 +484,7 @@ class TestSessionFlow:
         assert context.token_count < app.config.max_context_tokens
 
     @pytest.mark.asyncio
-    async def test_session_with_tool_results(self, app: OpenCode, session: Session, sample_file: Path):
+    async def test_session_with_tool_results(self, app: Code-Forge, session: Session, sample_file: Path):
         """Test session with tool execution results."""
         # Execute tool
         result = await app.execute_tool(
@@ -498,7 +498,7 @@ class TestSessionFlow:
         assert any(m.role == "tool" for m in messages)
 
     @pytest.mark.asyncio
-    async def test_session_list_and_delete(self, app: OpenCode):
+    async def test_session_list_and_delete(self, app: Code-Forge):
         """Test session listing and deletion."""
         # Create multiple sessions
         sessions = []
@@ -522,14 +522,14 @@ class TestSessionContext:
     """Test session context integration."""
 
     @pytest.mark.asyncio
-    async def test_context_includes_system_prompt(self, app: OpenCode, session: Session):
+    async def test_context_includes_system_prompt(self, app: Code-Forge, session: Session):
         """Test that context includes system prompt."""
         context = await session.get_context()
 
         assert any(m.role == "system" for m in context.messages)
 
     @pytest.mark.asyncio
-    async def test_context_token_counting(self, app: OpenCode, session: Session):
+    async def test_context_token_counting(self, app: Code-Forge, session: Session):
         """Test token counting accuracy."""
         await session.add_message("user", "Hello world")
 
@@ -537,7 +537,7 @@ class TestSessionContext:
         assert context.token_count > 0
 
     @pytest.mark.asyncio
-    async def test_context_file_mentions(self, app: OpenCode, session: Session, sample_file: Path):
+    async def test_context_file_mentions(self, app: Code-Forge, session: Session, sample_file: Path):
         """Test that file mentions are tracked."""
         await session.add_message("user", f"Look at {sample_file}")
 
@@ -563,7 +563,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from opencode.core.app import opencode
+from forge.core.app import forge
 
 
 class TestAgentWorkflow:
@@ -571,7 +571,7 @@ class TestAgentWorkflow:
 
     @pytest.mark.asyncio
     async def test_explore_agent_with_file_tools(
-        self, app: OpenCode, temp_project: Path, mock_llm_response
+        self, app: Code-Forge, temp_project: Path, mock_llm_response
     ):
         """Test Explore agent with file tools."""
         # Create test files
@@ -595,7 +595,7 @@ class TestAgentWorkflow:
         # Agent should have used Glob/Grep tools
 
     @pytest.mark.asyncio
-    async def test_plan_agent_with_context(self, app: OpenCode, mock_llm_response):
+    async def test_plan_agent_with_context(self, app: Code-Forge, mock_llm_response):
         """Test Plan agent with context."""
         app.llm.invoke = AsyncMock(
             return_value=mock_llm_response(
@@ -613,7 +613,7 @@ class TestAgentWorkflow:
 
     @pytest.mark.asyncio
     async def test_agent_inherits_session_context(
-        self, app: OpenCode, session, mock_llm_response
+        self, app: Code-Forge, session, mock_llm_response
     ):
         """Test that agents inherit session context."""
         # Add context to session
@@ -634,7 +634,7 @@ class TestAgentWorkflow:
 
     @pytest.mark.asyncio
     async def test_agent_tool_results_return_to_parent(
-        self, app: OpenCode, session, sample_file: Path, mock_llm_response
+        self, app: Code-Forge, session, sample_file: Path, mock_llm_response
     ):
         """Test that agent tool results are returned to parent."""
         app.llm.invoke = AsyncMock(
@@ -655,7 +655,7 @@ class TestAgentConfiguration:
     """Test agent configuration."""
 
     @pytest.mark.asyncio
-    async def test_agent_respects_model_config(self, app: OpenCode, mock_llm_response):
+    async def test_agent_respects_model_config(self, app: Code-Forge, mock_llm_response):
         """Test that agents use configured models."""
         app.llm.invoke = AsyncMock(return_value=mock_llm_response("Done"))
 
@@ -668,7 +668,7 @@ class TestAgentConfiguration:
         assert result.success
 
     @pytest.mark.asyncio
-    async def test_agent_timeout(self, app: OpenCode):
+    async def test_agent_timeout(self, app: Code-Forge):
         """Test agent timeout handling."""
         # Create slow mock
         async def slow_invoke(*args, **kwargs):
@@ -704,14 +704,14 @@ from pathlib import Path
 
 import pytest
 
-from opencode.core.app import opencode
+from forge.core.app import forge
 
 
 class TestGitWorkflow:
     """Test Git integration workflows."""
 
     @pytest.mark.asyncio
-    async def test_git_status_flow(self, app: OpenCode, git_repo: Path):
+    async def test_git_status_flow(self, app: Code-Forge, git_repo: Path):
         """Test git status through tool system."""
         # Create a new file
         (git_repo / "new_file.txt").write_text("New content")
@@ -725,7 +725,7 @@ class TestGitWorkflow:
         assert "new_file.txt" in result.output
 
     @pytest.mark.asyncio
-    async def test_git_diff_flow(self, app: OpenCode, git_repo: Path):
+    async def test_git_diff_flow(self, app: Code-Forge, git_repo: Path):
         """Test git diff through tool system."""
         # Modify existing file
         readme = git_repo / "README.md"
@@ -740,7 +740,7 @@ class TestGitWorkflow:
         assert "Updated Project" in result.output or "++" in result.output
 
     @pytest.mark.asyncio
-    async def test_git_commit_flow(self, app: OpenCode, git_repo: Path, monkeypatch):
+    async def test_git_commit_flow(self, app: Code-Forge, git_repo: Path, monkeypatch):
         """Test git commit through tool system."""
         monkeypatch.setattr(app.permission_system, "auto_approve", True)
 
@@ -768,7 +768,7 @@ class TestGitWorkflow:
         assert "Add feature" in log_result.output
 
     @pytest.mark.asyncio
-    async def test_git_safety_guards(self, app: OpenCode, git_repo: Path):
+    async def test_git_safety_guards(self, app: Code-Forge, git_repo: Path):
         """Test git safety guards are active."""
         # Try force push (should be blocked or warned)
         result = await app.execute_tool(
@@ -785,7 +785,7 @@ class TestGitBranchWorkflow:
     """Test Git branch workflows."""
 
     @pytest.mark.asyncio
-    async def test_create_branch(self, app: OpenCode, git_repo: Path, monkeypatch):
+    async def test_create_branch(self, app: Code-Forge, git_repo: Path, monkeypatch):
         """Test branch creation."""
         monkeypatch.setattr(app.permission_system, "auto_approve", True)
 
@@ -805,7 +805,7 @@ class TestGitBranchWorkflow:
         assert "feature/new-feature" in branch_result.output
 
     @pytest.mark.asyncio
-    async def test_switch_branch(self, app: OpenCode, git_repo: Path, monkeypatch):
+    async def test_switch_branch(self, app: Code-Forge, git_repo: Path, monkeypatch):
         """Test branch switching."""
         monkeypatch.setattr(app.permission_system, "auto_approve", True)
 
@@ -849,14 +849,14 @@ from pathlib import Path
 
 import pytest
 
-from opencode.core.app import opencode
+from forge.core.app import forge
 
 
 class TestPluginIntegration:
     """Test plugin system integration."""
 
     @pytest.mark.asyncio
-    async def test_plugin_discovery_and_load(self, app: OpenCode, sample_plugin: Path):
+    async def test_plugin_discovery_and_load(self, app: Code-Forge, sample_plugin: Path):
         """Test plugin discovery and loading."""
         # Discover plugins
         await app.plugin_manager.discover_and_load()
@@ -867,7 +867,7 @@ class TestPluginIntegration:
         assert plugin.active
 
     @pytest.mark.asyncio
-    async def test_plugin_tool_registration(self, app: OpenCode, sample_plugin: Path):
+    async def test_plugin_tool_registration(self, app: Code-Forge, sample_plugin: Path):
         """Test that plugin tools are registered."""
         await app.plugin_manager.discover_and_load()
 
@@ -876,7 +876,7 @@ class TestPluginIntegration:
         assert tool is not None
 
     @pytest.mark.asyncio
-    async def test_plugin_tool_execution(self, app: OpenCode, sample_plugin: Path):
+    async def test_plugin_tool_execution(self, app: Code-Forge, sample_plugin: Path):
         """Test executing plugin tool."""
         await app.plugin_manager.discover_and_load()
 
@@ -889,7 +889,7 @@ class TestPluginIntegration:
         assert "Echo: Hello plugin!" in result.output
 
     @pytest.mark.asyncio
-    async def test_plugin_enable_disable(self, app: OpenCode, sample_plugin: Path):
+    async def test_plugin_enable_disable(self, app: Code-Forge, sample_plugin: Path):
         """Test plugin enable/disable."""
         await app.plugin_manager.discover_and_load()
 
@@ -912,7 +912,7 @@ class TestPluginIntegration:
         assert tool is not None
 
     @pytest.mark.asyncio
-    async def test_plugin_reload(self, app: OpenCode, sample_plugin: Path):
+    async def test_plugin_reload(self, app: Code-Forge, sample_plugin: Path):
         """Test plugin reload."""
         await app.plugin_manager.discover_and_load()
 
@@ -937,10 +937,10 @@ class TestPluginIsolation:
     """Test plugin isolation and error handling."""
 
     @pytest.mark.asyncio
-    async def test_plugin_error_isolation(self, app: OpenCode, temp_home: Path):
+    async def test_plugin_error_isolation(self, app: Code-Forge, temp_home: Path):
         """Test that plugin errors don't crash system."""
         # Create broken plugin
-        broken_plugin = temp_home / ".opencode" / "plugins" / "broken-plugin"
+        broken_plugin = temp_home / ".forge" / "plugins" / "broken-plugin"
         broken_plugin.mkdir(parents=True)
 
         (broken_plugin / "plugin.yaml").write_text("""
@@ -955,7 +955,7 @@ raise ImportError("Intentional error")
 """)
 
         # Create good plugin
-        good_plugin = temp_home / ".opencode" / "plugins" / "good-plugin"
+        good_plugin = temp_home / ".forge" / "plugins" / "good-plugin"
         good_plugin.mkdir(parents=True)
 
         (good_plugin / "plugin.yaml").write_text("""
@@ -968,7 +968,7 @@ capabilities:
 """)
 
         (good_plugin / "good.py").write_text("""
-from opencode.plugins import Plugin, PluginMetadata
+from forge.plugins import Plugin, PluginMetadata
 
 class GoodPlugin(Plugin):
     @property
@@ -988,7 +988,7 @@ class GoodPlugin(Plugin):
         assert "broken-plugin" in errors
 
     @pytest.mark.asyncio
-    async def test_plugin_data_isolation(self, app: OpenCode, sample_plugin: Path):
+    async def test_plugin_data_isolation(self, app: Code-Forge, sample_plugin: Path):
         """Test that plugins have isolated data directories."""
         await app.plugin_manager.discover_and_load()
 
@@ -1023,13 +1023,13 @@ class TestStartupPerformance:
 
     def test_cold_start_under_2s(self, temp_home: Path, temp_project: Path):
         """Cold start should be under 2 seconds."""
-        from opencode.core.app import opencode
-        from opencode.core.config import Config
+        from forge.core.app import forge
+        from forge.core.config import Config
 
         start = time.perf_counter()
 
         config = Config(home_dir=temp_home, project_dir=temp_project)
-        app = OpenCode(config=config)
+        app = Code-Forge(config=config)
 
         elapsed = time.perf_counter() - start
 
@@ -1038,11 +1038,11 @@ class TestStartupPerformance:
     @pytest.mark.asyncio
     async def test_initialization_under_2s(self, temp_home: Path, temp_project: Path):
         """Full initialization should be under 2 seconds."""
-        from opencode.core.app import opencode
-        from opencode.core.config import Config
+        from forge.core.app import forge
+        from forge.core.config import Config
 
         config = Config(home_dir=temp_home, project_dir=temp_project)
-        app = OpenCode(config=config)
+        app = Code-Forge(config=config)
 
         start = time.perf_counter()
         await app.initialize()
@@ -1054,7 +1054,7 @@ class TestStartupPerformance:
 
     def test_config_load_under_100ms(self, temp_home: Path, temp_project: Path):
         """Config loading should be under 100ms."""
-        from opencode.core.config import Config
+        from forge.core.config import Config
 
         start = time.perf_counter()
         Config(home_dir=temp_home, project_dir=temp_project)
@@ -1454,14 +1454,14 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from opencode.core.app import opencode
+from forge.core.app import forge
 
 
 class TestErrorRecovery:
     """Test error handling and recovery."""
 
     @pytest.mark.asyncio
-    async def test_tool_error_recovery(self, app: OpenCode, temp_project: Path):
+    async def test_tool_error_recovery(self, app: Code-Forge, temp_project: Path):
         """Test recovery from tool execution error."""
         # Try to read non-existent file
         result = await app.execute_tool(
@@ -1481,7 +1481,7 @@ class TestErrorRecovery:
         assert result2.success
 
     @pytest.mark.asyncio
-    async def test_session_recovery(self, app: OpenCode):
+    async def test_session_recovery(self, app: Code-Forge):
         """Test session recovery from errors."""
         session = await app.session_manager.create_session()
 
@@ -1501,7 +1501,7 @@ class TestErrorRecovery:
             pytest.fail("Session recovery raised unhandled exception")
 
     @pytest.mark.asyncio
-    async def test_llm_error_handling(self, app: OpenCode, session):
+    async def test_llm_error_handling(self, app: Code-Forge, session):
         """Test LLM error handling."""
         # Mock LLM to raise error
         app.llm.invoke = AsyncMock(side_effect=Exception("API Error"))
@@ -1515,7 +1515,7 @@ class TestErrorRecovery:
             assert "API" in str(e) or "error" in str(e).lower()
 
     @pytest.mark.asyncio
-    async def test_timeout_handling(self, app: OpenCode, temp_project: Path):
+    async def test_timeout_handling(self, app: Code-Forge, temp_project: Path):
         """Test timeout handling."""
         # Create long-running command
         result = await app.execute_tool(
@@ -1535,7 +1535,7 @@ class TestGracefulDegradation:
     """Test graceful degradation."""
 
     @pytest.mark.asyncio
-    async def test_missing_optional_component(self, app: OpenCode):
+    async def test_missing_optional_component(self, app: Code-Forge):
         """Test handling of missing optional components."""
         # Disable plugin system
         app.plugin_manager = None
@@ -1548,7 +1548,7 @@ class TestGracefulDegradation:
         assert result.success
 
     @pytest.mark.asyncio
-    async def test_network_failure_handling(self, app: OpenCode, monkeypatch):
+    async def test_network_failure_handling(self, app: Code-Forge, monkeypatch):
         """Test handling of network failures."""
         # Mock network failure for web tools
         async def network_failure(*args, **kwargs):
@@ -1559,7 +1559,7 @@ class TestGracefulDegradation:
         pass  # Placeholder for network failure test
 
     @pytest.mark.asyncio
-    async def test_disk_full_handling(self, app: OpenCode, temp_project: Path):
+    async def test_disk_full_handling(self, app: Code-Forge, temp_project: Path):
         """Test handling of disk full errors."""
         # This would require mocking file system
         # Just verify error handling structure exists
@@ -1618,9 +1618,9 @@ docs/
 ```markdown
 # docs/index.md
 
-# OpenCode Documentation
+# Code-Forge Documentation
 
-OpenCode is an AI-powered coding assistant that connects to OpenRouter API
+Code-Forge is an AI-powered coding assistant that connects to OpenRouter API
 and uses LangChain as its backend middleware.
 
 ## Quick Links
@@ -1655,14 +1655,14 @@ Finalize package and release artifacts.
 
 ```toml
 [project]
-name = "opencode"
+name = "forge"
 version = "1.0.0"
 description = "AI-powered coding assistant with OpenRouter and LangChain"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
 authors = [
-    {name = "OpenCode Team", email = "team@opencode.dev"}
+    {name = "Code-Forge Team", email = "team@forge.dev"}
 ]
 keywords = [
     "ai",
@@ -1712,16 +1712,16 @@ docs = [
 ]
 
 [project.scripts]
-opencode = "opencode.cli:main"
+forge = "forge.cli:main"
 
-[project.entry-points."opencode.plugins"]
+[project.entry-points."forge.plugins"]
 # Built-in plugins can be registered here
 
 [project.urls]
-Homepage = "https://opencode.dev"
-Documentation = "https://docs.opencode.dev"
-Repository = "https://github.com/src/opencode/opencode"
-Changelog = "https://github.com/src/opencode/src/opencode/blob/main/CHANGELOG.md"
+Homepage = "https://forge.dev"
+Documentation = "https://docs.forge.dev"
+Repository = "https://github.com/src/forge/forge"
+Changelog = "https://github.com/src/forge/src/forge/blob/main/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling"]
@@ -1729,12 +1729,12 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/opencode",
+    "/forge",
     "/tests",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["opencode"]
+packages = ["forge"]
 ```
 
 **File:** `CHANGELOG.md`
@@ -1742,7 +1742,7 @@ packages = ["opencode"]
 ```markdown
 # Changelog
 
-All notable changes to OpenCode will be documented in this file.
+All notable changes to Code-Forge will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -1751,7 +1751,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of OpenCode
+- Initial release of Code-Forge
 - Core tool system (Read, Write, Edit, Glob, Grep, Bash)
 - Session management with persistence
 - Context management with automatic compaction

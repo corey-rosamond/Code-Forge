@@ -2,7 +2,7 @@
 
 import pytest
 
-from opencode.llm.routing import (
+from code_forge.llm.routing import (
     MODEL_ALIASES,
     RouteVariant,
     apply_variant,

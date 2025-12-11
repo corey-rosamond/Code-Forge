@@ -1,6 +1,6 @@
 # Tool Reference
 
-OpenCode provides built-in tools for common operations.
+Code-Forge provides built-in tools for common operations.
 
 ## File Tools
 

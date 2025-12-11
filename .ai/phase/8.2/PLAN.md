@@ -23,7 +23,7 @@
 ### Data Types
 
 ```python
-# src/opencode/web/types.py
+# src/forge/web/types.py
 """Data types for web tools."""
 
 from dataclasses import dataclass, field
@@ -117,7 +117,7 @@ class FetchOptions:
     """Options for URL fetching."""
     timeout: int = 30
     max_size: int = 5 * 1024 * 1024  # 5MB
-    user_agent: str = "src/opencode/1.0 (AI Assistant)"
+    user_agent: str = "src/forge/1.0 (AI Assistant)"
     follow_redirects: bool = True
     max_redirects: int = 5
     headers: dict[str, str] = field(default_factory=dict)
@@ -138,7 +138,7 @@ class ParsedContent:
 ### Configuration
 
 ```python
-# src/opencode/web/config.py
+# src/forge/web/config.py
 """Web tools configuration."""
 
 from dataclasses import dataclass, field
@@ -170,7 +170,7 @@ class FetchConfig:
     """Fetch configuration."""
     timeout: int = 30
     max_size: int = 5 * 1024 * 1024
-    user_agent: str = "src/opencode/1.0 (AI Assistant)"
+    user_agent: str = "src/forge/1.0 (AI Assistant)"
     follow_redirects: bool = True
     max_redirects: int = 5
 
@@ -219,7 +219,7 @@ class WebConfig:
         fetch_config = FetchConfig(
             timeout=fetch_data.get("timeout", 30),
             max_size=fetch_data.get("max_size", 5 * 1024 * 1024),
-            user_agent=fetch_data.get("user_agent", "src/opencode/1.0"),
+            user_agent=fetch_data.get("user_agent", "src/forge/1.0"),
             follow_redirects=fetch_data.get("follow_redirects", True),
             max_redirects=fetch_data.get("max_redirects", 5)
         )
@@ -243,7 +243,7 @@ class WebConfig:
 ## Step 2: Search Provider Interface (search/base.py)
 
 ```python
-# src/opencode/web/search/base.py
+# src/forge/web/search/base.py
 """Search provider interface."""
 
 from abc import ABC, abstractmethod
@@ -344,7 +344,7 @@ class SearchProvider(ABC):
 ### DuckDuckGo Provider
 
 ```python
-# src/opencode/web/search/duckduckgo.py
+# src/forge/web/search/duckduckgo.py
 """DuckDuckGo search provider."""
 
 import asyncio
@@ -428,7 +428,7 @@ class DuckDuckGoProvider(SearchProvider):
 ### Google Custom Search Provider
 
 ```python
-# src/opencode/web/search/google.py
+# src/forge/web/search/google.py
 """Google Custom Search provider."""
 
 import logging
@@ -540,7 +540,7 @@ class GoogleSearchProvider(SearchProvider):
 ### Brave Search Provider
 
 ```python
-# src/opencode/web/search/brave.py
+# src/forge/web/search/brave.py
 """Brave Search provider."""
 
 import logging
@@ -653,7 +653,7 @@ class BraveSearchProvider(SearchProvider):
 ## Step 4: URL Fetcher (fetch/fetcher.py)
 
 ```python
-# src/opencode/web/fetch/fetcher.py
+# src/forge/web/fetch/fetcher.py
 """URL fetcher implementation."""
 
 import asyncio
@@ -815,7 +815,7 @@ class URLFetcher:
 ## Step 5: HTML Parser (fetch/parser.py)
 
 ```python
-# src/opencode/web/fetch/parser.py
+# src/forge/web/fetch/parser.py
 """HTML parser and converter."""
 
 import logging
@@ -989,7 +989,7 @@ class HTMLParser:
 ## Step 6: Cache (cache.py)
 
 ```python
-# src/opencode/web/cache.py
+# src/forge/web/cache.py
 """Web response caching."""
 
 import hashlib
@@ -1246,7 +1246,7 @@ class WebCache:
 ## Step 7: Tool Implementations (tools.py)
 
 ```python
-# src/opencode/web/tools.py
+# src/forge/web/tools.py
 """Web tool implementations."""
 
 import logging
@@ -1434,8 +1434,8 @@ class WebFetchTool:
 ## Step 8: Package Exports (__init__.py)
 
 ```python
-# src/opencode/web/__init__.py
-"""Web tools for OpenCode."""
+# src/forge/web/__init__.py
+"""Web tools for Code-Forge."""
 
 from .cache import WebCache
 from .config import (

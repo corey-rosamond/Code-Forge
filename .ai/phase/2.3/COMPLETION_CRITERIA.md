@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 
 ## Checklist
 
-### BashTool (src/opencode/tools/execution/bash.py)
+### BashTool (src/forge/tools/execution/bash.py)
 - [ ] BashTool class extends BaseTool
 - [ ] name property returns "Bash"
 - [ ] category property returns ToolCategory.EXECUTION
@@ -34,7 +34,7 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 - [ ] Supports dry_run mode
 - [ ] Handles command failures gracefully
 
-### BashOutputTool (src/opencode/tools/execution/bash_output.py)
+### BashOutputTool (src/forge/tools/execution/bash_output.py)
 - [ ] BashOutputTool class extends BaseTool
 - [ ] name property returns "BashOutput"
 - [ ] category property returns ToolCategory.EXECUTION
@@ -47,7 +47,7 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 - [ ] Returns error for invalid filter regex
 - [ ] Returns error for non-existent shell
 
-### KillShellTool (src/opencode/tools/execution/kill_shell.py)
+### KillShellTool (src/forge/tools/execution/kill_shell.py)
 - [ ] KillShellTool class extends BaseTool
 - [ ] name property returns "KillShell"
 - [ ] category property returns ToolCategory.EXECUTION
@@ -57,7 +57,7 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 - [ ] Returns error for non-existent shells
 - [ ] Includes command and duration in metadata
 
-### ShellManager (src/opencode/tools/execution/shell_manager.py)
+### ShellManager (src/forge/tools/execution/shell_manager.py)
 - [ ] ShellManager is a singleton
 - [ ] create_shell() creates and starts subprocess
 - [ ] create_shell() returns ShellProcess with unique ID
@@ -69,7 +69,7 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 - [ ] reset() clears singleton for testing
 - [ ] Thread-safe operations with asyncio.Lock
 
-### ShellProcess (src/opencode/tools/execution/shell_manager.py)
+### ShellProcess (src/forge/tools/execution/shell_manager.py)
 - [ ] ShellProcess dataclass implemented
 - [ ] Fields: id, command, working_dir, process, status, exit_code
 - [ ] Fields: stdout_buffer, stderr_buffer, last_read positions
@@ -92,10 +92,10 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 - [ ] TIMEOUT status defined
 
 ### Package Structure
-- [ ] src/opencode/tools/execution/__init__.py exists
+- [ ] src/forge/tools/execution/__init__.py exists
 - [ ] __init__.py exports all tools and classes
 - [ ] register_execution_tools() function registers all tools
-- [ ] src/opencode/tools/__init__.py updated to include execution tools
+- [ ] src/forge/tools/__init__.py updated to include execution tools
 
 ### Tool Registration
 - [ ] All tools can be registered in ToolRegistry
@@ -124,12 +124,12 @@ All of the following criteria must be met before Phase 2.3 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/tools/execution/
+ls -la src/forge/tools/execution/
 # Expected: __init__.py, bash.py, bash_output.py, kill_shell.py, shell_manager.py
 
 # 2. Test imports
 python -c "
-from opencode.tools.execution import (
+from forge.tools.execution import (
     BashTool, BashOutputTool, KillShellTool,
     ShellManager, ShellProcess, ShellStatus,
     register_execution_tools
@@ -140,8 +140,8 @@ print('All execution tool imports successful')
 # 3. Test BashTool foreground execution
 python -c "
 import asyncio
-from opencode.tools.execution import BashTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool
+from forge.tools.base import ExecutionContext
 
 tool = BashTool()
 ctx = ExecutionContext(working_dir='/tmp')
@@ -157,8 +157,8 @@ print('BashTool foreground: OK')
 # 4. Test BashTool timeout
 python -c "
 import asyncio
-from opencode.tools.execution import BashTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool
+from forge.tools.base import ExecutionContext
 
 tool = BashTool()
 ctx = ExecutionContext(working_dir='/tmp')
@@ -173,8 +173,8 @@ print('BashTool timeout: OK')
 # 5. Test dangerous command blocking
 python -c "
 import asyncio
-from opencode.tools.execution import BashTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool
+from forge.tools.base import ExecutionContext
 
 tool = BashTool()
 ctx = ExecutionContext(working_dir='/tmp')
@@ -189,8 +189,8 @@ print('BashTool security: OK')
 # 6. Test BashTool background execution
 python -c "
 import asyncio
-from opencode.tools.execution import BashTool, ShellManager
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool, ShellManager
+from forge.tools.base import ExecutionContext
 
 ShellManager.reset()
 tool = BashTool()
@@ -219,8 +219,8 @@ ShellManager.reset()
 python -c "
 import asyncio
 import time
-from opencode.tools.execution import BashTool, BashOutputTool, ShellManager
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool, BashOutputTool, ShellManager
+from forge.tools.base import ExecutionContext
 
 ShellManager.reset()
 bash_tool = BashTool()
@@ -250,8 +250,8 @@ ShellManager.reset()
 # 8. Test KillShellTool
 python -c "
 import asyncio
-from opencode.tools.execution import BashTool, KillShellTool, ShellManager
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool, KillShellTool, ShellManager
+from forge.tools.base import ExecutionContext
 
 ShellManager.reset()
 bash_tool = BashTool()
@@ -281,7 +281,7 @@ ShellManager.reset()
 
 # 9. Test ShellManager singleton
 python -c "
-from opencode.tools.execution import ShellManager
+from forge.tools.execution import ShellManager
 
 ShellManager.reset()
 
@@ -293,8 +293,8 @@ print('ShellManager singleton: OK')
 
 # 10. Test tool registration
 python -c "
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.execution import register_execution_tools
+from forge.tools.registry import ToolRegistry
+from forge.tools.execution import register_execution_tools
 
 ToolRegistry.reset()
 registry = ToolRegistry()
@@ -308,7 +308,7 @@ print(f'Tool registration: OK ({registry.count()} tools)')
 
 # 11. Test schema generation
 python -c "
-from opencode.tools.execution import BashTool, BashOutputTool, KillShellTool
+from forge.tools.execution import BashTool, BashOutputTool, KillShellTool
 
 bash = BashTool()
 output = BashOutputTool()
@@ -332,8 +332,8 @@ print('Schema generation: OK')
 # 12. Test dry run mode
 python -c "
 import asyncio
-from opencode.tools.execution import BashTool
-from opencode.tools.base import ExecutionContext
+from forge.tools.execution import BashTool
+from forge.tools.base import ExecutionContext
 
 tool = BashTool()
 ctx = ExecutionContext(working_dir='/tmp', dry_run=True)
@@ -345,16 +345,16 @@ print('Dry run mode: OK')
 "
 
 # 13. Run all unit tests
-pytest tests/unit/tools/execution/ -v --cov=opencode.tools.execution --cov-report=term-missing
+pytest tests/unit/tools/execution/ -v --cov=forge.tools.execution --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 14. Type checking
-mypy src/opencode/tools/execution/ --strict
+mypy src/forge/tools/execution/ --strict
 # Expected: No errors
 
 # 15. Linting
-ruff check src/opencode/tools/execution/
+ruff check src/forge/tools/execution/
 # Expected: No errors
 ```
 
@@ -376,11 +376,11 @@ ruff check src/opencode/tools/execution/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/tools/execution/__init__.py` | Package exports and registration |
-| `src/opencode/tools/execution/bash.py` | BashTool implementation |
-| `src/opencode/tools/execution/bash_output.py` | BashOutputTool implementation |
-| `src/opencode/tools/execution/kill_shell.py` | KillShellTool implementation |
-| `src/opencode/tools/execution/shell_manager.py` | ShellManager and ShellProcess |
+| `src/forge/tools/execution/__init__.py` | Package exports and registration |
+| `src/forge/tools/execution/bash.py` | BashTool implementation |
+| `src/forge/tools/execution/bash_output.py` | BashOutputTool implementation |
+| `src/forge/tools/execution/kill_shell.py` | KillShellTool implementation |
+| `src/forge/tools/execution/shell_manager.py` | ShellManager and ShellProcess |
 | `tests/unit/tools/execution/__init__.py` | Test package |
 | `tests/unit/tools/execution/test_bash.py` | BashTool tests |
 | `tests/unit/tools/execution/test_bash_output.py` | BashOutputTool tests |

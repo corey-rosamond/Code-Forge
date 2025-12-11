@@ -8,8 +8,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode import __version__
-from opencode.cli.main import main, print_help
+from code_forge import __version__
+from code_forge.cli.main import main, print_help
 
 
 class TestMainFunction:
@@ -17,7 +17,7 @@ class TestMainFunction:
 
     def test_version_flag(self) -> None:
         """--version should print version and return 0."""
-        with patch.object(sys, "argv", ["opencode", "--version"]):
+        with patch.object(sys, "argv", ["forge", "--version"]):
             with patch("builtins.print") as mock_print:
                 exit_code = main()
         assert exit_code == 0
@@ -26,7 +26,7 @@ class TestMainFunction:
 
     def test_version_short_flag(self) -> None:
         """-v should print version and return 0."""
-        with patch.object(sys, "argv", ["opencode", "-v"]):
+        with patch.object(sys, "argv", ["forge", "-v"]):
             with patch("builtins.print") as mock_print:
                 exit_code = main()
         assert exit_code == 0
@@ -34,7 +34,7 @@ class TestMainFunction:
 
     def test_help_flag(self) -> None:
         """--help should print help and return 0."""
-        with patch.object(sys, "argv", ["opencode", "--help"]):
+        with patch.object(sys, "argv", ["forge", "--help"]):
             with patch("builtins.print") as mock_print:
                 exit_code = main()
         assert exit_code == 0
@@ -45,7 +45,7 @@ class TestMainFunction:
 
     def test_help_short_flag(self) -> None:
         """-h should print help and return 0."""
-        with patch.object(sys, "argv", ["opencode", "-h"]):
+        with patch.object(sys, "argv", ["forge", "-h"]):
             with patch("builtins.print") as mock_print:
                 exit_code = main()
         assert exit_code == 0
@@ -57,11 +57,11 @@ class TestMainFunction:
         mock_config.model.default = "anthropic/claude-3.5-sonnet"
         mock_config.get_api_key.return_value = "test-api-key"
 
-        with patch.object(sys, "argv", ["opencode"]):
-            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+        with patch.object(sys, "argv", ["forge"]):
+            with patch("code_forge.cli.main.ConfigLoader") as mock_loader:
                 mock_loader.return_value.load_all.return_value = mock_config
-                with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
-                    with patch("opencode.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
+                with patch("code_forge.cli.main.CodeForgeREPL", return_value=mock_repl):
+                    with patch("code_forge.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
                         mock_run.return_value = 0
                         exit_code = main()
 
@@ -71,8 +71,8 @@ class TestMainFunction:
 
     def test_config_load_error(self) -> None:
         """Config load error should return exit code 1."""
-        with patch.object(sys, "argv", ["opencode"]):
-            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+        with patch.object(sys, "argv", ["forge"]):
+            with patch("code_forge.cli.main.ConfigLoader") as mock_loader:
                 mock_loader.return_value.load_all.side_effect = Exception("Config error")
                 with patch("builtins.print"):
                     exit_code = main()
@@ -86,11 +86,11 @@ class TestMainFunction:
         mock_config.model.default = "anthropic/claude-3.5-sonnet"
         mock_config.get_api_key.return_value = "test-api-key"
 
-        with patch.object(sys, "argv", ["opencode"]):
-            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+        with patch.object(sys, "argv", ["forge"]):
+            with patch("code_forge.cli.main.ConfigLoader") as mock_loader:
                 mock_loader.return_value.load_all.return_value = mock_config
-                with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
-                    with patch("opencode.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
+                with patch("code_forge.cli.main.CodeForgeREPL", return_value=mock_repl):
+                    with patch("code_forge.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
                         mock_run.side_effect = Exception("REPL error")
                         with patch("builtins.print"):
                             exit_code = main()
@@ -104,11 +104,11 @@ class TestMainFunction:
         mock_config.model.default = "anthropic/claude-3.5-sonnet"
         mock_config.get_api_key.return_value = "test-api-key"
 
-        with patch.object(sys, "argv", ["opencode"]):
-            with patch("opencode.cli.main.ConfigLoader") as mock_loader:
+        with patch.object(sys, "argv", ["forge"]):
+            with patch("code_forge.cli.main.ConfigLoader") as mock_loader:
                 mock_loader.return_value.load_all.return_value = mock_config
-                with patch("opencode.cli.main.OpenCodeREPL", return_value=mock_repl):
-                    with patch("opencode.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
+                with patch("code_forge.cli.main.CodeForgeREPL", return_value=mock_repl):
+                    with patch("code_forge.cli.main.run_with_agent", new_callable=AsyncMock) as mock_run:
                         mock_run.side_effect = KeyboardInterrupt()
                         with patch("builtins.print"):
                             exit_code = main()
@@ -117,14 +117,14 @@ class TestMainFunction:
 
     def test_unknown_flag(self) -> None:
         """Unknown flags should return error code 1."""
-        with patch.object(sys, "argv", ["opencode", "--invalid-flag"]):
+        with patch.object(sys, "argv", ["forge", "--invalid-flag"]):
             with patch("builtins.print"):
                 exit_code = main()
         assert exit_code == 1
 
     def test_unknown_flag_error_message(self) -> None:
         """Unknown flags should print error to stderr."""
-        with patch.object(sys, "argv", ["opencode", "--unknown"]):
+        with patch.object(sys, "argv", ["forge", "--unknown"]):
             with patch("builtins.print") as mock_print:
                 exit_code = main()
 
@@ -177,17 +177,22 @@ class TestCLIIntegration:
         reason="Subprocess tests may behave differently on Windows",
     )
     def test_module_execution(self) -> None:
-        """python -m opencode --version should work."""
+        """python -m code_forge --version should work."""
         import os
+        from pathlib import Path
+
+        # Get project root dynamically (tests/unit/cli -> project root)
+        project_root = Path(__file__).parent.parent.parent.parent
+        src_dir = project_root / "src"
 
         env = os.environ.copy()
         # PYTHONPATH should point to src directory for src layout
-        env["PYTHONPATH"] = "/home/corey/OpenCode/src"
+        env["PYTHONPATH"] = str(src_dir)
         result = subprocess.run(
-            [sys.executable, "-m", "opencode", "--version"],
+            [sys.executable, "-m", "code_forge", "--version"],
             capture_output=True,
             text=True,
-            cwd="/home/corey/OpenCode",
+            cwd=str(project_root),
             env=env,
         )
         assert result.returncode == 0

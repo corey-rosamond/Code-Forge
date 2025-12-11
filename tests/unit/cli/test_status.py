@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.cli.status import StatusBar, StatusBarObserver
+from code_forge.cli.status import StatusBar, StatusBarObserver
 
 
 class MockObserver(StatusBarObserver):

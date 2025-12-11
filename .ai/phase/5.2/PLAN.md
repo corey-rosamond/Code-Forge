@@ -8,7 +8,7 @@
 
 ## Overview
 
-This plan details the implementation of context window management for OpenCode, including token counting, truncation strategies, and context compaction.
+This plan details the implementation of context window management for Code-Forge, including token counting, truncation strategies, and context compaction.
 
 ---
 
@@ -22,7 +22,7 @@ This plan details the implementation of context window management for OpenCode, 
 
 ---
 
-## File 1: src/opencode/context/tokens.py
+## File 1: src/forge/context/tokens.py
 
 ```python
 """Token counting implementations."""
@@ -415,7 +415,7 @@ def get_counter(model: str) -> TokenCounter:
 
 ---
 
-## File 2: src/opencode/context/limits.py
+## File 2: src/forge/context/limits.py
 
 ```python
 """Context limits and tracking."""
@@ -735,7 +735,7 @@ class ContextTracker:
 
 ---
 
-## File 3: src/opencode/context/strategies.py
+## File 3: src/forge/context/strategies.py
 
 ```python
 """Context truncation strategies."""
@@ -1134,7 +1134,7 @@ class CompositeStrategy(TruncationStrategy):
 
 ---
 
-## File 4: src/opencode/context/compaction.py
+## File 4: src/forge/context/compaction.py
 
 ```python
 """Context compaction via summarization."""
@@ -1397,7 +1397,7 @@ class ToolResultCompactor:
 
 ---
 
-## File 5: src/opencode/context/manager.py
+## File 5: src/forge/context/manager.py
 
 ```python
 """Central context management."""
@@ -1681,16 +1681,16 @@ class ContextManager:
 
 ---
 
-## File 6: src/opencode/context/__init__.py
+## File 6: src/forge/context/__init__.py
 
 ```python
 """Context management package.
 
-This package provides context window management for OpenCode,
+This package provides context window management for Code-Forge,
 including token counting, truncation strategies, and compaction.
 
 Example:
-    from opencode.context import ContextManager, TruncationMode
+    from forge.context import ContextManager, TruncationMode
 
     # Create manager for model
     manager = ContextManager(
@@ -1775,8 +1775,8 @@ __all__ = [
 ### With Session Management (Phase 5.1)
 
 ```python
-from opencode.sessions import SessionManager, SessionMessage
-from opencode.context import ContextManager
+from forge.sessions import SessionManager, SessionMessage
+from forge.context import ContextManager
 
 # Create context manager
 ctx = ContextManager(model="claude-3-opus")
@@ -1799,8 +1799,8 @@ session.add_message(session_msg)
 ### With LangChain Integration (Phase 3.2)
 
 ```python
-from opencode.langchain import OpenRouterLLM
-from opencode.context import ContextManager, TruncationMode
+from forge.langchain import OpenRouterLLM
+from forge.context import ContextManager, TruncationMode
 
 llm = OpenRouterLLM(model="anthropic/claude-3-opus")
 

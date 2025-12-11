@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from opencode.plugins.base import (
+from code_forge.plugins.base import (
     Plugin,
     PluginCapabilities,
     PluginContext,
@@ -33,7 +33,7 @@ class TestPluginMetadata:
         assert meta.homepage is None
         assert meta.repository is None
         assert meta.keywords == []
-        assert meta.opencode_version is None
+        assert meta.forge_version is None
 
     def test_all_fields(self) -> None:
         """Test metadata with all fields."""
@@ -47,7 +47,7 @@ class TestPluginMetadata:
             homepage="https://example.com",
             repository="https://github.com/example/plugin",
             keywords=["test", "plugin"],
-            opencode_version=">=1.0.0",
+            forge_version=">=1.0.0",
         )
         assert meta.author == "John Doe"
         assert meta.email == "john@example.com"
@@ -55,7 +55,7 @@ class TestPluginMetadata:
         assert meta.homepage == "https://example.com"
         assert meta.repository == "https://github.com/example/plugin"
         assert meta.keywords == ["test", "plugin"]
-        assert meta.opencode_version == ">=1.0.0"
+        assert meta.forge_version == ">=1.0.0"
 
     def test_to_dict(self) -> None:
         """Test metadata to dict conversion."""

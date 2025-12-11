@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.utils.result import Result
+from code_forge.utils.result import Result
 
 
 class TestResultOk:

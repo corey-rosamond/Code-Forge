@@ -49,7 +49,7 @@ To use GitHub features, set one of:
   - GITHUB_TOKEN environment variable
   - GH_TOKEN environment variable
 
-Or configure in ~/.src/opencode/config.yaml:
+Or configure in ~/.src/forge/config.yaml:
   github:
     token: "ghp_your_token_here"
 
@@ -346,7 +346,7 @@ Description:
 - [x] Unit tests added
 - [ ] Manual testing
 
-🤖 Generated with OpenCode
+🤖 Generated with Code-Forge
 ────────────────────────────────────────────
 
 Changes: +156 -34 in 5 files

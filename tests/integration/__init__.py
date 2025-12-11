@@ -1,1 +1,1 @@
-"""Integration tests for OpenCode."""
+"""Integration tests for Code-Forge."""

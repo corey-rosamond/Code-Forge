@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.web.cache import WebCache
-from opencode.web.types import FetchOptions, FetchResponse
+from code_forge.web.cache import WebCache
+from code_forge.web.types import FetchOptions, FetchResponse
 
 
 def make_response(

@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from opencode.mcp.client import MCPClient
-from opencode.mcp.protocol import MCPTool
-from opencode.mcp.tools import MCPToolAdapter, MCPToolRegistry, _sanitize_name
+from code_forge.mcp.client import MCPClient
+from code_forge.mcp.protocol import MCPTool
+from code_forge.mcp.tools import MCPToolAdapter, MCPToolRegistry, _sanitize_name
 
 
 class TestSanitizeName:

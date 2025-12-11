@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.commands.parser import CommandParser, ParsedCommand
+from code_forge.commands.parser import CommandParser, ParsedCommand
 
 
 class TestParsedCommand:

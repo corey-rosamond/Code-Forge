@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to OpenCode will be documented in this file.
+All notable changes to Code-Forge will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -74,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### v1.0.0 Highlights
 
-OpenCode 1.0.0 is the first stable release, featuring a complete AI-powered coding assistant with:
+Code-Forge 1.0.0 is the first stable release, featuring a complete AI-powered coding assistant with:
 
 - **400+ AI Models**: Connect to any model via OpenRouter
 - **Powerful Tools**: Read, write, edit files, run commands, search the web

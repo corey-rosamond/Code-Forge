@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.mcp.client import MCPClient, MCPClientError
-from opencode.mcp.protocol import (
+from code_forge.mcp.client import MCPClient, MCPClientError
+from code_forge.mcp.protocol import (
     MCPCapabilities,
     MCPError,
     MCPPrompt,
@@ -20,7 +20,7 @@ from opencode.mcp.protocol import (
     MCPServerInfo,
     MCPTool,
 )
-from opencode.mcp.transport.base import MCPTransport
+from code_forge.mcp.transport.base import MCPTransport
 
 
 class MockTransport(MCPTransport):
@@ -90,7 +90,7 @@ class TestMCPClient:
         transport = MockTransport()
         client = MCPClient(transport)
         assert client.transport is transport
-        assert client.client_name == "opencode"
+        assert client.client_name == "forge"
         assert client.client_version == "1.0.0"
         assert client.capabilities is None
         assert client.server_info is None

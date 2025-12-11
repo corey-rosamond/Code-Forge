@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.mcp.transport.http import HTTPTransport
-from opencode.mcp.transport.stdio import StdioTransport
+from code_forge.mcp.transport.http import HTTPTransport
+from code_forge.mcp.transport.stdio import StdioTransport
 
 
 class TestHTTPTransportCoverage:
@@ -333,8 +333,8 @@ class TestClientCoverage:
     @pytest.mark.asyncio
     async def test_connect_init_failure_not_mcp_error(self) -> None:
         """Test connect when init fails with non-MCPError."""
-        from opencode.mcp.client import MCPClient, MCPClientError
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.client import MCPClient, MCPClientError
+        from code_forge.mcp.transport.base import MCPTransport
 
         mock_transport = MagicMock(spec=MCPTransport)
         mock_transport.connect = AsyncMock()
@@ -356,8 +356,8 @@ class TestClientCoverage:
     @pytest.mark.asyncio
     async def test_connect_init_failure_mcp_error(self) -> None:
         """Test connect when init fails with MCPClientError."""
-        from opencode.mcp.client import MCPClient, MCPClientError
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.client import MCPClient, MCPClientError
+        from code_forge.mcp.transport.base import MCPTransport
 
         mock_transport = MagicMock(spec=MCPTransport)
         mock_transport.connect = AsyncMock()
@@ -378,8 +378,8 @@ class TestClientCoverage:
     @pytest.mark.asyncio
     async def test_disconnect_transport_error(self) -> None:
         """Test disconnect when transport raises error."""
-        from opencode.mcp.client import MCPClient
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.client import MCPClient
+        from code_forge.mcp.transport.base import MCPTransport
 
         mock_transport = MagicMock(spec=MCPTransport)
         mock_transport.disconnect = AsyncMock(side_effect=Exception("Disconnect error"))
@@ -393,8 +393,8 @@ class TestClientCoverage:
     @pytest.mark.asyncio
     async def test_request_connection_error(self) -> None:
         """Test _request with connection error."""
-        from opencode.mcp.client import MCPClient, MCPClientError
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.client import MCPClient, MCPClientError
+        from code_forge.mcp.transport.base import MCPTransport
 
         mock_transport = MagicMock(spec=MCPTransport)
         mock_transport.send = AsyncMock(side_effect=ConnectionError("Connection lost"))
@@ -408,8 +408,8 @@ class TestClientCoverage:
     @pytest.mark.asyncio
     async def test_notify_connection_error(self) -> None:
         """Test _notify with connection error."""
-        from opencode.mcp.client import MCPClient, MCPClientError
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.client import MCPClient, MCPClientError
+        from code_forge.mcp.transport.base import MCPTransport
 
         mock_transport = MagicMock(spec=MCPTransport)
         mock_transport.send = AsyncMock(side_effect=ConnectionError("Connection lost"))
@@ -423,8 +423,8 @@ class TestClientCoverage:
     @pytest.mark.asyncio
     async def test_handle_message_server_request(self) -> None:
         """Test _handle_message with server request."""
-        from opencode.mcp.client import MCPClient
-        from opencode.mcp.transport.base import MCPTransport
+        from code_forge.mcp.client import MCPClient
+        from code_forge.mcp.transport.base import MCPTransport
 
         mock_transport = MagicMock(spec=MCPTransport)
         mock_transport.is_connected = True

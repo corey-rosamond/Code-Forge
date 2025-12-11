@@ -20,7 +20,7 @@
   - [ ] `homepage: str | None`
   - [ ] `repository: str | None`
   - [ ] `keywords: list[str]`
-  - [ ] `opencode_version: str | None`
+  - [ ] `forge_version: str | None`
   - [ ] `to_dict()` method
 
 - [ ] `PluginCapabilities` dataclass implemented
@@ -236,16 +236,16 @@
 pytest tests/plugins/ -v
 
 # Run with coverage
-pytest tests/plugins/ --cov=src/opencode/plugins --cov-report=term-missing
+pytest tests/plugins/ --cov=src/forge/plugins --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/plugins/ --cov=src/opencode/plugins --cov-fail-under=90
+pytest tests/plugins/ --cov=src/forge/plugins --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/plugins/
+mypy src/forge/plugins/
 
 # Complexity check
-flake8 src/opencode/plugins/ --max-complexity=10
+flake8 src/forge/plugins/ --max-complexity=10
 ```
 
 ---
@@ -306,7 +306,7 @@ entry_point: test_plugin:TestPlugin
 """)
 
     (plugin_dir / "test_plugin.py").write_text("""
-from opencode.plugins import Plugin, PluginMetadata
+from forge.plugins import Plugin, PluginMetadata
 
 class TestPlugin(Plugin):
     @property
@@ -449,7 +449,7 @@ Before starting Phase 10.1, verify:
 ## Plugin Directory Structure
 
 ```
-~/.src/opencode/
+~/.src/forge/
 ├── plugins/                  # User plugins
 │   └── my-plugin/
 │       ├── plugin.yaml       # Manifest
@@ -462,7 +462,7 @@ Before starting Phase 10.1, verify:
 │
 └── config.yaml               # May include plugin configs
 
-.src/opencode/                    # Project level
+.src/forge/                    # Project level
 └── plugins/
     └── project-plugin/
         └── ...

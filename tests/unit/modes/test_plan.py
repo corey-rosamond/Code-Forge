@@ -4,8 +4,8 @@ from datetime import datetime
 
 import pytest
 
-from opencode.modes.base import ModeContext, ModeName
-from opencode.modes.plan import Plan, PlanMode, PlanStep
+from code_forge.modes.base import ModeContext, ModeName
+from code_forge.modes.plan import Plan, PlanMode, PlanStep
 
 
 class TestPlanStep:

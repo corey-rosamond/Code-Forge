@@ -13,7 +13,7 @@
 ```
 You: /help
 
-OpenCode Commands
+Code-Forge Commands
 ========================================
 
 General:

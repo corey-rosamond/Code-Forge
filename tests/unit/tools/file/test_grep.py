@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from opencode.tools.base import ExecutionContext
-from opencode.tools.file.grep import GrepTool
+from code_forge.tools.base import ExecutionContext
+from code_forge.tools.file.grep import GrepTool
 
 
 @pytest.fixture
@@ -73,7 +73,7 @@ class TestGrepToolProperties:
         assert "ripgrep" in grep_tool.description.lower()
 
     def test_category(self, grep_tool: GrepTool) -> None:
-        from opencode.tools.base import ToolCategory
+        from code_forge.tools.base import ToolCategory
 
         assert grep_tool.category == ToolCategory.FILE
 

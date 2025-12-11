@@ -2,15 +2,15 @@
 
 import pytest
 
-from opencode.modes.base import Mode, ModeConfig, ModeContext, ModeName, NormalMode
-from opencode.modes.manager import (
+from code_forge.modes.base import Mode, ModeConfig, ModeContext, ModeName, NormalMode
+from code_forge.modes.manager import (
     ModeError,
     ModeManager,
     ModeNotFoundError,
     ModeSwitchError,
 )
-from opencode.modes.plan import PlanMode
-from opencode.modes.thinking import ThinkingMode
+from code_forge.modes.plan import PlanMode
+from code_forge.modes.thinking import ThinkingMode
 
 
 @pytest.fixture

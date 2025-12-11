@@ -369,7 +369,7 @@ flowchart TD
 
 ```mermaid
 flowchart TB
-    subgraph HooksPkg["src/opencode/hooks/"]
+    subgraph HooksPkg["src/forge/hooks/"]
         INIT["__init__.py"]
         EVENTS["events.py<br/>EventType, HookEvent"]
         REGISTRY["registry.py<br/>Hook, HookRegistry"]
@@ -377,15 +377,15 @@ flowchart TB
         CONFIG["config.py<br/>HookConfig"]
     end
 
-    subgraph ToolsPkg["src/opencode/tools/"]
+    subgraph ToolsPkg["src/forge/tools/"]
         TOOL_EXEC["executor.py"]
     end
 
-    subgraph LLMPkg["src/opencode/llm/"]
+    subgraph LLMPkg["src/forge/llm/"]
         CLIENT["client.py"]
     end
 
-    subgraph SessionPkg["src/opencode/sessions/"]
+    subgraph SessionPkg["src/forge/sessions/"]
         MANAGER["manager.py"]
     end
 
@@ -467,15 +467,15 @@ flowchart TB
     end
 
     subgraph EnvVars["Environment Variables"]
-        E_EVENT[OPENCODE_EVENT]
-        E_TS[OPENCODE_TIMESTAMP]
-        E_SESS[OPENCODE_SESSION_ID]
-        E_TOOL[OPENCODE_TOOL_NAME]
-        E_ARGS[OPENCODE_TOOL_ARGS]
-        E_RESULT[OPENCODE_TOOL_RESULT]
-        E_MODEL[OPENCODE_LLM_MODEL]
-        E_TOKENS[OPENCODE_LLM_TOKENS]
-        E_PERM[OPENCODE_PERM_LEVEL]
+        E_EVENT[FORGE_EVENT]
+        E_TS[FORGE_TIMESTAMP]
+        E_SESS[FORGE_SESSION_ID]
+        E_TOOL[FORGE_TOOL_NAME]
+        E_ARGS[FORGE_TOOL_ARGS]
+        E_RESULT[FORGE_TOOL_RESULT]
+        E_MODEL[FORGE_LLM_MODEL]
+        E_TOKENS[FORGE_LLM_TOKENS]
+        E_PERM[FORGE_PERM_LEVEL]
     end
 
     TYPE --> E_EVENT

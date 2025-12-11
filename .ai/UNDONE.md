@@ -1,6 +1,6 @@
-# OpenCode Project Roadmap
+# Code-Forge Project Roadmap
 
-**Project:** OpenCode - Claude Code Alternative
+**Project:** Code-Forge - Claude Code Alternative
 **Target:** Production-ready CLI using OpenRouter API and LangChain 1.0
 **Last Updated:** 2025-12-09
 
@@ -52,7 +52,7 @@ All 22 phases have planning documents in `.ai/phase/[phase]/`:
 
 ### Implementation Code
 
-Phase 1.1 implementation complete in `src/opencode/`:
+Phase 1.1 implementation complete in `src/forge/`:
 - Core interfaces (`core/interfaces.py`)
 - Value objects (`core/types.py`)
 - Exception hierarchy (`core/errors.py`)
@@ -60,24 +60,24 @@ Phase 1.1 implementation complete in `src/opencode/`:
 - Result type (`utils/result.py`)
 - CLI entry point (`cli/main.py`)
 
-Phase 1.2 implementation complete in `src/opencode/config/`:
+Phase 1.2 implementation complete in `src/forge/config/`:
 - Configuration models (`config/models.py`)
 - Configuration sources (`config/sources.py`)
 - Configuration loader (`config/loader.py`)
 
-Phase 1.3 implementation complete in `src/opencode/cli/`:
+Phase 1.3 implementation complete in `src/forge/cli/`:
 - Theme definitions (`cli/themes.py`)
 - Status bar (`cli/status.py`)
 - REPL core (`cli/repl.py`)
 - CLI main updated to start REPL
 
-Phase 2.1 implementation complete in `src/opencode/tools/`:
+Phase 2.1 implementation complete in `src/forge/tools/`:
 - Tool models and BaseTool ABC (`tools/base.py`)
 - Thread-safe ToolRegistry singleton (`tools/registry.py`)
 - ToolExecutor with tracking (`tools/executor.py`)
 - Public exports (`tools/__init__.py`)
 
-Phase 2.2 implementation complete in `src/opencode/tools/file/`:
+Phase 2.2 implementation complete in `src/forge/tools/file/`:
 - ReadTool - Read files with offset/limit, images, PDFs, notebooks (`tools/file/read.py`)
 - WriteTool - Write files with directory creation (`tools/file/write.py`)
 - EditTool - Find/replace with replace_all option (`tools/file/edit.py`)
@@ -85,7 +85,7 @@ Phase 2.2 implementation complete in `src/opencode/tools/file/`:
 - GrepTool - Content search with regex, context lines (`tools/file/grep.py`)
 - Security utilities - Path traversal prevention (`tools/file/utils.py`)
 
-Phase 2.3 implementation complete in `src/opencode/tools/execution/`:
+Phase 2.3 implementation complete in `src/forge/tools/execution/`:
 - ShellManager - Singleton for managing background shell processes (`tools/execution/shell_manager.py`)
 - ShellProcess - Dataclass for tracking shell state and output (`tools/execution/shell_manager.py`)
 - ShellStatus - Enum for process states (pending, running, completed, failed, killed, timeout)
@@ -94,7 +94,7 @@ Phase 2.3 implementation complete in `src/opencode/tools/execution/`:
 - KillShellTool - Terminate background processes (`tools/execution/kill_shell.py`)
 - Security patterns block dangerous commands (rm -rf /, mkfs, dd, fork bombs)
 
-Phase 3.1 implementation complete in `src/opencode/llm/`:
+Phase 3.1 implementation complete in `src/forge/llm/`:
 - Message, ToolCall, ToolDefinition models (`llm/models.py`)
 - CompletionRequest/Response models (`llm/models.py`)
 - StreamChunk, StreamDelta for streaming (`llm/models.py`)
@@ -103,15 +103,15 @@ Phase 3.1 implementation complete in `src/opencode/llm/`:
 - OpenRouterClient with retry logic, streaming, usage tracking (`llm/client.py`)
 - StreamCollector for assembling streamed responses (`llm/streaming.py`)
 
-Phase 3.2 implementation complete in `src/opencode/langchain/`:
+Phase 3.2 implementation complete in `src/forge/langchain/`:
 - OpenRouterLLM wrapper - BaseChatModel implementation (`langchain/llm.py`)
-- Bidirectional message conversion - LangChain <-> OpenCode (`langchain/messages.py`)
-- Tool adapters - LangChainToolAdapter, OpenCodeToolAdapter (`langchain/tools.py`)
+- Bidirectional message conversion - LangChain <-> Code-Forge (`langchain/messages.py`)
+- Tool adapters - LangChainToolAdapter, Code-ForgeToolAdapter (`langchain/tools.py`)
 - ConversationMemory, SlidingWindowMemory, SummaryMemory (`langchain/memory.py`)
 - Callback handlers - TokenTracking, Logging, Streaming, Composite (`langchain/callbacks.py`)
-- OpenCodeAgent - ReAct-style agent executor with tool loop (`langchain/agent.py`)
+- Code-ForgeAgent - ReAct-style agent executor with tool loop (`langchain/agent.py`)
 
-Phase 4.1 implementation complete in `src/opencode/permissions/`:
+Phase 4.1 implementation complete in `src/forge/permissions/`:
 - Permission models - PermissionLevel, PermissionCategory, PermissionRule, PermissionResult (`permissions/models.py`)
 - Pattern matching - PatternMatcher with glob, regex, tool/arg/category patterns (`permissions/rules.py`)
 - RuleSet - Collection with priority/specificity-based evaluation (`permissions/rules.py`)
@@ -119,7 +119,7 @@ Phase 4.1 implementation complete in `src/opencode/permissions/`:
 - User confirmation - ConfirmationChoice, ConfirmationRequest, PermissionPrompt (`permissions/prompt.py`)
 - Configuration - PermissionConfig, DEFAULT_RULES (14 rules) (`permissions/config.py`)
 
-Phase 4.2 implementation complete in `src/opencode/hooks/`:
+Phase 4.2 implementation complete in `src/forge/hooks/`:
 - Event types - EventType enum with 16 event types (tool, LLM, session, permission, user) (`hooks/events.py`)
 - HookEvent - Event data with factory methods and serialization (`hooks/events.py`)
 - Hook dataclass - Pattern matching (exact, glob, tool-specific, comma-separated) (`hooks/registry.py`)
@@ -131,7 +131,7 @@ Phase 4.2 implementation complete in `src/opencode/hooks/`:
 - HookConfig - Configuration loading/saving (global + project) (`hooks/config.py`)
 - HOOK_TEMPLATES - Example hooks (log_all, notify_session_start, git_auto_commit, block_sudo) (`hooks/config.py`)
 
-Phase 5.1 implementation complete in `src/opencode/sessions/`:
+Phase 5.1 implementation complete in `src/forge/sessions/`:
 - Session data models (`sessions/models.py`)
   - Session dataclass - Core session with messages, tool history, tokens, metadata
   - SessionMessage - Messages with to_llm_message()/from_llm_message() conversion
@@ -139,7 +139,7 @@ Phase 5.1 implementation complete in `src/opencode/sessions/`:
 - Session storage (`sessions/storage.py`)
   - SessionStorage - File-based JSON persistence with atomic writes
   - Backup creation before overwrite, recovery support
-  - XDG Base Directory compliance (~/.local/share/opencode/sessions/)
+  - XDG Base Directory compliance (~/.local/share/forge/sessions/)
   - Automatic backup rotation (max 100, 7 days age limit)
 - Session index (`sessions/index.py`)
   - SessionIndex - Fast session listing without loading full files
@@ -151,7 +151,7 @@ Phase 5.1 implementation complete in `src/opencode/sessions/`:
   - Auto-save with configurable interval (asyncio task)
   - Hook system integration (session:start, session:end, session:message, session:save)
 
-Phase 5.2 implementation complete in `src/opencode/context/`:
+Phase 5.2 implementation complete in `src/forge/context/`:
 - Token counting (`context/tokens.py`)
   - TokenCounter - Abstract base class for token counting
   - TiktokenCounter - tiktoken-based accurate counting with fallback
@@ -178,7 +178,7 @@ Phase 5.2 implementation complete in `src/opencode/context/`:
   - ContextManager - Central coordinator for context management
   - Auto-truncation, compact_if_needed(), get_stats()
 
-Phase 6.1 implementation complete in `src/opencode/commands/`:
+Phase 6.1 implementation complete in `src/forge/commands/`:
 - Command parsing (`commands/parser.py`)
   - ParsedCommand - Dataclass for parsed command with args, kwargs, flags
   - CommandParser - Parses /command input, handles quoted strings
@@ -206,7 +206,7 @@ Phase 6.1 implementation complete in `src/opencode/commands/`:
   - config_commands.py: /config with subcommands (get, set), /model
   - debug_commands.py: /debug, /tokens, /history, /tools
 
-Phase 6.2 implementation complete in `src/opencode/modes/`:
+Phase 6.2 implementation complete in `src/forge/modes/`:
 - Mode base classes (`modes/base.py`)
   - Mode - Abstract base class with activate/deactivate lifecycle
   - ModeConfig - Mode configuration with system prompt additions
@@ -248,7 +248,7 @@ Phase 6.2 implementation complete in `src/opencode/modes/`:
 - Package exports (`modes/__init__.py`)
   - setup_modes() - Register all default modes with manager
 
-Phase 7.1 implementation complete in `src/opencode/agents/`:
+Phase 7.1 implementation complete in `src/forge/agents/`:
 - Agent base classes (`agents/base.py`)
   - AgentState - Enum for lifecycle states (PENDING, RUNNING, COMPLETED, FAILED, CANCELLED)
   - ResourceLimits - Token, time, tool call, iteration limits
@@ -279,7 +279,7 @@ Phase 7.1 implementation complete in `src/opencode/agents/`:
   - GeneralAgent - General purpose tasks
   - Factory function create_agent() and registry
 
-Phase 7.2 implementation complete in `src/opencode/skills/`:
+Phase 7.2 implementation complete in `src/forge/skills/`:
 - Skill base classes (`skills/base.py`)
   - SkillConfig - Configuration option with type validation (string, int, bool, choice)
   - SkillMetadata - Name, description, author, version, tags, aliases, examples
@@ -292,7 +292,7 @@ Phase 7.2 implementation complete in `src/opencode/skills/`:
   - Validation for required fields, config types
 - Skill loader (`skills/loader.py`)
   - SkillLoader - File-based skill discovery
-  - Search paths for user (~/.opencode/skills/) and project (.opencode/skills/)
+  - Search paths for user (~/.forge/skills/) and project (.forge/skills/)
   - Hot reload support
   - Error callbacks for load failures
 - Skill registry (`skills/registry.py`)
@@ -318,7 +318,7 @@ Phase 7.2 implementation complete in `src/opencode/skills/`:
   - /skill search <query> - Search skills
   - /skill reload - Reload all skills
 
-Phase 8.1 implementation complete in `src/opencode/mcp/`:
+Phase 8.1 implementation complete in `src/forge/mcp/`:
 - MCP protocol types (`mcp/protocol.py`)
   - MCPRequest, MCPResponse, MCPNotification - JSON-RPC 2.0 messages
   - MCPError - Error with code, message, data
@@ -345,14 +345,14 @@ Phase 8.1 implementation complete in `src/opencode/mcp/`:
   - list_prompts(), get_prompt() - Prompt operations
   - MCPClientError - Client error with JSON-RPC code
 - Tool integration (`mcp/tools.py`)
-  - MCPToolAdapter - Adapts MCP tools to OpenCode tool system
+  - MCPToolAdapter - Adapts MCP tools to Code-Forge tool system
   - MCPToolRegistry - Registry for MCP tools with namespacing
   - Tool names: mcp__{server}__{tool} format
 - Configuration (`mcp/config.py`)
   - MCPServerConfig - Server configuration (transport, command/url, env)
   - MCPSettings - Global MCP settings (timeout, auto_connect)
   - MCPConfig - Full configuration with servers and settings
-  - MCPConfigLoader - Load from ~/.opencode/mcp.yaml and .opencode/mcp.yaml
+  - MCPConfigLoader - Load from ~/.forge/mcp.yaml and .forge/mcp.yaml
 - Connection manager (`mcp/manager.py`)
   - MCPManager - Singleton for managing MCP connections
   - connect(), disconnect(), reconnect() - Connection lifecycle
@@ -360,7 +360,7 @@ Phase 8.1 implementation complete in `src/opencode/mcp/`:
   - get_all_tools(), get_all_resources(), get_all_prompts()
   - reload_config() - Hot reload configuration
 
-Phase 8.2 implementation complete in `src/opencode/web/`:
+Phase 8.2 implementation complete in `src/forge/web/`:
 - Web types (`web/types.py`)
   - SearchResult - Individual search result with title, url, snippet, date, metadata
   - SearchResponse - Search results with query, provider, total_results, search_time
@@ -400,7 +400,7 @@ Phase 8.2 implementation complete in `src/opencode/web/`:
   - WebFetchTool - Fetch tool with caching, format options (markdown, text, raw)
   - Content truncation for large responses
 
-Phase 9.1 implementation complete in `src/opencode/git/`:
+Phase 9.1 implementation complete in `src/forge/git/`:
 - Repository interface (`git/repository.py`)
   - GitRepository - Core repository interface with path detection
   - GitRemote - Remote repository information (name, url, fetch/push URLs)
@@ -462,7 +462,7 @@ Phase 9.1 implementation complete in `src/opencode/git/`:
 - Package exports (`git/__init__.py`)
   - All public classes exported with sorted __all__
 
-Phase 9.2 implementation complete in `src/opencode/github/`:
+Phase 9.2 implementation complete in `src/forge/github/`:
 - Authentication (`github/auth.py`)
   - GitHubAuth - Authentication data (token, username, scopes, rate limits)
   - GitHubAuthenticator - Token validation, env var support (GITHUB_TOKEN, GH_TOKEN)
@@ -515,7 +515,7 @@ Phase 9.2 implementation complete in `src/opencode/github/`:
 - Package exports (`github/__init__.py`)
   - All public classes exported
 
-Phase 10.1 implementation complete in `src/opencode/plugins/`:
+Phase 10.1 implementation complete in `src/forge/plugins/`:
 - Plugin exceptions (`plugins/exceptions.py`)
   - PluginError - Base exception with plugin_id attribute
   - PluginNotFoundError, PluginLoadError, PluginManifestError
@@ -572,7 +572,7 @@ Phase 1.1 through 10.2 tests complete in `tests/`:
 
 ### ALL PHASES COMPLETE ✅
 
-OpenCode v1.0.0 is ready for release!
+Code-Forge v1.0.0 is ready for release!
 
 All implementation phases complete:
 1. [x] Phase 1.1 complete (Core Foundation)
@@ -687,4 +687,4 @@ Phase 10.2 (Polish & Testing) - Requires all above
 - Phase 1.1 implementation complete (2025-12-03)
 - Do not mark anything as complete without verified evidence
 - Each phase requires planning docs to be read before implementation starts
-- Source code is in `src/opencode/` (standard Python src layout)
+- Source code is in `src/forge/` (standard Python src layout)

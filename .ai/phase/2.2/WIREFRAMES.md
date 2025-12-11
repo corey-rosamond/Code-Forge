@@ -25,7 +25,7 @@ This document shows the expected output formats and user-visible results from th
 │      4	import sys                                                    │
 │      5	from pathlib import Path                                      │
 │      6	                                                              │
-│      7	from opencode.cli import main                                 │
+│      7	from forge.cli import main                                 │
 │      8	                                                              │
 │      9	                                                              │
 │     10	if __name__ == "__main__":                                    │

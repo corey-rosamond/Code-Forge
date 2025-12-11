@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from opencode.git.repository import GitError, GitRepository
-from opencode.git.safety import GitSafety, SafetyCheck
+from code_forge.git.repository import GitError, GitRepository
+from code_forge.git.safety import GitSafety, SafetyCheck
 
 
 class TestSafetyCheck:

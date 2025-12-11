@@ -8,7 +8,7 @@
 
 ## Overview
 
-This plan details the implementation of session management for OpenCode, enabling conversation persistence, session resume, and history tracking.
+This plan details the implementation of session management for Code-Forge, enabling conversation persistence, session resume, and history tracking.
 
 ---
 
@@ -21,7 +21,7 @@ This plan details the implementation of session management for OpenCode, enablin
 
 ---
 
-## File 1: src/opencode/sessions/models.py
+## File 1: src/forge/sessions/models.py
 
 ```python
 """Session data models."""
@@ -407,7 +407,7 @@ class Session:
 
 ---
 
-## File 2: src/opencode/sessions/storage.py
+## File 2: src/forge/sessions/storage.py
 
 ```python
 """Session persistence layer."""
@@ -495,7 +495,7 @@ class SessionStorage:
         else:
             base = Path.home() / ".local" / "share"
 
-        return base / "opencode" / cls.DEFAULT_DIR_NAME
+        return base / "forge" / cls.DEFAULT_DIR_NAME
 
     @classmethod
     def get_project_dir(cls, project_root: Path | str) -> Path:
@@ -509,7 +509,7 @@ class SessionStorage:
         """
         if isinstance(project_root, str):
             project_root = Path(project_root)
-        return project_root / ".opencode" / cls.DEFAULT_DIR_NAME
+        return project_root / ".forge" / cls.DEFAULT_DIR_NAME
 
     def get_path(self, session_id: str) -> Path:
         """Get the file path for a session.
@@ -851,7 +851,7 @@ import time
 
 ---
 
-## File 3: src/opencode/sessions/index.py
+## File 3: src/forge/sessions/index.py
 
 ```python
 """Session index for fast listing and search."""
@@ -1193,7 +1193,7 @@ class SessionIndex:
 
 ---
 
-## File 4: src/opencode/sessions/manager.py
+## File 4: src/forge/sessions/manager.py
 
 ```python
 """Session lifecycle management."""
@@ -1751,16 +1751,16 @@ class SessionManager:
 
 ---
 
-## File 5: src/opencode/sessions/__init__.py
+## File 5: src/forge/sessions/__init__.py
 
 ```python
 """Session management package.
 
-This package provides session persistence and management for OpenCode.
+This package provides session persistence and management for Code-Forge.
 Sessions store conversation history, tool invocations, and metadata.
 
 Example:
-    from opencode.sessions import SessionManager
+    from forge.sessions import SessionManager
 
     manager = SessionManager.get_instance()
 
@@ -1814,8 +1814,8 @@ __all__ = [
 
 ```python
 # Memory backed by session
-from opencode.sessions import SessionManager
-from opencode.langchain.memory import ConversationMemory
+from forge.sessions import SessionManager
+from forge.langchain.memory import ConversationMemory
 
 manager = SessionManager.get_instance()
 session = manager.create()
@@ -1833,7 +1833,7 @@ for msg in session.messages:
 
 ```python
 # Fire session events
-from opencode.hooks import fire_event, HookEvent
+from forge.hooks import fire_event, HookEvent
 
 async def on_session_start(session):
     event = HookEvent.session_start(session.id)

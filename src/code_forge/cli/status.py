@@ -1,0 +1,236 @@
+"""Status bar for Code-Forge CLI.
+
+This module provides the StatusBar class for displaying runtime information
+at the bottom of the terminal, including model, tokens, mode, and status.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+
+@dataclass
+class StatusBar:
+    """Status bar displayed at bottom of terminal.
+
+    The status bar shows current model, token usage, operating mode,
+    and status information in a formatted line.
+
+    Attributes:
+        model: Current model name.
+        tokens_used: Number of tokens used.
+        tokens_max: Maximum tokens available.
+        mode: Current operating mode.
+        status: Current status text.
+        visible: Whether status bar is visible.
+        thinking_enabled: Whether extended thinking is enabled.
+    """
+
+    model: str = ""
+    tokens_used: int = 0
+    tokens_max: int = 128000
+    mode: str = "Normal"
+    status: str = "Ready"
+    visible: bool = True
+    thinking_enabled: bool = False
+    _observers: list[StatusBarObserver] = field(default_factory=list, repr=False)
+
+    def set_model(self, model: str) -> None:
+        """Update current model.
+
+        Args:
+            model: New model name.
+        """
+        if model != self.model:
+            self.model = model
+            self._notify()
+
+    def set_tokens(self, used: int, max_tokens: int | None = None) -> None:
+        """Update token counts.
+
+        Args:
+            used: Number of tokens used.
+            max_tokens: Maximum tokens (optional).
+        """
+        changed = self.tokens_used != used
+        self.tokens_used = used
+        if max_tokens is not None and self.tokens_max != max_tokens:
+            self.tokens_max = max_tokens
+            changed = True
+        if changed:
+            self._notify()
+
+    def set_mode(self, mode: str) -> None:
+        """Update operating mode.
+
+        Args:
+            mode: New mode name.
+        """
+        if mode != self.mode:
+            self.mode = mode
+            self._notify()
+
+    def set_status(self, status: str) -> None:
+        """Update status text.
+
+        Args:
+            status: New status text.
+        """
+        if status != self.status:
+            self.status = status
+            self._notify()
+
+    def set_visible(self, visible: bool) -> None:
+        """Set status bar visibility.
+
+        Args:
+            visible: Whether to show status bar.
+        """
+        if visible != self.visible:
+            self.visible = visible
+            self._notify()
+
+    def set_thinking(self, enabled: bool) -> None:
+        """Set extended thinking mode.
+
+        Args:
+            enabled: Whether thinking mode is enabled.
+        """
+        if enabled != self.thinking_enabled:
+            self.thinking_enabled = enabled
+            self._notify()
+
+    def toggle_thinking(self) -> bool:
+        """Toggle extended thinking mode.
+
+        Returns:
+            New thinking mode state.
+        """
+        self.thinking_enabled = not self.thinking_enabled
+        self._notify()
+        return self.thinking_enabled
+
+    def add_observer(self, observer: StatusBarObserver) -> None:
+        """Add an observer to be notified of changes.
+
+        Args:
+            observer: Observer to add.
+        """
+        if observer not in self._observers:
+            self._observers.append(observer)
+
+    def remove_observer(self, observer: StatusBarObserver) -> None:
+        """Remove an observer.
+
+        Args:
+            observer: Observer to remove.
+        """
+        if observer in self._observers:
+            self._observers.remove(observer)
+
+    def _notify(self) -> None:
+        """Notify all observers of a change."""
+        for observer in self._observers:
+            observer.on_status_changed(self)
+
+    def render(self, width: int) -> str:
+        """Render status bar to string.
+
+        Creates a formatted status bar string with left, center, and right
+        sections that fits within the given width.
+
+        Args:
+            width: Terminal width in characters.
+
+        Returns:
+            Formatted status bar string, empty if not visible.
+        """
+        if not self.visible:
+            return ""
+
+        if width <= 0:
+            return ""
+
+        left = f" {self.model}"
+        center = f"Tokens: {self.tokens_used:,}/{self.tokens_max:,}"
+        right = f"{self.mode} | {self.status} "
+
+        total_content = len(left) + len(center) + len(right)
+
+        # If content won't fit, use compact format
+        if total_content >= width:
+            return self._render_compact(width)
+
+        # Calculate padding for centered layout
+        left_pad = (width - len(center)) // 2 - len(left)
+        left_pad = max(left_pad, 1)
+
+        right_pad = width - len(left) - left_pad - len(center) - len(right)
+        right_pad = max(right_pad, 1)
+
+        return f"{left}{' ' * left_pad}{center}{' ' * right_pad}{right}"
+
+    def _render_compact(self, width: int) -> str:
+        """Render compact status bar for narrow terminals.
+
+        Args:
+            width: Terminal width.
+
+        Returns:
+            Compact status bar string.
+        """
+        if width < 20:
+            return f" {self.model[:width - 2]}"
+
+        # Model and status only
+        compact = f" {self.model} | {self.status} "
+        if len(compact) <= width:
+            return compact
+
+        # Just model
+        return f" {self.model[:width - 4]}... "
+
+    def format_for_prompt_toolkit(self) -> str:
+        """Format status bar for prompt_toolkit bottom_toolbar.
+
+        Returns:
+            Status bar text formatted for prompt_toolkit.
+        """
+        if not self.visible:
+            return ""
+
+        thinking_indicator = "Thinking: On" if self.thinking_enabled else "Thinking: Off"
+
+        return (
+            f" {self.model}  |  "
+            f"Tokens: {self.tokens_used:,}/{self.tokens_max:,}  |  "
+            f"{thinking_indicator}  |  "
+            f"{self.mode}  |  {self.status} "
+        )
+
+    def format_input_hints(self) -> str:
+        """Format input hints bar for display below the prompt.
+
+        Shows keyboard hints like 'Tab accepts' and 'Shift+Tab thinking'.
+
+        Returns:
+            Input hints text.
+        """
+        thinking_state = "on" if self.thinking_enabled else "off"
+        return f"Tab autocomplete  |  Shift+Tab thinking ({thinking_state})  |  ? help"
+
+
+class StatusBarObserver:
+    """Interface for status bar change observers.
+
+    Implement this interface to receive notifications when the
+    status bar content changes.
+    """
+
+    def on_status_changed(self, status_bar: StatusBar) -> None:
+        """Called when status bar content changes.
+
+        Args:
+            status_bar: The updated status bar.
+        """
+        pass  # Default implementation does nothing

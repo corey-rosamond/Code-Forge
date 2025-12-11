@@ -9,7 +9,7 @@
 
 ## Overview
 
-This phase implements the configuration system with hierarchical loading, validation, and live reload. Configuration controls all aspects of OpenCode behavior.
+This phase implements the configuration system with hierarchical loading, validation, and live reload. Configuration controls all aspects of Code-Forge behavior.
 
 ---
 
@@ -18,24 +18,24 @@ This phase implements the configuration system with hierarchical loading, valida
 ### FR-1.2.1: Configuration File Support
 - Load configuration from JSON files
 - Load configuration from YAML files
-- Support for `.src/opencode/settings.json` (project)
-- Support for `~/.src/opencode/settings.json` (user)
-- Support for `.src/opencode/settings.local.json` (local overrides, gitignored)
+- Support for `.src/forge/settings.json` (project)
+- Support for `~/.src/forge/settings.json` (user)
+- Support for `.src/forge/settings.local.json` (local overrides, gitignored)
 - Support for enterprise configuration path
 
 ### FR-1.2.2: Configuration Hierarchy
 - Enterprise settings (highest priority)
-- User settings (~/.src/opencode/)
-- Project settings (.src/opencode/)
-- Local overrides (.src/opencode/settings.local.json)
-- Environment variables (OPENCODE_* prefix)
+- User settings (~/.src/forge/)
+- Project settings (.src/forge/)
+- Local overrides (.src/forge/settings.local.json)
+- Environment variables (FORGE_* prefix)
 - Default values (lowest priority)
 
 ### FR-1.2.3: Environment Variable Support
-- OPENCODE_API_KEY - OpenRouter API key
-- OPENCODE_MODEL - Default model
-- OPENCODE_LOG_LEVEL - Logging level
-- OPENCODE_CONFIG_PATH - Custom config path
+- FORGE_API_KEY - OpenRouter API key
+- FORGE_MODEL - Default model
+- FORGE_LOG_LEVEL - Logging level
+- FORGE_CONFIG_PATH - Custom config path
 - Parse environment variables and merge into config
 
 ### FR-1.2.4: Configuration Schema
@@ -147,7 +147,7 @@ class SessionConfig(BaseModel):
     max_history: int = 100
     session_dir: str | None = None
 
-class OpenCodeConfig(BaseModel):
+class Code-ForgeConfig(BaseModel):
     """Root configuration model."""
     model: ModelConfig = Field(default_factory=ModelConfig)
     permissions: PermissionConfig = Field(default_factory=PermissionConfig)
@@ -170,15 +170,15 @@ class ConfigLoader(IConfigLoader):
     """
 
     def __init__(self):
-        self._config: OpenCodeConfig | None = None
+        self._config: Code-ForgeConfig | None = None
         self._watchers: List[Callable] = []
 
-    def load_all(self) -> OpenCodeConfig:
+    def load_all(self) -> Code-ForgeConfig:
         """Load and merge all configuration sources."""
         config = {}
 
         # 1. Load defaults
-        config = OpenCodeConfig().model_dump()
+        config = Code-ForgeConfig().model_dump()
 
         # 2. Load user config
         user_config = self._load_user_config()
@@ -196,18 +196,18 @@ class ConfigLoader(IConfigLoader):
         config = self._apply_env_vars(config)
 
         # 6. Validate and return
-        return OpenCodeConfig.model_validate(config)
+        return Code-ForgeConfig.model_validate(config)
 ```
 
 ### File Locations
 
 ```
-~/.src/opencode/
+~/.src/forge/
 ├── settings.json          # User settings
 ├── sessions/              # Session storage
 └── cache/                 # Cache directory
 
-.src/opencode/
+.src/forge/
 ├── settings.json          # Project settings (version controlled)
 ├── settings.local.json    # Local overrides (gitignored)
 ├── commands/              # Custom commands
@@ -260,7 +260,7 @@ class ConfigLoader(IConfigLoader):
 - [ ] Configuration loads from JSON files
 - [ ] Configuration loads from YAML files
 - [ ] Hierarchy is respected (enterprise > user > project > local > env)
-- [ ] Environment variables with OPENCODE_ prefix work
+- [ ] Environment variables with FORGE_ prefix work
 - [ ] Pydantic validation catches invalid config
 - [ ] Default values work for missing fields
 - [ ] File watcher detects changes
@@ -273,23 +273,23 @@ class ConfigLoader(IConfigLoader):
 
 ```bash
 # Create test config
-echo '{"model": {"default": "claude-4"}}' > .src/opencode/settings.json
+echo '{"model": {"default": "claude-4"}}' > .src/forge/settings.json
 
 # Verify config loads (future CLI feature)
-python -c "from opencode.config import ConfigLoader; c = ConfigLoader(); print(c.load_all().model.default)"
+python -c "from forge.config import ConfigLoader; c = ConfigLoader(); print(c.load_all().model.default)"
 # Expected: claude-4
 
 # Verify env var override
-OPENCODE_MODEL=gpt-5 python -c "from opencode.config import ConfigLoader; c = ConfigLoader(); print(c.load_all().model.default)"
+FORGE_MODEL=gpt-5 python -c "from forge.config import ConfigLoader; c = ConfigLoader(); print(c.load_all().model.default)"
 # Expected: gpt-5
 
 # Verify validation
 echo '{"model": {"max_tokens": "invalid"}}' > /tmp/bad.json
-python -c "from opencode.config import ConfigLoader; ConfigLoader().load(Path('/tmp/bad.json'))"
+python -c "from forge.config import ConfigLoader; ConfigLoader().load(Path('/tmp/bad.json'))"
 # Expected: ValidationError
 
 # Run tests
-pytest tests/unit/config/ -v --cov=opencode.config
+pytest tests/unit/config/ -v --cov=forge.config
 ```
 
 ---

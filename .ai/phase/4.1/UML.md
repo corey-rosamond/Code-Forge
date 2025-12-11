@@ -407,7 +407,7 @@ flowchart TD
 
 ```mermaid
 flowchart TB
-    subgraph PermPkg["src/opencode/permissions/"]
+    subgraph PermPkg["src/forge/permissions/"]
         INIT["__init__.py"]
         MODELS["models.py<br/>PermissionLevel, Rule, Result"]
         RULES["rules.py<br/>PatternMatcher, RuleSet"]
@@ -416,12 +416,12 @@ flowchart TB
         CONFIG["config.py<br/>PermissionConfig"]
     end
 
-    subgraph ToolsPkg["src/opencode/tools/"]
+    subgraph ToolsPkg["src/forge/tools/"]
         EXECUTOR["executor.py"]
         BASE["base.py"]
     end
 
-    subgraph ConfigPkg["src/opencode/config/"]
+    subgraph ConfigPkg["src/forge/config/"]
         SETTINGS["settings.py"]
     end
 

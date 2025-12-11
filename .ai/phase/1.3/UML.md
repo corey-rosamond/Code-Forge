@@ -10,8 +10,8 @@
 
 ```mermaid
 classDiagram
-    class OpenCodeREPL {
-        -_config: OpenCodeConfig
+    class Code-ForgeREPL {
+        -_config: Code-ForgeConfig
         -_console: Console
         -_input: InputHandler
         -_output: OutputRenderer
@@ -48,7 +48,7 @@ classDiagram
     }
 
     class StatusBar {
-        -_config: OpenCodeConfig
+        -_config: Code-ForgeConfig
         -_model: str
         -_tokens_used: int
         -_tokens_max: int
@@ -62,10 +62,10 @@ classDiagram
         +render(width) str
     }
 
-    OpenCodeREPL --> InputHandler
-    OpenCodeREPL --> OutputRenderer
-    OpenCodeREPL --> StatusBar
-    OpenCodeREPL --> OpenCodeConfig
+    Code-ForgeREPL --> InputHandler
+    Code-ForgeREPL --> OutputRenderer
+    Code-ForgeREPL --> StatusBar
+    Code-ForgeREPL --> Code-ForgeConfig
 ```
 
 ---
@@ -77,16 +77,16 @@ sequenceDiagram
     participant U as User
     participant CLI as main.py
     participant CL as ConfigLoader
-    participant R as OpenCodeREPL
+    participant R as Code-ForgeREPL
     participant I as InputHandler
     participant O as OutputRenderer
     participant S as StatusBar
 
-    U->>CLI: opencode
+    U->>CLI: forge
     CLI->>CL: load_all()
-    CL-->>CLI: OpenCodeConfig
+    CL-->>CLI: Code-ForgeConfig
 
-    CLI->>R: OpenCodeREPL(config)
+    CLI->>R: Code-ForgeREPL(config)
     R->>I: InputHandler(history_path)
     R->>O: OutputRenderer(console, theme)
     R->>S: StatusBar(config)
@@ -126,7 +126,7 @@ sequenceDiagram
     participant U as User
     participant PT as prompt_toolkit
     participant KB as KeyBindings
-    participant R as OpenCodeREPL
+    participant R as Code-ForgeREPL
     participant O as OutputRenderer
 
     Note over U,O: Escape - Cancel Input

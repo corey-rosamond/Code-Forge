@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 6.1 implements the slash command system for OpenCode, providing built-in commands that users can invoke with `/command` syntax. Commands provide quick access to common operations, session management, context control, and system configuration.
+Phase 6.1 implements the slash command system for Code-Forge, providing built-in commands that users can invoke with `/command` syntax. Commands provide quick access to common operations, session management, context control, and system configuration.
 
 ---
 
@@ -170,7 +170,7 @@ Phase 6.1 implements the slash command system for OpenCode, providing built-in c
 ### Package Structure
 
 ```
-src/opencode/commands/
+src/forge/commands/
 ├── __init__.py           # Package exports
 ├── parser.py             # Command parsing
 ├── registry.py           # Command registry
@@ -387,7 +387,7 @@ class CommandExecutor:
 ```
 /help
 
-OpenCode Commands
+Code-Forge Commands
 ================
 
 Session:

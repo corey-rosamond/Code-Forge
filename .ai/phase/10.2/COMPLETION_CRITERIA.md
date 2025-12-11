@@ -14,7 +14,7 @@
   - [ ] `temp_dir` fixture for temporary directories
   - [ ] `temp_home` fixture for isolated home directory
   - [ ] `temp_project` fixture for project directory
-  - [ ] `app` fixture for OpenCode application instance
+  - [ ] `app` fixture for Code-Forge application instance
   - [ ] `mock_llm_response` fixture for LLM mocking
   - [ ] `git_repo` fixture for git repository testing
   - [ ] `sample_file` fixture for file operations
@@ -233,10 +233,10 @@
 pytest tests/ -v
 
 # Run with coverage
-pytest tests/ --cov=opencode --cov-report=term-missing
+pytest tests/ --cov=forge --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/ --cov=opencode --cov-fail-under=90
+pytest tests/ --cov=forge --cov-fail-under=90
 
 # Run only unit tests
 pytest tests/unit/ -v
@@ -251,14 +251,14 @@ pytest tests/e2e/ -v
 pytest tests/performance/ -v
 
 # Type checking
-mypy src/opencode/
+mypy src/forge/
 
 # Linting
-ruff check src/opencode/
-ruff format --check src/opencode/
+ruff check src/forge/
+ruff format --check src/forge/
 
 # Complexity check
-flake8 src/opencode/ --max-complexity=10 --select=C901
+flake8 src/forge/ --max-complexity=10 --select=C901
 
 # Build package
 python -m build
@@ -267,8 +267,8 @@ python -m build
 pip install -e .
 
 # Verify CLI
-opencode --version
-opencode --help
+forge --version
+forge --help
 ```
 
 ---

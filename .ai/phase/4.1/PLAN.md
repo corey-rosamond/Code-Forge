@@ -21,7 +21,7 @@
 
 ## Step 1: Permission Models
 
-Create `src/opencode/permissions/models.py`:
+Create `src/forge/permissions/models.py`:
 
 ```python
 """Permission data models."""
@@ -173,7 +173,7 @@ def get_tool_category(tool_name: str) -> PermissionCategory:
 
 ## Step 2: Pattern Matching
 
-Create `src/opencode/permissions/rules.py`:
+Create `src/forge/permissions/rules.py`:
 
 ```python
 """Permission rule definition and pattern matching."""
@@ -186,7 +186,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from opencode.permissions.models import (
+from forge.permissions.models import (
     PermissionLevel,
     PermissionResult,
     PermissionRule,
@@ -506,7 +506,7 @@ class RuleSet:
 
 ## Step 3: Permission Checker
 
-Create `src/opencode/permissions/checker.py`:
+Create `src/forge/permissions/checker.py`:
 
 ```python
 """Permission checker for tool execution."""
@@ -515,15 +515,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from opencode.permissions.models import (
+from forge.permissions.models import (
     PermissionLevel,
     PermissionResult,
     PermissionRule,
 )
-from opencode.permissions.rules import RuleSet
+from forge.permissions.rules import RuleSet
 
 if TYPE_CHECKING:
-    from opencode.config import Config
+    from forge.config import Config
 
 
 class PermissionChecker:
@@ -532,7 +532,7 @@ class PermissionChecker:
 
     Evaluates rules from multiple sources in order:
     1. Session rules (temporary, highest priority)
-    2. Project rules (from .src/opencode/permissions.json)
+    2. Project rules (from .src/forge/permissions.json)
     3. Global rules (from user config)
     4. Default permission
 
@@ -687,7 +687,7 @@ class PermissionChecker:
         Returns:
             Configured PermissionChecker
         """
-        from opencode.permissions.config import PermissionConfig
+        from forge.permissions.config import PermissionConfig
 
         global_rules = PermissionConfig.load_global()
         project_rules = PermissionConfig.load_project(config.project_root)
@@ -720,7 +720,7 @@ class ToolPermissionError(Exception):
 
 ## Step 4: User Confirmation
 
-Create `src/opencode/permissions/prompt.py`:
+Create `src/forge/permissions/prompt.py`:
 
 ```python
 """User confirmation prompts for permission requests."""
@@ -732,7 +732,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable
 
-from opencode.permissions.models import PermissionRule, PermissionLevel
+from forge.permissions.models import PermissionRule, PermissionLevel
 
 
 class ConfirmationChoice(str, Enum):
@@ -940,7 +940,7 @@ def create_rule_from_choice(
 
 ## Step 5: Configuration Loading
 
-Create `src/opencode/permissions/config.py`:
+Create `src/forge/permissions/config.py`:
 
 ```python
 """Permission configuration management."""
@@ -952,11 +952,11 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from opencode.permissions.models import PermissionLevel, PermissionRule
-from opencode.permissions.rules import RuleSet
+from forge.permissions.models import PermissionLevel, PermissionRule
+from forge.permissions.rules import RuleSet
 
 if TYPE_CHECKING:
-    from opencode.config import Config
+    from forge.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -1070,12 +1070,12 @@ class PermissionConfig:
     """Manages permission configuration files."""
 
     GLOBAL_FILE = "permissions.json"
-    PROJECT_FILE = ".src/opencode/permissions.json"
+    PROJECT_FILE = ".src/forge/permissions.json"
 
     @classmethod
     def get_global_path(cls) -> Path:
         """Get path to global permissions file."""
-        from opencode.config import Config
+        from forge.config import Config
 
         config_dir = Config.get_config_dir()
         return config_dir / cls.GLOBAL_FILE
@@ -1171,18 +1171,18 @@ class PermissionConfig:
 
 ## Step 6: Package Exports
 
-Create `src/opencode/permissions/__init__.py`:
+Create `src/forge/permissions/__init__.py`:
 
 ```python
 """
-Permission system for OpenCode.
+Permission system for Code-Forge.
 
 This package provides permission checking and user confirmation
 for tool execution, ensuring safety while maintaining usability.
 
 Example:
     ```python
-    from opencode.permissions import (
+    from forge.permissions import (
         PermissionChecker,
         PermissionLevel,
         PermissionRule,
@@ -1217,7 +1217,7 @@ Example:
     ```
 """
 
-from opencode.permissions.models import (
+from forge.permissions.models import (
     PermissionLevel,
     PermissionCategory,
     PermissionResult,
@@ -1225,21 +1225,21 @@ from opencode.permissions.models import (
     TOOL_CATEGORIES,
     get_tool_category,
 )
-from opencode.permissions.rules import (
+from forge.permissions.rules import (
     PatternMatcher,
     RuleSet,
 )
-from opencode.permissions.checker import (
+from forge.permissions.checker import (
     PermissionChecker,
     ToolPermissionError,
 )
-from opencode.permissions.prompt import (
+from forge.permissions.prompt import (
     ConfirmationChoice,
     ConfirmationRequest,
     PermissionPrompt,
     create_rule_from_choice,
 )
-from opencode.permissions.config import (
+from forge.permissions.config import (
     PermissionConfig,
     DEFAULT_RULES,
 )
@@ -1273,12 +1273,12 @@ __all__ = [
 
 ## Step 7: Integration with Tool Executor
 
-Update `src/opencode/tools/executor.py` to integrate permissions:
+Update `src/forge/tools/executor.py` to integrate permissions:
 
 ```python
 # Add to ToolExecutor class
 
-from opencode.permissions import (
+from forge.permissions import (
     PermissionChecker,
     PermissionPrompt,
     PermissionError,

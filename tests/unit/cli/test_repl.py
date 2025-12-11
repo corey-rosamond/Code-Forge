@@ -10,10 +10,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from rich.console import Console
 
-from opencode.cli.repl import InputHandler, OpenCodeREPL, OutputRenderer
-from opencode.cli.status import StatusBar
-from opencode.cli.themes import DARK_THEME, ThemeRegistry
-from opencode.config import OpenCodeConfig
+from code_forge.cli.repl import InputHandler, CodeForgeREPL, OutputRenderer
+from code_forge.cli.status import StatusBar
+from code_forge.cli.themes import DARK_THEME, ThemeRegistry
+from code_forge.config import CodeForgeConfig
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -25,7 +25,7 @@ class TestInputHandler:
     @pytest.fixture
     def temp_history_path(self, tmp_path: Path) -> Path:
         """Create temporary history file path."""
-        return tmp_path / ".opencode" / "history"
+        return tmp_path / ".forge" / "history"
 
     def test_init_creates_history_dir(self, temp_history_path: Path) -> None:
         """Test that init creates history directory."""
@@ -184,22 +184,22 @@ class TestOutputRenderer:
         renderer.clear()
 
 
-class TestOpenCodeREPL:
-    """Tests for OpenCodeREPL class."""
+class TestCodeForgeREPL:
+    """Tests for CodeForgeREPL class."""
 
     @pytest.fixture
-    def config(self) -> OpenCodeConfig:
+    def config(self) -> CodeForgeConfig:
         """Create test configuration."""
-        return OpenCodeConfig()
+        return CodeForgeConfig()
 
     @pytest.fixture
-    def repl(self, config: OpenCodeConfig) -> Generator[OpenCodeREPL, None, None]:
+    def repl(self, config: CodeForgeConfig) -> Generator[CodeForgeREPL, None, None]:
         """Create test REPL instance."""
-        with patch("opencode.cli.repl.InputHandler._ensure_history_dir"):
-            repl = OpenCodeREPL(config)
+        with patch("code_forge.cli.repl.InputHandler._ensure_history_dir"):
+            repl = CodeForgeREPL(config)
             yield repl
 
-    def test_init(self, repl: OpenCodeREPL) -> None:
+    def test_init(self, repl: CodeForgeREPL) -> None:
         """Test REPL initialization."""
         assert repl._config is not None
         assert repl._theme is not None
@@ -209,45 +209,45 @@ class TestOpenCodeREPL:
         assert repl._output is not None
         assert repl._running is False
 
-    def test_status_bar_property(self, repl: OpenCodeREPL) -> None:
+    def test_status_bar_property(self, repl: CodeForgeREPL) -> None:
         """Test status_bar property."""
         assert repl.status_bar is repl._status
         assert isinstance(repl.status_bar, StatusBar)
 
-    def test_output_property(self, repl: OpenCodeREPL) -> None:
+    def test_output_property(self, repl: CodeForgeREPL) -> None:
         """Test output property."""
         assert repl.output is repl._output
         assert isinstance(repl.output, OutputRenderer)
 
-    def test_is_running_property(self, repl: OpenCodeREPL) -> None:
+    def test_is_running_property(self, repl: CodeForgeREPL) -> None:
         """Test is_running property."""
         assert repl.is_running is False
 
-    def test_stop(self, repl: OpenCodeREPL) -> None:
+    def test_stop(self, repl: CodeForgeREPL) -> None:
         """Test stopping the REPL."""
         repl._running = True
         repl.stop()
         assert repl._running is False
 
-    def test_get_prompt(self, repl: OpenCodeREPL) -> None:
+    def test_get_prompt(self, repl: CodeForgeREPL) -> None:
         """Test prompt generation."""
         prompt = repl._get_prompt()
         assert prompt == "> "
 
-    def test_get_history_path(self, repl: OpenCodeREPL) -> None:
+    def test_get_history_path(self, repl: CodeForgeREPL) -> None:
         """Test history path generation."""
         path = repl._get_history_path()
         assert isinstance(path, Path)
-        assert "opencode" in str(path)
+        assert "forge" in str(path)
         assert "history" in str(path)
 
-    def test_on_input_registers_callback(self, repl: OpenCodeREPL) -> None:
+    def test_on_input_registers_callback(self, repl: CodeForgeREPL) -> None:
         """Test registering input callback."""
         callback = MagicMock()
         repl.on_input(callback)
         assert callback in repl._callbacks
 
-    def test_on_input_multiple_callbacks(self, repl: OpenCodeREPL) -> None:
+    def test_on_input_multiple_callbacks(self, repl: CodeForgeREPL) -> None:
         """Test registering multiple callbacks."""
         callback1 = MagicMock()
         callback2 = MagicMock()
@@ -255,40 +255,40 @@ class TestOpenCodeREPL:
         repl.on_input(callback2)
         assert len(repl._callbacks) == 2
 
-    def test_theme_from_config(self, config: OpenCodeConfig) -> None:
+    def test_theme_from_config(self, config: CodeForgeConfig) -> None:
         """Test that REPL uses theme from config."""
         config.display.theme = "light"
-        with patch("opencode.cli.repl.InputHandler._ensure_history_dir"):
-            repl = OpenCodeREPL(config)
+        with patch("code_forge.cli.repl.InputHandler._ensure_history_dir"):
+            repl = CodeForgeREPL(config)
             assert repl._theme == ThemeRegistry.get("light")
 
-    def test_status_bar_from_config(self, config: OpenCodeConfig) -> None:
+    def test_status_bar_from_config(self, config: CodeForgeConfig) -> None:
         """Test that status bar uses config values."""
         config.model.default = "test-model"
         config.display.status_line = False
-        with patch("opencode.cli.repl.InputHandler._ensure_history_dir"):
-            repl = OpenCodeREPL(config)
+        with patch("code_forge.cli.repl.InputHandler._ensure_history_dir"):
+            repl = CodeForgeREPL(config)
             assert repl._status.model == "test-model"
             assert repl._status.visible is False
 
 
-class TestOpenCodeREPLAsync:
-    """Async tests for OpenCodeREPL."""
+class TestCodeForgeREPLAsync:
+    """Async tests for CodeForgeREPL."""
 
     @pytest.fixture
-    def config(self) -> OpenCodeConfig:
+    def config(self) -> CodeForgeConfig:
         """Create test configuration."""
-        return OpenCodeConfig()
+        return CodeForgeConfig()
 
     @pytest.fixture
-    def repl(self, config: OpenCodeConfig) -> Generator[OpenCodeREPL, None, None]:
+    def repl(self, config: CodeForgeConfig) -> Generator[CodeForgeREPL, None, None]:
         """Create test REPL instance."""
-        with patch("opencode.cli.repl.InputHandler._ensure_history_dir"):
-            repl = OpenCodeREPL(config)
+        with patch("code_forge.cli.repl.InputHandler._ensure_history_dir"):
+            repl = CodeForgeREPL(config)
             yield repl
 
     @pytest.mark.asyncio
-    async def test_process_input_no_callbacks(self, repl: OpenCodeREPL) -> None:
+    async def test_process_input_no_callbacks(self, repl: CodeForgeREPL) -> None:
         """Test processing input with no callbacks echoes."""
         with patch.object(repl._output, "print_dim") as mock_print:
             await repl._process_input("test input")
@@ -296,7 +296,7 @@ class TestOpenCodeREPLAsync:
             assert "test input" in str(mock_print.call_args)
 
     @pytest.mark.asyncio
-    async def test_process_input_sync_callback(self, repl: OpenCodeREPL) -> None:
+    async def test_process_input_sync_callback(self, repl: CodeForgeREPL) -> None:
         """Test processing input with sync callback."""
         callback = MagicMock()
         repl.on_input(callback)
@@ -304,7 +304,7 @@ class TestOpenCodeREPLAsync:
         callback.assert_called_once_with("test")
 
     @pytest.mark.asyncio
-    async def test_process_input_async_callback(self, repl: OpenCodeREPL) -> None:
+    async def test_process_input_async_callback(self, repl: CodeForgeREPL) -> None:
         """Test processing input with async callback."""
         callback = AsyncMock()
         repl.on_input(callback)
@@ -312,7 +312,7 @@ class TestOpenCodeREPLAsync:
         callback.assert_called_once_with("test")
 
     @pytest.mark.asyncio
-    async def test_process_input_multiple_callbacks(self, repl: OpenCodeREPL) -> None:
+    async def test_process_input_multiple_callbacks(self, repl: CodeForgeREPL) -> None:
         """Test processing input calls all callbacks."""
         callback1 = MagicMock()
         callback2 = AsyncMock()
@@ -323,7 +323,7 @@ class TestOpenCodeREPLAsync:
         callback2.assert_called_once_with("test")
 
     @pytest.mark.asyncio
-    async def test_run_exits_on_eof(self, repl: OpenCodeREPL) -> None:
+    async def test_run_exits_on_eof(self, repl: CodeForgeREPL) -> None:
         """Test that REPL exits on EOF."""
         with patch.object(repl._input, "get_input", new=AsyncMock(return_value=None)):
             with patch.object(repl._output, "print"):
@@ -333,7 +333,7 @@ class TestOpenCodeREPLAsync:
                     assert repl._running is False
 
     @pytest.mark.asyncio
-    async def test_run_shows_welcome(self, repl: OpenCodeREPL) -> None:
+    async def test_run_shows_welcome(self, repl: CodeForgeREPL) -> None:
         """Test that REPL shows welcome on start."""
         call_count = 0
 
@@ -352,7 +352,7 @@ class TestOpenCodeREPLAsync:
 
     @pytest.mark.asyncio
     async def test_run_shows_shortcuts_on_question_mark(
-        self, repl: OpenCodeREPL
+        self, repl: CodeForgeREPL
     ) -> None:
         """Test that ? shows shortcuts."""
         inputs = iter(["?", None])
@@ -368,7 +368,7 @@ class TestOpenCodeREPLAsync:
                         mock_shortcuts.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_run_skips_empty_input(self, repl: OpenCodeREPL) -> None:
+    async def test_run_skips_empty_input(self, repl: CodeForgeREPL) -> None:
         """Test that empty input is skipped."""
         inputs = iter(["", "   ", "\n", None])
 
@@ -385,7 +385,7 @@ class TestOpenCodeREPLAsync:
                     callback.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_run_handles_keyboard_interrupt(self, repl: OpenCodeREPL) -> None:
+    async def test_run_handles_keyboard_interrupt(self, repl: CodeForgeREPL) -> None:
         """Test that KeyboardInterrupt is handled gracefully."""
         call_count = 0
 
@@ -405,7 +405,7 @@ class TestOpenCodeREPLAsync:
                     assert any("Interrupt" in str(c) for c in mock_dim.call_args_list)
 
     @pytest.mark.asyncio
-    async def test_run_handles_exception(self, repl: OpenCodeREPL) -> None:
+    async def test_run_handles_exception(self, repl: CodeForgeREPL) -> None:
         """Test that exceptions are handled and displayed."""
         call_count = 0
 
@@ -431,18 +431,18 @@ class TestOpenCodeREPLAsync:
                         assert "Test error" in str(mock_error.call_args)
 
 
-class TestOpenCodeREPLIntegration:
-    """Integration tests for OpenCodeREPL."""
+class TestCodeForgeREPLIntegration:
+    """Integration tests for CodeForgeREPL."""
 
     @pytest.fixture
-    def config(self) -> OpenCodeConfig:
+    def config(self) -> CodeForgeConfig:
         """Create test configuration."""
-        return OpenCodeConfig()
+        return CodeForgeConfig()
 
-    def test_full_initialization(self, config: OpenCodeConfig) -> None:
+    def test_full_initialization(self, config: CodeForgeConfig) -> None:
         """Test that all components are properly initialized."""
-        with patch("opencode.cli.repl.InputHandler._ensure_history_dir"):
-            repl = OpenCodeREPL(config)
+        with patch("code_forge.cli.repl.InputHandler._ensure_history_dir"):
+            repl = CodeForgeREPL(config)
             assert repl._theme == ThemeRegistry.get(config.display.theme)
             assert repl._status.model == config.model.default
             assert repl._status.visible == config.display.status_line

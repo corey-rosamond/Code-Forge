@@ -263,7 +263,7 @@ This document shows the expected output formats and user-visible results from th
 │                                                                     │
 │ This command has been blocked because it matches a pattern          │
 │ known to be destructive. If you need to perform this operation,     │
-│ please do so manually outside of OpenCode.                          │
+│ please do so manually outside of Code-Forge.                          │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -382,7 +382,7 @@ This document shows the expected output formats and user-visible results from th
 
 ### Running npm install
 ```
-$ opencode
+$ forge
 > Run npm install
 
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -405,7 +405,7 @@ $ opencode
 
 ### Running Tests in Background
 ```
-$ opencode
+$ forge
 > Run pytest in background
 
 ┌─────────────────────────────────────────────────────────────────────┐

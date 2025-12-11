@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.tools.base import ExecutionContext, ToolCategory
-from opencode.tools.execution.bash import BashTool
-from opencode.tools.execution.shell_manager import ShellManager
+from code_forge.tools.base import ExecutionContext, ToolCategory
+from code_forge.tools.execution.bash import BashTool
+from code_forge.tools.execution.shell_manager import ShellManager
 
 
 @pytest.fixture(autouse=True)

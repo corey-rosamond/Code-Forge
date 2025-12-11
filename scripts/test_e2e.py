@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end test for OpenCode agent.
+"""End-to-end test for Code-Forge agent.
 
 This script tests the full agent flow:
 1. Load configuration
@@ -36,7 +36,7 @@ from typing import TYPE_CHECKING, Any
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 if TYPE_CHECKING:
-    from opencode.langchain.agent import AgentResult, OpenCodeAgent
+    from code_forge.langchain.agent import AgentResult, Code-ForgeAgent
 
 
 @dataclass
@@ -70,11 +70,11 @@ class TestSuiteResult:
 
 
 class EndToEndTester:
-    """End-to-end test runner for OpenCode."""
+    """End-to-end test runner for Code-Forge."""
 
     def __init__(self, verbose: bool = False) -> None:
         self.verbose = verbose
-        self.agent: OpenCodeAgent | None = None
+        self.agent: Code-ForgeAgent | None = None
         self.system_prompt: str = ""
         self.tool_names: list[str] = []
         self.temp_dir: str = ""
@@ -82,16 +82,16 @@ class EndToEndTester:
 
     async def setup(self) -> bool:
         """Set up the test environment."""
-        from opencode.config import ConfigLoader
-        from opencode.langchain.agent import OpenCodeAgent
-        from opencode.langchain.llm import OpenRouterLLM
-        from opencode.langchain.prompts import get_system_prompt
-        from opencode.llm import OpenRouterClient
-        from opencode.llm.models import Message
-        from opencode.tools import ToolRegistry, register_all_tools
+        from code_forge.config import ConfigLoader
+        from code_forge.langchain.agent import Code-ForgeAgent
+        from code_forge.langchain.llm import OpenRouterLLM
+        from code_forge.langchain.prompts import get_system_prompt
+        from code_forge.llm import OpenRouterClient
+        from code_forge.llm.models import Message
+        from code_forge.tools import ToolRegistry, register_all_tools
 
         print("=" * 60)
-        print("OpenCode End-to-End Test Suite")
+        print("Code-Forge End-to-End Test Suite")
         print("=" * 60)
 
         # Step 1: Load configuration
@@ -127,7 +127,7 @@ class EndToEndTester:
         # Step 4: Register tools
         print("[Setup] Registering tools...")
         try:
-            from opencode.langchain.tools import adapt_tools_for_langchain
+            from code_forge.langchain.tools import adapt_tools_for_langchain
 
             register_all_tools()
             tool_registry = ToolRegistry()
@@ -144,7 +144,7 @@ class EndToEndTester:
         # Step 5: Create agent
         print("[Setup] Creating agent...")
         try:
-            self.agent = OpenCodeAgent(llm=llm, tools=tools, max_iterations=10)
+            self.agent = Code-ForgeAgent(llm=llm, tools=tools, max_iterations=10)
             self.system_prompt = get_system_prompt(
                 tool_names=self.tool_names,
                 working_directory=os.getcwd(),
@@ -157,7 +157,7 @@ class EndToEndTester:
             return False
 
         # Step 6: Create temp directory for tests
-        self.temp_dir = tempfile.mkdtemp(prefix="opencode_e2e_")
+        self.temp_dir = tempfile.mkdtemp(prefix="code_forge_e2e_")
         print(f"  ✓ Temp directory: {self.temp_dir}")
 
         print("\n" + "=" * 60)
@@ -171,7 +171,7 @@ class EndToEndTester:
 
     def reset_agent(self) -> None:
         """Reset agent memory while preserving system prompt."""
-        from opencode.llm.models import Message
+        from code_forge.llm.models import Message
 
         if self.agent:
             self.agent.reset()
@@ -205,7 +205,7 @@ class EndToEndTester:
         self.reset_agent()
         try:
             result = await self.run_prompt(
-                "Use Glob to find all Python files in src/opencode/tools/. "
+                "Use Glob to find all Python files in src/code_forge/tools/. "
                 "List the file names you find."
             )
             tool_called = any(tc.name == "Glob" for tc in result.tool_calls)
@@ -259,14 +259,14 @@ class EndToEndTester:
         try:
             result = await self.run_prompt(
                 f"Use Write to create a new file at {test_file} with the content "
-                "'Hello from OpenCode test!'"
+                "'Hello from Code-Forge test!'"
             )
             tool_called = any(tc.name == "Write" for tc in result.tool_calls)
             file_exists = os.path.exists(test_file)
             content_correct = False
             if file_exists:
                 with open(test_file) as f:
-                    content_correct = "Hello from OpenCode" in f.read()
+                    content_correct = "Hello from Code-Forge" in f.read()
 
             if tool_called and file_exists and content_correct:
                 suite.results.append(TestResult(
@@ -319,7 +319,7 @@ class EndToEndTester:
         self.reset_agent()
         try:
             result = await self.run_prompt(
-                "Use Grep to search for 'BaseTool' in src/opencode/tools/. "
+                "Use Grep to search for 'BaseTool' in src/code_forge/tools/. "
                 "Tell me which files contain this term."
             )
             tool_called = any(tc.name == "Grep" for tc in result.tool_calls)
@@ -350,7 +350,7 @@ class EndToEndTester:
             )
             tool_called = any(tc.name == "Bash" for tc in result.tool_calls)
             # Should contain a path
-            has_path = "/" in result.output or "OpenCode" in result.output
+            has_path = "/" in result.output or "Code-Forge" in result.output
             if tool_called and has_path:
                 suite.results.append(TestResult(
                     name="Bash tool",
@@ -519,7 +519,7 @@ class EndToEndTester:
             result3 = await self.run_prompt(
                 "What was the project name from that file?"
             )
-            has_name = "opencode" in result3.output.lower()
+            has_name = "code_forge" in result3.output.lower()
 
             if has_name:
                 suite.results.append(TestResult(
@@ -691,13 +691,13 @@ def add(a, b):
         self.reset_agent()
         try:
             result = await self.run_prompt(
-                "Use Glob to find Python files in src/opencode/core/, "
+                "Use Glob to find Python files in src/code_forge/core/, "
                 "then Read the errors.py file and list the exception classes defined there."
             )
             glob_called = any(tc.name == "Glob" for tc in result.tool_calls)
             read_called = any(tc.name == "Read" for tc in result.tool_calls)
-            # Should find OpenCodeError
-            has_exception = "opencodeerror" in result.output.lower() or "error" in result.output.lower()
+            # Should find Code-ForgeError
+            has_exception = "code_forgeerror" in result.output.lower() or "error" in result.output.lower()
 
             if glob_called and read_called and has_exception:
                 suite.results.append(TestResult(
@@ -720,7 +720,7 @@ def add(a, b):
         self.reset_agent()
         try:
             result = await self.run_prompt(
-                "Use Grep to find where 'ToolResult' is used in src/opencode/tools/, "
+                "Use Grep to find where 'ToolResult' is used in src/code_forge/tools/, "
                 "then explain what ToolResult is used for based on the code."
             )
             grep_called = any(tc.name == "Grep" for tc in result.tool_calls)
@@ -750,7 +750,7 @@ def add(a, b):
         try:
             result = await self.run_prompt(
                 "I want to understand the tool system. "
-                "1. Use Glob to find files in src/opencode/tools/ "
+                "1. Use Glob to find files in src/code_forge/tools/ "
                 "2. Read the base.py file "
                 "3. Tell me the main classes and their purposes."
             )
@@ -899,7 +899,7 @@ def add(a, b):
         if not web_tools_available:
             # Web tools not registered, test that they exist as modules
             try:
-                from opencode.web import WebSearchTool, WebFetchTool
+                from code_forge.web import WebSearchTool, WebFetchTool
 
                 suite.results.append(TestResult(
                     name="WebSearch tool",
@@ -1005,8 +1005,8 @@ def add(a, b):
         print("\n[Suite] Slash Commands Tests")
         print("-" * 40)
 
-        from opencode.commands import CommandExecutor, CommandContext, register_builtin_commands
-        from opencode.sessions import SessionManager
+        from code_forge.commands import CommandExecutor, CommandContext, register_builtin_commands
+        from code_forge.sessions import SessionManager
 
         # Register commands and create executor
         register_builtin_commands()
@@ -1146,7 +1146,7 @@ def add(a, b):
         print("\n[Suite] Session Management Tests")
         print("-" * 40)
 
-        from opencode.sessions import SessionManager
+        from code_forge.sessions import SessionManager
 
         session_manager = SessionManager.get_instance()
         test_session_id = None
@@ -1295,7 +1295,7 @@ def add(a, b):
         print("\n[Suite] Context Management Tests")
         print("-" * 40)
 
-        from opencode.context import get_counter, ContextManager, SlidingWindowStrategy
+        from code_forge.context import get_counter, ContextManager, SlidingWindowStrategy
 
         # Test 1: Token counting
         try:
@@ -1321,7 +1321,7 @@ def add(a, b):
 
         # Test 2: Context limits via llm routing
         try:
-            from opencode.llm.routing import get_model_context_limit
+            from code_forge.llm.routing import get_model_context_limit
 
             max_tokens = get_model_context_limit("anthropic/claude-3.5-sonnet")
 
@@ -1343,7 +1343,7 @@ def add(a, b):
 
         # Test 3: Truncation strategy
         try:
-            from opencode.context import get_counter
+            from code_forge.context import get_counter
 
             strategy = SlidingWindowStrategy(window_size=5)  # Correct parameter name
             # Create messages as dicts (what the strategy expects)
@@ -1395,7 +1395,7 @@ def add(a, b):
         print("\n[Suite] Subagents Tests")
         print("-" * 40)
 
-        from opencode.agents import AgentTypeRegistry, AgentManager
+        from code_forge.agents import AgentTypeRegistry, AgentManager
 
         # Test 1: Agent type registry
         try:
@@ -1443,7 +1443,7 @@ def add(a, b):
 
         # Test 3: Create agent config
         try:
-            from opencode.agents import AgentConfig
+            from code_forge.agents import AgentConfig
 
             config = AgentConfig(
                 agent_type="explore",
@@ -1471,7 +1471,7 @@ def add(a, b):
         try:
             # Ask the main agent to use an explore subagent
             result = await self.run_prompt(
-                "Using your capabilities, briefly describe the structure of src/opencode/tools/. "
+                "Using your capabilities, briefly describe the structure of src/code_forge/tools/. "
                 "Focus on what types of files are there."
             )
 
@@ -1508,7 +1508,7 @@ def add(a, b):
         print("\n[Suite] Git Integration Tests")
         print("-" * 40)
 
-        from opencode.git import GitRepository
+        from code_forge.git import GitRepository
 
         # Test 1: Repository detection
         try:
@@ -1620,7 +1620,7 @@ def add(a, b):
         print("\n[Suite] Permission System Tests")
         print("-" * 40)
 
-        from opencode.permissions import PermissionChecker, PermissionLevel, PermissionRule, RuleSet
+        from code_forge.permissions import PermissionChecker, PermissionLevel, PermissionRule, RuleSet
 
         # Test 1: Permission levels
         try:
@@ -1719,7 +1719,7 @@ def add(a, b):
         print("\n[Suite] Hooks System Tests")
         print("-" * 40)
 
-        from opencode.hooks import HookExecutor, EventType, HookRegistry, Hook
+        from code_forge.hooks import HookExecutor, EventType, HookRegistry, Hook
 
         # Test 1: Event types
         try:
@@ -1798,7 +1798,7 @@ def add(a, b):
         print("\n[Suite] Plugin System Tests")
         print("-" * 40)
 
-        from opencode.plugins import PluginManager, PluginRegistry
+        from code_forge.plugins import PluginManager, PluginRegistry
 
         # Test 1: Plugin registry (not a singleton, just a class)
         try:
@@ -1842,7 +1842,7 @@ def add(a, b):
 
         # Test 3: Plugin discovery
         try:
-            from opencode.plugins import PluginDiscovery
+            from code_forge.plugins import PluginDiscovery
 
             discovery = PluginDiscovery()
 
@@ -1923,7 +1923,7 @@ def add(a, b):
 
 async def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(description="OpenCode End-to-End Tests")
+    parser = argparse.ArgumentParser(description="Code-Forge End-to-End Tests")
     parser.add_argument(
         "--verbose", "-v",
         action="store_true",

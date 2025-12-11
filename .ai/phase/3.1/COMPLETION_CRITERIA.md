@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 
 ## Checklist
 
-### Message Models (src/opencode/llm/models.py)
+### Message Models (src/forge/llm/models.py)
 - [ ] MessageRole enum defined (SYSTEM, USER, ASSISTANT, TOOL)
 - [ ] ContentPart dataclass for multimodal content
 - [ ] ToolCall dataclass with id, type, function
@@ -26,11 +26,11 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 - [ ] Message.assistant() factory method
 - [ ] Message.tool_result() factory method
 
-### Tool Definition Models (src/opencode/llm/models.py)
+### Tool Definition Models (src/forge/llm/models.py)
 - [ ] ToolDefinition dataclass with name, description, parameters
 - [ ] ToolDefinition.to_dict() returns OpenAI function format
 
-### Request Models (src/opencode/llm/models.py)
+### Request Models (src/forge/llm/models.py)
 - [ ] CompletionRequest dataclass with all parameters
 - [ ] CompletionRequest.to_dict() serializes correctly
 - [ ] Supports: model, messages, tools, tool_choice
@@ -38,7 +38,7 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 - [ ] Supports: frequency_penalty, presence_penalty, stop
 - [ ] Supports: stream, transforms, route (OpenRouter-specific)
 
-### Response Models (src/opencode/llm/models.py)
+### Response Models (src/forge/llm/models.py)
 - [ ] TokenUsage dataclass with prompt/completion/total tokens
 - [ ] CompletionChoice dataclass with index, message, finish_reason
 - [ ] CompletionResponse dataclass with id, model, choices, usage
@@ -47,8 +47,8 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 - [ ] StreamChunk dataclass with id, model, delta, finish_reason, usage
 - [ ] StreamChunk.from_dict() parses streaming chunks
 
-### Error Classes (src/opencode/llm/errors.py)
-- [ ] LLMError base class extends OpenCodeError
+### Error Classes (src/forge/llm/errors.py)
+- [ ] LLMError base class extends Code-ForgeError
 - [ ] AuthenticationError for 401 responses
 - [ ] RateLimitError with retry_after attribute
 - [ ] ModelNotFoundError with model_id attribute
@@ -56,14 +56,14 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 - [ ] ContentPolicyError for content violations
 - [ ] ProviderError for upstream provider errors
 
-### Routing (src/opencode/llm/routing.py)
+### Routing (src/forge/llm/routing.py)
 - [ ] RouteVariant enum (DEFAULT, NITRO, FLOOR, ONLINE, THINKING)
 - [ ] apply_variant() adds suffix to model ID
 - [ ] parse_model_id() extracts base model and variant
 - [ ] resolve_model_alias() resolves common aliases
 - [ ] MODEL_ALIASES dict with common shortcuts
 
-### OpenRouter Client (src/opencode/llm/client.py)
+### OpenRouter Client (src/forge/llm/client.py)
 - [ ] OpenRouterClient class with constructor
 - [ ] Constructor accepts: api_key, base_url, app_name, app_url, timeout, max_retries
 - [ ] _get_headers() returns proper auth and app headers
@@ -92,7 +92,7 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 - [ ] Retry uses exponential backoff
 - [ ] Retry respects Retry-After header
 
-### Streaming (src/opencode/llm/streaming.py)
+### Streaming (src/forge/llm/streaming.py)
 - [ ] StreamCollector class implemented
 - [ ] add_chunk() accumulates content
 - [ ] add_chunk() returns new content (or None)
@@ -102,7 +102,7 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 - [ ] Handles partial tool call arguments
 
 ### Package Structure
-- [ ] src/opencode/llm/__init__.py exports all public classes
+- [ ] src/forge/llm/__init__.py exports all public classes
 - [ ] All imports work correctly
 - [ ] No circular dependencies
 
@@ -126,12 +126,12 @@ All of the following criteria must be met before Phase 3.1 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/llm/
+ls -la src/forge/llm/
 # Expected: __init__.py, client.py, models.py, errors.py, routing.py, streaming.py
 
 # 2. Test imports
 python -c "
-from opencode.llm import (
+from forge.llm import (
     OpenRouterClient,
     Message, MessageRole, ToolDefinition,
     CompletionRequest, CompletionResponse, CompletionChoice,
@@ -145,7 +145,7 @@ print('All LLM imports successful')
 
 # 3. Test Message creation
 python -c "
-from opencode.llm import Message, MessageRole
+from forge.llm import Message, MessageRole
 
 # System message
 sys_msg = Message.system('You are helpful.')
@@ -170,7 +170,7 @@ print('Message creation: OK')
 
 # 4. Test Message serialization
 python -c "
-from opencode.llm import Message, MessageRole
+from forge.llm import Message, MessageRole
 
 msg = Message.user('Hello!')
 d = msg.to_dict()
@@ -185,7 +185,7 @@ print('Message serialization: OK')
 
 # 5. Test CompletionRequest
 python -c "
-from opencode.llm import CompletionRequest, Message, ToolDefinition
+from forge.llm import CompletionRequest, Message, ToolDefinition
 
 req = CompletionRequest(
     model='anthropic/claude-3-opus',
@@ -204,7 +204,7 @@ print('CompletionRequest: OK')
 
 # 6. Test CompletionResponse parsing
 python -c "
-from opencode.llm import CompletionResponse
+from forge.llm import CompletionResponse
 
 data = {
     'id': 'gen-123',
@@ -228,8 +228,8 @@ print('CompletionResponse parsing: OK')
 
 # 7. Test routing
 python -c "
-from opencode.llm import RouteVariant, apply_variant
-from opencode.llm.routing import resolve_model_alias, parse_model_id
+from forge.llm import RouteVariant, apply_variant
+from forge.llm.routing import resolve_model_alias, parse_model_id
 
 # Apply variant
 result = apply_variant('anthropic/claude-3-opus', RouteVariant.NITRO)
@@ -249,8 +249,8 @@ print('Routing: OK')
 
 # 8. Test StreamCollector
 python -c "
-from opencode.llm.streaming import StreamCollector
-from opencode.llm import StreamChunk, MessageRole
+from forge.llm.streaming import StreamCollector
+from forge.llm import StreamChunk, MessageRole
 
 collector = StreamCollector()
 
@@ -278,7 +278,7 @@ print('StreamCollector: OK')
 
 # 9. Test error classes
 python -c "
-from opencode.llm import (
+from forge.llm import (
     LLMError, AuthenticationError, RateLimitError,
     ModelNotFoundError, ContextLengthError
 )
@@ -302,7 +302,7 @@ print('Error classes: OK')
 
 # 10. Test client initialization (no API call)
 python -c "
-from opencode.llm import OpenRouterClient
+from forge.llm import OpenRouterClient
 
 client = OpenRouterClient(
     api_key='test-key',
@@ -325,16 +325,16 @@ print('Client initialization: OK')
 "
 
 # 11. Run all unit tests
-pytest tests/unit/llm/ -v --cov=opencode.llm --cov-report=term-missing
+pytest tests/unit/llm/ -v --cov=forge.llm --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 12. Type checking
-mypy src/opencode/llm/ --strict
+mypy src/forge/llm/ --strict
 # Expected: No errors
 
 # 13. Linting
-ruff check src/opencode/llm/
+ruff check src/forge/llm/
 # Expected: No errors
 
 # 14. Integration test with mock (if available)
@@ -342,7 +342,7 @@ python -c "
 import asyncio
 from unittest.mock import AsyncMock, patch
 
-from opencode.llm import OpenRouterClient, CompletionRequest, Message
+from forge.llm import OpenRouterClient, CompletionRequest, Message
 
 async def test_complete_mock():
     mock_response = {
@@ -399,12 +399,12 @@ asyncio.run(test_complete_mock())
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/llm/__init__.py` | Package exports |
-| `src/opencode/llm/models.py` | Message, Request, Response models |
-| `src/opencode/llm/client.py` | OpenRouterClient implementation |
-| `src/opencode/llm/errors.py` | LLM error classes |
-| `src/opencode/llm/routing.py` | Model routing and aliases |
-| `src/opencode/llm/streaming.py` | StreamCollector utility |
+| `src/forge/llm/__init__.py` | Package exports |
+| `src/forge/llm/models.py` | Message, Request, Response models |
+| `src/forge/llm/client.py` | OpenRouterClient implementation |
+| `src/forge/llm/errors.py` | LLM error classes |
+| `src/forge/llm/routing.py` | Model routing and aliases |
+| `src/forge/llm/streaming.py` | StreamCollector utility |
 | `tests/unit/llm/__init__.py` | Test package |
 | `tests/unit/llm/test_models.py` | Model tests |
 | `tests/unit/llm/test_client.py` | Client tests |

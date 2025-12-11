@@ -14,8 +14,8 @@ All of the following criteria must be met before Phase 1.2 is considered complet
 
 ## Checklist
 
-### Configuration Models (src/opencode/config/models.py)
-- [ ] `OpenCodeConfig` root model defined
+### Configuration Models (src/forge/config/models.py)
+- [ ] `Code-ForgeConfig` root model defined
 - [ ] `ModelConfig` with validation (max_tokens range, temperature range)
 - [ ] `PermissionConfig` with allow/ask/deny lists
 - [ ] `HooksConfig` with all hook event types
@@ -29,7 +29,7 @@ All of the following criteria must be met before Phase 1.2 is considered complet
 - [ ] All models have sensible defaults
 - [ ] API key uses `SecretStr` type
 
-### Configuration Sources (src/opencode/config/sources.py)
+### Configuration Sources (src/forge/config/sources.py)
 - [ ] `IConfigSource` interface defined
 - [ ] `JsonFileSource` implementation
 - [ ] `YamlFileSource` implementation
@@ -37,7 +37,7 @@ All of the following criteria must be met before Phase 1.2 is considered complet
 - [ ] All sources handle missing files gracefully
 - [ ] All sources handle malformed content gracefully
 
-### Configuration Loader (src/opencode/config/loader.py)
+### Configuration Loader (src/forge/config/loader.py)
 - [ ] `ConfigLoader` implements `IConfigLoader` from Phase 1.1
 - [ ] `load_all()` loads and merges all sources
 - [ ] `load(path)` loads single file
@@ -52,19 +52,19 @@ All of the following criteria must be met before Phase 1.2 is considered complet
 
 ### Hierarchy Implementation
 - [ ] Defaults are loaded first
-- [ ] Enterprise settings (`/etc/src/opencode/settings.json`) loaded
-- [ ] User settings (`~/.src/opencode/settings.json`) loaded
-- [ ] Project settings (`.src/opencode/settings.json`) loaded
-- [ ] Local overrides (`.src/opencode/settings.local.json`) loaded
+- [ ] Enterprise settings (`/etc/src/forge/settings.json`) loaded
+- [ ] User settings (`~/.src/forge/settings.json`) loaded
+- [ ] Project settings (`.src/forge/settings.json`) loaded
+- [ ] Local overrides (`.src/forge/settings.local.json`) loaded
 - [ ] Environment variables applied last
 - [ ] Later sources override earlier sources
 - [ ] Deep merge preserves nested values
 
 ### Environment Variables
-- [ ] `OPENCODE_API_KEY` sets api_key
-- [ ] `OPENCODE_MODEL` sets model.default
-- [ ] `OPENCODE_MAX_TOKENS` sets model.max_tokens
-- [ ] `OPENCODE_THEME` sets display.theme
+- [ ] `FORGE_API_KEY` sets api_key
+- [ ] `FORGE_MODEL` sets model.default
+- [ ] `FORGE_MAX_TOKENS` sets model.max_tokens
+- [ ] `FORGE_THEME` sets display.theme
 - [ ] Environment has highest precedence
 
 ### Live Reload
@@ -97,9 +97,9 @@ All of the following criteria must be met before Phase 1.2 is considered complet
 ```bash
 # 1. Test model validation
 python -c "
-from opencode.config.models import opencodeConfig, ModelConfig
+from forge.config.models import forgeConfig, ModelConfig
 # Valid config
-c = OpenCodeConfig(model=ModelConfig(default='gpt-5', max_tokens=8192))
+c = Code-ForgeConfig(model=ModelConfig(default='gpt-5', max_tokens=8192))
 print(f'Valid config: {c.model.default}')
 
 # Invalid max_tokens should fail
@@ -111,10 +111,10 @@ except Exception as e:
 "
 
 # 2. Test JSON loading
-mkdir -p .opencode
-echo '{"model": {"default": "test-model"}}' > .src/opencode/settings.json
+mkdir -p .forge
+echo '{"model": {"default": "test-model"}}' > .src/forge/settings.json
 python -c "
-from opencode.config import ConfigLoader
+from forge.config import ConfigLoader
 c = ConfigLoader().load_all()
 print(f'Loaded model: {c.model.default}')
 assert c.model.default == 'test-model', 'JSON loading failed'
@@ -122,8 +122,8 @@ print('JSON loading works!')
 "
 
 # 3. Test environment override
-OPENCODE_MODEL=env-model python -c "
-from opencode.config import ConfigLoader
+FORGE_MODEL=env-model python -c "
+from forge.config import ConfigLoader
 c = ConfigLoader().load_all()
 print(f'Model from env: {c.model.default}')
 assert c.model.default == 'env-model', 'Env override failed'
@@ -131,10 +131,10 @@ print('Environment override works!')
 "
 
 # 4. Test hierarchy merge
-echo '{"model": {"default": "user-model", "max_tokens": 4096}}' > ~/.src/opencode/settings.json
-echo '{"model": {"default": "project-model"}}' > .src/opencode/settings.json
+echo '{"model": {"default": "user-model", "max_tokens": 4096}}' > ~/.src/forge/settings.json
+echo '{"model": {"default": "project-model"}}' > .src/forge/settings.json
 python -c "
-from opencode.config import ConfigLoader
+from forge.config import ConfigLoader
 c = ConfigLoader().load_all()
 print(f'Model: {c.model.default}, Tokens: {c.model.max_tokens}')
 assert c.model.default == 'project-model', 'Hierarchy failed'
@@ -144,11 +144,11 @@ print('Hierarchy merge works!')
 
 # 5. Test API key security
 python -c "
-from opencode.config.models import opencodeConfig
+from forge.config.models import forgeConfig
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-c = OpenCodeConfig(api_key='sk-secret-123')
+c = Code-ForgeConfig(api_key='sk-secret-123')
 s = str(c)
 assert 'sk-secret-123' not in s, 'API key in string!'
 print(f'String repr: {s[:100]}...')
@@ -156,13 +156,13 @@ print('API key is secure!')
 "
 
 # 6. Run all tests
-pytest tests/unit/config/ -v --cov=opencode.config --cov-report=term-missing
+pytest tests/unit/config/ -v --cov=forge.config --cov-report=term-missing
 
 # 7. Type checking
-mypy src/opencode/config/ --strict
+mypy src/forge/config/ --strict
 
 # 8. Linting
-ruff check src/opencode/config/
+ruff check src/forge/config/
 ```
 
 ---
@@ -183,10 +183,10 @@ ruff check src/opencode/config/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/config/__init__.py` | Package exports |
-| `src/opencode/config/models.py` | Pydantic configuration models |
-| `src/opencode/config/sources.py` | IConfigSource implementations |
-| `src/opencode/config/loader.py` | ConfigLoader implementation |
+| `src/forge/config/__init__.py` | Package exports |
+| `src/forge/config/models.py` | Pydantic configuration models |
+| `src/forge/config/sources.py` | IConfigSource implementations |
+| `src/forge/config/loader.py` | ConfigLoader implementation |
 | `tests/unit/config/__init__.py` | Test package |
 | `tests/unit/config/test_models.py` | Model tests |
 | `tests/unit/config/test_sources.py` | Source tests |

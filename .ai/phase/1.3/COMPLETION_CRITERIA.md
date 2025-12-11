@@ -14,8 +14,8 @@ All of the following criteria must be met before Phase 1.3 is considered complet
 
 ## Checklist
 
-### REPL Core (src/opencode/cli/repl.py)
-- [ ] `OpenCodeREPL` class implemented
+### REPL Core (src/forge/cli/repl.py)
+- [ ] `Code-ForgeREPL` class implemented
 - [ ] `run()` async method starts REPL loop
 - [ ] `stop()` method stops REPL loop
 - [ ] `on_input()` method registers callbacks for input processing
@@ -27,17 +27,17 @@ All of the following criteria must be met before Phase 1.3 is considered complet
 - [ ] Clean exit on EOF (Ctrl+D)
 - [ ] Graceful interrupt on Ctrl+C (returns to prompt)
 
-### Input Handler (src/opencode/cli/repl.py or separate file)
+### Input Handler (src/forge/cli/repl.py or separate file)
 - [ ] `InputHandler` class implemented
 - [ ] Single-line input with Enter to submit
 - [ ] Multiline input with Shift+Enter
 - [ ] History navigation with Up/Down arrows
 - [ ] Reverse search with Ctrl+R
-- [ ] History persists to `~/.src/opencode/history`
+- [ ] History persists to `~/.src/forge/history`
 - [ ] History file created if not exists
 - [ ] Directory created if not exists
 
-### Output Renderer (src/opencode/cli/repl.py or separate file)
+### Output Renderer (src/forge/cli/repl.py or separate file)
 - [ ] `OutputRenderer` class implemented
 - [ ] `print()` method for plain text
 - [ ] `print_markdown()` method for markdown
@@ -47,7 +47,7 @@ All of the following criteria must be met before Phase 1.3 is considered complet
 - [ ] `print_warning()` method for warnings (yellow)
 - [ ] `clear()` method for screen clearing
 
-### Status Bar (src/opencode/cli/status.py)
+### Status Bar (src/forge/cli/status.py)
 - [ ] `StatusBar` class implemented
 - [ ] `set_model()` updates displayed model
 - [ ] `set_tokens()` updates token display
@@ -57,7 +57,7 @@ All of the following criteria must be met before Phase 1.3 is considered complet
 - [ ] Status bar respects terminal width
 - [ ] Status bar hidden when `display.status_line` is false
 
-### Themes (src/opencode/cli/themes.py)
+### Themes (src/forge/cli/themes.py)
 - [ ] `DARK_THEME` dictionary defined
 - [ ] `LIGHT_THEME` dictionary defined
 - [ ] Theme includes: background, foreground, accent, success, warning, error, dim
@@ -73,14 +73,14 @@ All of the following criteria must be met before Phase 1.3 is considered complet
 - [ ] "?": Show shortcuts (on empty input + Enter)
 - [ ] Up/Down: Navigate history
 
-### CLI Integration (src/opencode/cli/main.py)
+### CLI Integration (src/forge/cli/main.py)
 - [ ] `main()` updated to start REPL when no arguments
 - [ ] Configuration loaded before REPL starts
 - [ ] Async event loop properly handled
 - [ ] Exit code returned correctly
 
 ### Testing
-- [ ] Unit tests for `OpenCodeREPL`
+- [ ] Unit tests for `Code-ForgeREPL`
 - [ ] Unit tests for `InputHandler`
 - [ ] Unit tests for `OutputRenderer`
 - [ ] Unit tests for `StatusBar`
@@ -94,7 +94,7 @@ All of the following criteria must be met before Phase 1.3 is considered complet
 
 ```bash
 # 1. Start REPL
-opencode
+forge
 # Expected: Welcome screen appears, prompt ready
 
 # 2. Test basic input
@@ -129,24 +129,24 @@ opencode
 # Expected: List of keyboard shortcuts displayed
 
 # 9. Verify history file
-ls -la ~/.src/opencode/history
+ls -la ~/.src/forge/history
 # Expected: File exists
 
 # 10. Test theme via config
-echo '{"display": {"theme": "light"}}' > .src/opencode/settings.json
-opencode
+echo '{"display": {"theme": "light"}}' > .src/forge/settings.json
+forge
 # Expected: Light theme colors
 
 # 11. Run tests
-pytest tests/unit/cli/ -v --cov=opencode.cli --cov-report=term-missing
+pytest tests/unit/cli/ -v --cov=forge.cli --cov-report=term-missing
 # Expected: All pass, coverage ≥ 90%
 
 # 12. Type checking
-mypy src/opencode/cli/ --strict
+mypy src/forge/cli/ --strict
 # Expected: No errors
 
 # 13. Linting
-ruff check src/opencode/cli/
+ruff check src/forge/cli/
 # Expected: No errors
 ```
 
@@ -161,7 +161,7 @@ ruff check src/opencode/cli/
 | Lint Errors | 0 | `ruff check` |
 | McCabe Complexity | ≤ 8 | `ruff check --select=C901` |
 | Input Latency | < 10ms | Manual testing |
-| Startup Time | < 500ms | `time opencode --version` |
+| Startup Time | < 500ms | `time forge --version` |
 
 ---
 
@@ -169,11 +169,11 @@ ruff check src/opencode/cli/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/cli/repl.py` | OpenCodeREPL, InputHandler, OutputRenderer |
-| `src/opencode/cli/status.py` | StatusBar class |
-| `src/opencode/cli/themes.py` | Theme definitions |
-| `src/opencode/cli/__init__.py` | Updated exports |
-| `src/opencode/cli/main.py` | Updated entry point |
+| `src/forge/cli/repl.py` | Code-ForgeREPL, InputHandler, OutputRenderer |
+| `src/forge/cli/status.py` | StatusBar class |
+| `src/forge/cli/themes.py` | Theme definitions |
+| `src/forge/cli/__init__.py` | Updated exports |
+| `src/forge/cli/main.py` | Updated entry point |
 | `tests/unit/cli/test_repl.py` | REPL tests |
 | `tests/unit/cli/test_status.py` | Status bar tests |
 | `tests/unit/cli/test_themes.py` | Theme tests |

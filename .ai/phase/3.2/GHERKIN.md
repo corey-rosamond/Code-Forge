@@ -8,29 +8,29 @@
 
 ## Feature: Message Conversion
 
-### Scenario: Convert SystemMessage to OpenCode
+### Scenario: Convert SystemMessage to Code-Forge
 ```gherkin
 Given a LangChain SystemMessage with content "You are helpful."
-When I call langchain_to_opencode(message)
-Then the result should be an OpenCode Message
+When I call langchain_to_forge(message)
+Then the result should be an Code-Forge Message
 And the role should be MessageRole.SYSTEM
 And the content should be "You are helpful."
 ```
 
-### Scenario: Convert HumanMessage to OpenCode
+### Scenario: Convert HumanMessage to Code-Forge
 ```gherkin
 Given a LangChain HumanMessage with content "Hello!"
-When I call langchain_to_opencode(message)
-Then the result should be an OpenCode Message
+When I call langchain_to_forge(message)
+Then the result should be an Code-Forge Message
 And the role should be MessageRole.USER
 And the content should be "Hello!"
 ```
 
-### Scenario: Convert AIMessage to OpenCode
+### Scenario: Convert AIMessage to Code-Forge
 ```gherkin
 Given a LangChain AIMessage with content "Hi there!"
-When I call langchain_to_opencode(message)
-Then the result should be an OpenCode Message
+When I call langchain_to_forge(message)
+Then the result should be an Code-Forge Message
 And the role should be MessageRole.ASSISTANT
 And the content should be "Hi there!"
 ```
@@ -40,37 +40,37 @@ And the content should be "Hi there!"
 Given a LangChain AIMessage with tool_calls:
   | id       | name      | args                    |
   | call_123 | read_file | {"path": "/tmp/test"}   |
-When I call langchain_to_opencode(message)
+When I call langchain_to_forge(message)
 Then the result should have tool_calls
 And tool_calls[0].id should be "call_123"
 And tool_calls[0].function["name"] should be "read_file"
 And tool_calls[0].function["arguments"] should be JSON '{"path": "/tmp/test"}'
 ```
 
-### Scenario: Convert ToolMessage to OpenCode
+### Scenario: Convert ToolMessage to Code-Forge
 ```gherkin
 Given a LangChain ToolMessage with:
   | content      | "file contents here" |
   | tool_call_id | "call_123"           |
-When I call langchain_to_opencode(message)
-Then the result should be an OpenCode Message
+When I call langchain_to_forge(message)
+Then the result should be an Code-Forge Message
 And the role should be MessageRole.TOOL
 And the tool_call_id should be "call_123"
 And the content should be "file contents here"
 ```
 
-### Scenario: Convert OpenCode system message to LangChain
+### Scenario: Convert Code-Forge system message to LangChain
 ```gherkin
-Given an OpenCode Message with role=SYSTEM and content="Be helpful"
-When I call opencode_to_langchain(message)
+Given an Code-Forge Message with role=SYSTEM and content="Be helpful"
+When I call forge_to_langchain(message)
 Then the result should be a SystemMessage
 And the content should be "Be helpful"
 ```
 
-### Scenario: Convert OpenCode assistant message with tool calls
+### Scenario: Convert Code-Forge assistant message with tool calls
 ```gherkin
-Given an OpenCode Message with role=ASSISTANT and tool_calls
-When I call opencode_to_langchain(message)
+Given an Code-Forge Message with role=ASSISTANT and tool_calls
+When I call forge_to_langchain(message)
 Then the result should be an AIMessage
 And the tool_calls should be converted to LangChain format
 And each tool call should have id, name, and args (as dict)
@@ -79,8 +79,8 @@ And each tool call should have id, name, and args (as dict)
 ### Scenario: Convert list of messages
 ```gherkin
 Given a list of 3 LangChain messages [SystemMessage, HumanMessage, AIMessage]
-When I call langchain_messages_to_opencode(messages)
-Then the result should be a list of 3 OpenCode Messages
+When I call langchain_messages_to_forge(messages)
+Then the result should be a list of 3 Code-Forge Messages
 And each message should have the correct role
 ```
 
@@ -157,18 +157,18 @@ And the default should not be modified
 
 ## Feature: Tool Adapters
 
-### Scenario: Adapt OpenCode tool to LangChain
+### Scenario: Adapt Code-Forge tool to LangChain
 ```gherkin
-Given an OpenCode ReadTool
-When I create LangChainToolAdapter(opencode_tool=read_tool)
+Given an Code-Forge ReadTool
+When I create LangChainToolAdapter(forge_tool=read_tool)
 Then the adapter should implement LangChain BaseTool
 And adapter.name should match read_tool.name
 And adapter.description should match read_tool.description
 ```
 
-### Scenario: Generate args schema from OpenCode parameters
+### Scenario: Generate args schema from Code-Forge parameters
 ```gherkin
-Given an OpenCode tool with parameters:
+Given an Code-Forge tool with parameters:
   | name      | type   | required | description       |
   | file_path | string | true     | Path to the file  |
   | encoding  | string | false    | File encoding     |
@@ -194,18 +194,18 @@ Then I should receive an error message
 And the error should contain "Error:"
 ```
 
-### Scenario: Adapt LangChain tool to OpenCode
+### Scenario: Adapt LangChain tool to Code-Forge
 ```gherkin
 Given a LangChain tool (e.g., WikipediaQueryRun)
-When I create OpenCodeToolAdapter(langchain_tool=wiki_tool)
-Then the adapter should implement OpenCode BaseTool interface
+When I create Code-ForgeToolAdapter(langchain_tool=wiki_tool)
+Then the adapter should implement Code-Forge BaseTool interface
 And I can call adapter.execute(params, context)
 And it should return a ToolResult
 ```
 
 ### Scenario: Convert batch of tools
 ```gherkin
-Given a list of 3 OpenCode tools
+Given a list of 3 Code-Forge tools
 When I call adapt_tools_for_langchain(tools)
 Then I should receive a list of 3 LangChainToolAdapters
 And each adapter should be usable with LangChain agents
@@ -392,7 +392,7 @@ And events should be dispatched in order
 
 ### Scenario: Simple completion without tools
 ```gherkin
-Given an OpenCodeAgent with LLM and empty tools list
+Given an Code-ForgeAgent with LLM and empty tools list
 When I call agent.run("What is 2+2?")
 Then the agent should return an AgentResult
 And result.output should contain the answer
@@ -402,7 +402,7 @@ And result.tool_calls should be empty
 
 ### Scenario: Agent with tool execution
 ```gherkin
-Given an OpenCodeAgent with ReadTool
+Given an Code-ForgeAgent with ReadTool
 When I call agent.run("Read /tmp/test.txt")
 Then the agent should:
   1. Send request to LLM with tool definitions
@@ -416,7 +416,7 @@ And result.iterations should be 2
 
 ### Scenario: Multiple tool calls in one turn
 ```gherkin
-Given an OpenCodeAgent with multiple tools
+Given an Code-ForgeAgent with multiple tools
 When the LLM returns multiple tool_calls in one response
 Then all tools should be executed
 And all results should be sent back together
@@ -425,7 +425,7 @@ And agent should continue to next iteration
 
 ### Scenario: Max iterations limit
 ```gherkin
-Given an OpenCodeAgent with max_iterations=3
+Given an Code-ForgeAgent with max_iterations=3
 When the agent keeps calling tools without completing
 Then execution should stop after 3 iterations
 And result.stopped_reason should be "max_iterations"
@@ -433,7 +433,7 @@ And result.stopped_reason should be "max_iterations"
 
 ### Scenario: Timeout handling
 ```gherkin
-Given an OpenCodeAgent with timeout=5.0
+Given an Code-ForgeAgent with timeout=5.0
 When execution takes longer than 5 seconds
 Then execution should be interrupted
 And result.stopped_reason should be "timeout"
@@ -441,7 +441,7 @@ And result.stopped_reason should be "timeout"
 
 ### Scenario: Stream agent execution
 ```gherkin
-Given an OpenCodeAgent
+Given an Code-ForgeAgent
 When I iterate async for event in agent.stream("Do something")
 Then I should receive AgentEvent objects
 And events should include LLM_START, LLM_CHUNK, LLM_END
@@ -451,7 +451,7 @@ And final event should be AGENT_END
 
 ### Scenario: Tool execution error handling
 ```gherkin
-Given an OpenCodeAgent with a tool
+Given an Code-ForgeAgent with a tool
 When the tool execution fails
 Then the error should be returned as tool result
 And the agent should continue execution
@@ -460,7 +460,7 @@ And the LLM should see the error message
 
 ### Scenario: Agent reset
 ```gherkin
-Given an OpenCodeAgent with conversation history
+Given an Code-ForgeAgent with conversation history
 When I call agent.reset()
 Then memory.get_history() should be empty
 And system message should be preserved
@@ -494,7 +494,7 @@ And tool calls should work within the chain
 
 ### Scenario: Handle LLM API error in agent
 ```gherkin
-Given an OpenCodeAgent
+Given an Code-ForgeAgent
 When the LLM API returns an error
 Then the agent should propagate the error
 And result.stopped_reason should contain "error"
@@ -502,7 +502,7 @@ And result.stopped_reason should contain "error"
 
 ### Scenario: Handle invalid tool call
 ```gherkin
-Given an OpenCodeAgent with tools
+Given an Code-ForgeAgent with tools
 When the LLM returns a call to unknown tool "fake_tool"
 Then the agent should return error as tool result
 And execution should continue
@@ -510,7 +510,7 @@ And execution should continue
 
 ### Scenario: Handle malformed tool arguments
 ```gherkin
-Given an OpenCodeAgent
+Given an Code-ForgeAgent
 When the LLM returns tool call with invalid JSON arguments
 Then the agent should handle gracefully
 And return appropriate error message

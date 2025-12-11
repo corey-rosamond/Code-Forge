@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document provides the complete implementation plan for GitHub integration, enabling OpenCode to interact with GitHub repositories, issues, pull requests, and other GitHub features.
+This document provides the complete implementation plan for GitHub integration, enabling Code-Forge to interact with GitHub repositories, issues, pull requests, and other GitHub features.
 
 ---
 
@@ -1998,7 +1998,7 @@ class GitHubContext:
 ### 8. __init__.py - Package Exports
 
 ```python
-"""GitHub integration for OpenCode."""
+"""GitHub integration for Code-Forge."""
 from .auth import (
     GitHubAuth,
     GitHubAuthenticator,
@@ -2087,8 +2087,8 @@ __all__ = [
 
 ```python
 # Detect GitHub remote from git config
-from opencode.git import GitRepository
-from opencode.github import RepositoryService
+from forge.git import GitRepository
+from forge.github import RepositoryService
 
 repo = GitRepository()
 remotes = repo.get_remotes()

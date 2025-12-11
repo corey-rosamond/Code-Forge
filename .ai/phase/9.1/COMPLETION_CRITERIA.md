@@ -240,16 +240,16 @@
 pytest tests/git/ -v
 
 # Run with coverage
-pytest tests/git/ --cov=src/opencode/git --cov-report=term-missing
+pytest tests/git/ --cov=src/forge/git --cov-report=term-missing
 
 # Check coverage threshold
-pytest tests/git/ --cov=src/opencode/git --cov-fail-under=90
+pytest tests/git/ --cov=src/forge/git --cov-fail-under=90
 
 # Type checking
-mypy src/opencode/git/
+mypy src/forge/git/
 
 # Complexity check
-flake8 src/opencode/git/ --max-complexity=10
+flake8 src/forge/git/ --max-complexity=10
 ```
 
 ---

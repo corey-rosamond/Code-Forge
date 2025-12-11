@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from opencode.context.tokens import (
+from code_forge.context.tokens import (
     ApproximateCounter,
     CachingCounter,
     TiktokenCounter,

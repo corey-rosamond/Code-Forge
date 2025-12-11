@@ -11,21 +11,21 @@
 ```gherkin
 Feature: Project Installation and Setup
   As a developer
-  I want to install OpenCode as a Python package
+  I want to install Code-Forge as a Python package
   So that I can use it as a development tool
 
   @phase1.1 @installation
   Scenario: Install package with Poetry
-    Given I have cloned the OpenCode repository
+    Given I have cloned the Code-Forge repository
     And Python 3.10 or higher is installed
     When I run "pip install -e ".[dev]""
     Then the installation should complete without errors
     And all dependencies should be installed
-    And the "opencode" command should be available
+    And the "forge" command should be available
 
   @phase1.1 @installation
   Scenario: Install package with uv
-    Given I have cloned the OpenCode repository
+    Given I have cloned the Code-Forge repository
     And Python 3.10 or higher is installed
     When I run "uv sync"
     Then the installation should complete without errors
@@ -34,7 +34,7 @@ Feature: Project Installation and Setup
   @phase1.1 @installation
   Scenario: Verify Python version requirement
     Given I have Python 3.9 installed
-    When I attempt to install OpenCode
+    When I attempt to install Code-Forge
     Then the installation should fail
     And I should see an error about Python version requirement
 ```
@@ -50,43 +50,43 @@ Feature: CLI Entry Point
   So that I can verify the installation works
 
   Background:
-    Given OpenCode is installed
+    Given Code-Forge is installed
 
   @phase1.1 @cli @smoke
   Scenario: Display version
-    When I run "opencode --version"
+    When I run "forge --version"
     Then I should see the version number "0.1.0"
     And the exit code should be 0
 
   @phase1.1 @cli @smoke
   Scenario: Display version with short flag
-    When I run "opencode -v"
+    When I run "forge -v"
     Then I should see the version number "0.1.0"
     And the exit code should be 0
 
   @phase1.1 @cli @smoke
   Scenario: Display help
-    When I run "opencode --help"
+    When I run "forge --help"
     Then I should see usage information
     And I should see available options listed
     And the exit code should be 0
 
   @phase1.1 @cli @smoke
   Scenario: Display help with short flag
-    When I run "opencode -h"
+    When I run "forge -h"
     Then I should see usage information
     And the exit code should be 0
 
   @phase1.1 @cli
   Scenario: Run without arguments
-    When I run "opencode"
+    When I run "forge"
     Then I should see a welcome message
     And I should see instructions for help
     And the exit code should be 0
 
   @phase1.1 @cli
   Scenario: Run as Python module
-    When I run "python -m OpenCode --version"
+    When I run "python -m Code-Forge --version"
     Then I should see the version number
     And the exit code should be 0
 ```
@@ -147,22 +147,22 @@ Feature: Exception Hierarchy
   So that I can handle errors appropriately
 
   @phase1.1 @errors
-  Scenario: OpenCodeError is base exception
-    When I raise an OpenCodeError with message "test error"
+  Scenario: Code-ForgeError is base exception
+    When I raise an Code-ForgeError with message "test error"
     Then it should be catchable as Exception
     And its string should be "test error"
 
   @phase1.1 @errors
-  Scenario: OpenCodeError with cause
+  Scenario: Code-ForgeError with cause
     Given I have an original exception
-    When I raise an OpenCodeError with that cause
+    When I raise an Code-ForgeError with that cause
     Then the cause should be accessible
     And the string should include "caused by"
 
   @phase1.1 @errors
   Scenario: ConfigError inheritance
     When I raise a ConfigError
-    Then it should be catchable as OpenCodeError
+    Then it should be catchable as Code-ForgeError
     And it should be catchable as Exception
 
   @phase1.1 @errors
@@ -316,7 +316,7 @@ Feature: Logging Infrastructure
   Scenario: Get named logger
     When I call get_logger with name "test"
     Then I should get a Logger instance
-    And its name should be "opencode.test"
+    And its name should be "forge.test"
 
   @phase1.1 @logging
   Scenario: Log messages at different levels
@@ -338,19 +338,19 @@ Feature: Code Quality Standards
 
   @phase1.1 @quality
   Scenario: Type checking passes
-    When I run "mypy src/opencode/"
+    When I run "mypy src/forge/"
     Then there should be no errors
     And all public functions should have type hints
 
   @phase1.1 @quality
   Scenario: Linting passes
-    When I run "ruff check src/opencode/"
+    When I run "ruff check src/forge/"
     Then there should be no errors
     And code should follow PEP 8
 
   @phase1.1 @quality
   Scenario: Test coverage is adequate
-    When I run "pytest --cov=opencode"
+    When I run "pytest --cov=forge"
     Then coverage should be at least 90%
     And all core modules should be covered
 

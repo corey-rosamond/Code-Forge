@@ -312,7 +312,7 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    subgraph ModesPkg["src/opencode/modes/"]
+    subgraph ModesPkg["src/forge/modes/"]
         INIT["__init__.py"]
         BASE["base.py<br/>Mode, ModeConfig, ModeContext"]
         PROMPTS["prompts.py<br/>Mode prompt templates"]
@@ -322,15 +322,15 @@ flowchart TB
         HEADLESS["headless.py<br/>HeadlessMode"]
     end
 
-    subgraph REPLPkg["src/opencode/repl/"]
+    subgraph REPLPkg["src/forge/repl/"]
         REPL["repl.py"]
     end
 
-    subgraph SessionsPkg["src/opencode/sessions/"]
+    subgraph SessionsPkg["src/forge/sessions/"]
         SESSION["manager.py"]
     end
 
-    subgraph CommandsPkg["src/opencode/commands/"]
+    subgraph CommandsPkg["src/forge/commands/"]
         COMMANDS["builtin/"]
     end
 

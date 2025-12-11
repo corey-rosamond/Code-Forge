@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 8.1 implements Model Context Protocol (MCP) support for OpenCode, enabling integration with external MCP servers that provide additional tools, resources, and capabilities. MCP is an open protocol for connecting AI assistants to external data sources and services.
+Phase 8.1 implements Model Context Protocol (MCP) support for Code-Forge, enabling integration with external MCP servers that provide additional tools, resources, and capabilities. MCP is an open protocol for connecting AI assistants to external data sources and services.
 
 ---
 
@@ -132,8 +132,8 @@ Phase 8.1 implements Model Context Protocol (MCP) support for OpenCode, enabling
 - Environment variables
 
 **FR-6.2:** Configuration sources
-- Global config (~/.src/opencode/mcp.yaml)
-- Project config (.src/opencode/mcp.yaml)
+- Global config (~/.src/forge/mcp.yaml)
+- Project config (.src/forge/mcp.yaml)
 - Environment variables
 - CLI arguments
 
@@ -185,7 +185,7 @@ Phase 8.1 implements Model Context Protocol (MCP) support for OpenCode, enabling
 ### Package Structure
 
 ```
-src/opencode/mcp/
+src/forge/mcp/
 ├── __init__.py           # Package exports
 ├── protocol.py           # MCP protocol types
 ├── client.py             # MCP client implementation
@@ -204,7 +204,7 @@ src/opencode/mcp/
 ### Configuration Format
 
 ```yaml
-# ~/.src/opencode/mcp.yaml or .src/opencode/mcp.yaml
+# ~/.src/forge/mcp.yaml or .src/forge/mcp.yaml
 servers:
   filesystem:
     transport: stdio
@@ -384,7 +384,7 @@ class HTTPTransport(MCPTransport):
 class MCPClient:
     """MCP client for communicating with servers."""
 
-    def __init__(self, transport: MCPTransport, name: str = "opencode"):
+    def __init__(self, transport: MCPTransport, name: str = "forge"):
         self.transport = transport
         self.name = name
         self._request_id = 0
@@ -430,13 +430,13 @@ class MCPClient:
 
 # tools.py
 class MCPToolAdapter:
-    """Adapts MCP tools to OpenCode tool interface."""
+    """Adapts MCP tools to Code-Forge tool interface."""
 
     def __init__(self, client: MCPClient, server_name: str):
         ...
 
     def create_tool(self, mcp_tool: MCPTool) -> "Tool":
-        """Create OpenCode Tool from MCP tool."""
+        """Create Code-Forge Tool from MCP tool."""
         ...
 
     async def execute(self, tool_name: str, arguments: dict) -> Any:

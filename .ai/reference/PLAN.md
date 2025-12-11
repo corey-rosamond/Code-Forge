@@ -1,4 +1,4 @@
-# OpenCode Architectural Plan
+# Code-Forge Architectural Plan
 ## A Clean Architecture Approach to AI-Assisted Development
 
 **Document Version:** 1.0
@@ -10,7 +10,7 @@
 
 ## Preface: Architectural Philosophy
 
-After three decades in software architecture, I've learned that the difference between a good system and a great one lies not in its features, but in its fundamental architecture. OpenCode represents an opportunity to build a system that exemplifies the best practices we've refined over the years.
+After three decades in software architecture, I've learned that the difference between a good system and a great one lies not in its features, but in its fundamental architecture. Code-Forge represents an opportunity to build a system that exemplifies the best practices we've refined over the years.
 
 This plan embraces:
 - **SOLID Principles** as our foundation
@@ -891,18 +891,18 @@ RUN pip install poetry && \
 FROM python:3.11-slim
 
 # Security: Non-root user
-RUN useradd -m -u 1000 opencode
-USER opencode
+RUN useradd -m -u 1000 forge
+USER forge
 
 WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.11 /usr/local/lib/python3.11
-COPY --chown=opencode:opencode . .
+COPY --chown=forge:forge . .
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD python -c "import sys; sys.exit(0)"
 
-ENTRYPOINT ["python", "-m", "opencode"]
+ENTRYPOINT ["python", "-m", "forge"]
 ```
 
 ### 11.2 Orchestration with Kubernetes
@@ -911,9 +911,9 @@ ENTRYPOINT ["python", "-m", "opencode"]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opencode
+  name: forge
   labels:
-    app: opencode
+    app: forge
 spec:
   replicas: 3
   strategy:
@@ -923,15 +923,15 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: opencode
+      app: forge
   template:
     metadata:
       labels:
-        app: opencode
+        app: forge
     spec:
       containers:
-      - name: opencode
-        image: opencode:latest
+      - name: forge
+        image: forge:latest
         resources:
           limits:
             memory: "2Gi"
@@ -1095,7 +1095,7 @@ def calculate_solid_score(codebase: Codebase) -> float:
 
 ```
 ┌─────────────────────────────────────────┐
-│        OpenCode Quality Dashboard        │
+│        Code-Forge Quality Dashboard        │
 ├─────────────────────────────────────────┤
 │ McCabe Complexity:      7.2/10.0   ✓    │
 │ Test Coverage:          86%        ✓    │
@@ -1172,7 +1172,7 @@ This is not just a plan—it's a commitment to excellence.
 
 ## Appendix A: Design Pattern Quick Reference
 
-| Pattern | Usage in OpenCode | Benefit |
+| Pattern | Usage in Code-Forge | Benefit |
 |---------|------------------|---------|
 | Command | Tool execution | Undo/redo, queuing |
 | Observer | Hook system | Loose coupling |

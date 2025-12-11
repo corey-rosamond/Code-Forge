@@ -1,4 +1,4 @@
-# OpenCode Requirements Document
+# Code-Forge Requirements Document
 ## Complete Claude Code Alternative with OpenRouter and LangChain
 
 **Version:** 1.0
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter's access to 400+ AI models and LangChain's advanced agent orchestration capabilities. The system will provide feature parity with Claude Code while offering enhanced flexibility, cost optimization, and extensibility.
+Code-Forge is a comprehensive alternative to Claude Code that leverages OpenRouter's access to 400+ AI models and LangChain's advanced agent orchestration capabilities. The system will provide feature parity with Claude Code while offering enhanced flexibility, cost optimization, and extensibility.
 
 ### 1.1 Core Value Propositions
 - **Multi-Model Support**: Access to 400+ models through OpenRouter (GPT-5, Claude 4, Gemini 2.5, etc.)
@@ -68,7 +68,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 #### 2.2.1 Session Management Commands
 - **FR-028**: `/clear` - Clear conversation history while maintaining session
 - **FR-029**: `/compact` - Summarize conversation and compress context
-- **FR-030**: `/init` - Initialize new session or create OPENCODE.md
+- **FR-030**: `/init` - Initialize new session or create FORGE.md
 - **FR-031**: `/continue` - Resume most recent conversation
 - **FR-032**: `/resume <id>` - Resume specific session by ID
 - **FR-033**: `/export` - Export conversation for sharing
@@ -93,7 +93,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 
 #### 2.2.4 Integration Commands
 - **FR-048**: `/install-github-app` - Set up GitHub integration
-- **FR-049**: Custom slash commands from `.opencode/commands/`
+- **FR-049**: Custom slash commands from `.forge/commands/`
 
 ### 2.3 Operating Modes
 
@@ -235,9 +235,9 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 
 #### 2.10.1 Configuration Hierarchy
 - **FR-130**: Enterprise settings (highest priority)
-- **FR-131**: User settings (~/.opencode/)
-- **FR-132**: Project settings (.opencode/)
-- **FR-133**: Local overrides (.opencode/settings.local.json)
+- **FR-131**: User settings (~/.forge/)
+- **FR-132**: Project settings (.forge/)
+- **FR-133**: Local overrides (.forge/settings.local.json)
 
 #### 2.10.2 Configuration Files
 - **FR-134**: JSON/YAML configuration format
@@ -249,7 +249,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 
 #### 2.11.1 Session Features
 - **FR-138**: Auto-save all interactions
-- **FR-139**: Session history in ~/.opencode/sessions/
+- **FR-139**: Session history in ~/.forge/sessions/
 - **FR-140**: Resume with full context
 - **FR-141**: Export to multiple formats
 - **FR-142**: Cost tracking per session
@@ -261,7 +261,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 - **FR-144**: Token counting and monitoring
 - **FR-145**: Context window of up to 1M tokens
 - **FR-146**: Smart context pruning
-- **FR-147**: OPENCODE.md auto-inclusion
+- **FR-147**: FORGE.md auto-inclusion
 
 ### 2.13 GitHub Integration
 
@@ -270,7 +270,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 - **FR-149**: PR creation and management
 - **FR-150**: Automatic PR reviews
 - **FR-151**: Issue triage and labeling
-- **FR-152**: @opencode mentions in PRs/issues
+- **FR-152**: @forge mentions in PRs/issues
 
 ---
 
@@ -437,11 +437,11 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 ### 4.4 Data Storage
 
 #### 4.4.1 File Structure
-- **TR-031**: Session storage in ~/.opencode/sessions/
-- **TR-032**: Configuration in .opencode/ and ~/.opencode/
-- **TR-033**: Plugins in .opencode/plugins/
-- **TR-034**: Skills in .opencode/skills/
-- **TR-035**: Commands in .opencode/commands/
+- **TR-031**: Session storage in ~/.forge/sessions/
+- **TR-032**: Configuration in .forge/ and ~/.forge/
+- **TR-033**: Plugins in .forge/plugins/
+- **TR-034**: Skills in .forge/skills/
+- **TR-035**: Commands in .forge/commands/
 
 #### 4.4.2 Data Formats
 - **TR-036**: JSON for configuration files
@@ -456,7 +456,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 ### 5.1 CLI Interface
 
 #### 5.1.1 Command Structure
-- **IR-001**: Main command: `opencode`
+- **IR-001**: Main command: `forge`
 - **IR-002**: Flags: `--continue`, `--resume`, `--help`, `--version`
 - **IR-003**: Options: `--model`, `--output-format`, `--config`
 - **IR-004**: Arguments: Initial prompt or file path
@@ -620,7 +620,7 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 
 ## Document Control
 
-- **Author**: OpenCode Development Team
+- **Author**: Code-Forge Development Team
 - **Review Date**: December 2025
 - **Next Review**: January 2026
 - **Approval Status**: Draft
@@ -628,4 +628,4 @@ OpenCode is a comprehensive alternative to Claude Code that leverages OpenRouter
 
 ---
 
-*This requirements document serves as the comprehensive specification for the OpenCode project, ensuring all features, capabilities, and constraints are clearly defined and understood by all stakeholders.*
+*This requirements document serves as the comprehensive specification for the Code-Forge project, ensuring all features, capabilities, and constraints are clearly defined and understood by all stakeholders.*

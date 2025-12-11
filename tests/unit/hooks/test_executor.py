@@ -6,14 +6,14 @@ import asyncio
 
 import pytest
 
-from opencode.hooks.events import HookEvent
-from opencode.hooks.executor import (
+from code_forge.hooks.events import HookEvent
+from code_forge.hooks.executor import (
     HookBlockedError,
     HookExecutor,
     HookResult,
     fire_event,
 )
-from opencode.hooks.registry import Hook, HookRegistry
+from code_forge.hooks.registry import Hook, HookRegistry
 
 
 class TestHookResult:
@@ -155,7 +155,7 @@ class TestHookExecutor:
     ) -> None:
         """Hook receives environment variables."""
         registry.register(
-            Hook(event_pattern="tool:pre_execute", command="echo $OPENCODE_TOOL_NAME")
+            Hook(event_pattern="tool:pre_execute", command="echo $FORGE_TOOL_NAME")
         )
 
         event = HookEvent.tool_pre_execute("bash", {"command": "ls"})
@@ -502,7 +502,7 @@ class TestHookExecutorEdgeCases:
             {"command": 'echo "hello $world"'},
         )
         env = event.to_env()
-        assert "OPENCODE_TOOL_ARGS" in env
+        assert "FORGE_TOOL_ARGS" in env
 
         registry = HookRegistry.get_instance()
         registry.register(Hook(event_pattern="tool:*", command="echo ok"))

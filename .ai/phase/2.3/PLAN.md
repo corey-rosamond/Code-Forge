@@ -21,7 +21,7 @@ All tools extend `BaseTool` from Phase 2.1.
 ## Architecture
 
 ```
-src/opencode/tools/
+src/forge/tools/
 ├── __init__.py          # Updated exports
 ├── base.py              # From Phase 2.1
 ├── registry.py          # From Phase 2.1
@@ -42,13 +42,13 @@ src/opencode/tools/
 ### Step 1: Create Execution Tools Package
 
 ```python
-# src/opencode/tools/execution/__init__.py
-"""Execution tools for OpenCode."""
+# src/forge/tools/execution/__init__.py
+"""Execution tools for Code-Forge."""
 
-from opencode.tools.execution.bash import BashTool
-from opencode.tools.execution.bash_output import BashOutputTool
-from opencode.tools.execution.kill_shell import KillShellTool
-from opencode.tools.execution.shell_manager import ShellManager, ShellProcess, ShellStatus
+from forge.tools.execution.bash import BashTool
+from forge.tools.execution.bash_output import BashOutputTool
+from forge.tools.execution.kill_shell import KillShellTool
+from forge.tools.execution.shell_manager import ShellManager, ShellProcess, ShellStatus
 
 __all__ = [
     "BashTool",
@@ -70,7 +70,7 @@ def register_execution_tools(registry: "ToolRegistry") -> None:
 ### Step 2: Implement ShellManager
 
 ```python
-# src/opencode/tools/execution/shell_manager.py
+# src/forge/tools/execution/shell_manager.py
 """Shell process management for background command execution."""
 
 from __future__ import annotations
@@ -396,7 +396,7 @@ class ShellManager:
 ### Step 3: Implement BashTool
 
 ```python
-# src/opencode/tools/execution/bash.py
+# src/forge/tools/execution/bash.py
 """Bash command execution tool."""
 
 from __future__ import annotations
@@ -405,14 +405,14 @@ import asyncio
 import re
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
     ExecutionContext,
     ToolCategory,
 )
-from opencode.tools.execution.shell_manager import ShellManager, ShellStatus
+from forge.tools.execution.shell_manager import ShellManager, ShellStatus
 
 
 class BashTool(BaseTool):
@@ -643,7 +643,7 @@ Usage notes:
 ### Step 4: Implement BashOutputTool
 
 ```python
-# src/opencode/tools/execution/bash_output.py
+# src/forge/tools/execution/bash_output.py
 """Tool for retrieving output from background shells."""
 
 from __future__ import annotations
@@ -651,14 +651,14 @@ from __future__ import annotations
 import re
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
     ExecutionContext,
     ToolCategory,
 )
-from opencode.tools.execution.shell_manager import ShellManager
+from forge.tools.execution.shell_manager import ShellManager
 
 
 class BashOutputTool(BaseTool):
@@ -755,21 +755,21 @@ Usage:
 ### Step 5: Implement KillShellTool
 
 ```python
-# src/opencode/tools/execution/kill_shell.py
+# src/forge/tools/execution/kill_shell.py
 """Tool for killing background shells."""
 
 from __future__ import annotations
 
 from typing import Any, List
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
     ExecutionContext,
     ToolCategory,
 )
-from opencode.tools.execution.shell_manager import ShellManager
+from forge.tools.execution.shell_manager import ShellManager
 
 
 class KillShellTool(BaseTool):
@@ -847,10 +847,10 @@ Usage:
 ### Step 6: Update Package Exports
 
 ```python
-# src/opencode/tools/__init__.py (updated)
-"""OpenCode tool system."""
+# src/forge/tools/__init__.py (updated)
+"""Code-Forge tool system."""
 
-from opencode.tools.base import (
+from forge.tools.base import (
     BaseTool,
     ToolParameter,
     ToolResult,
@@ -858,11 +858,11 @@ from opencode.tools.base import (
     ToolCategory,
     ToolExecution,
 )
-from opencode.tools.registry import ToolRegistry
-from opencode.tools.executor import ToolExecutor
+from forge.tools.registry import ToolRegistry
+from forge.tools.executor import ToolExecutor
 
 # File tools
-from opencode.tools.file import (
+from forge.tools.file import (
     ReadTool,
     WriteTool,
     EditTool,
@@ -872,7 +872,7 @@ from opencode.tools.file import (
 )
 
 # Execution tools
-from opencode.tools.execution import (
+from forge.tools.execution import (
     BashTool,
     BashOutputTool,
     KillShellTool,

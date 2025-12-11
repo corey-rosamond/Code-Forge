@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.core.errors import (
+from code_forge.core.errors import (
     ConfigError,
-    OpenCodeError,
+    CodeForgeError,
     PermissionDeniedError,
     ProviderError,
     SessionError,
@@ -14,30 +14,30 @@ from opencode.core.errors import (
 )
 
 
-class TestOpenCodeError:
-    """Tests for OpenCodeError base exception."""
+class TestCodeForgeError:
+    """Tests for CodeForgeError base exception."""
 
     def test_create_error_with_message(self) -> None:
-        """OpenCodeError should store message."""
-        error = OpenCodeError("test error")
+        """CodeForgeError should store message."""
+        error = CodeForgeError("test error")
         assert str(error) == "test error"
 
     def test_error_is_catchable_as_exception(self) -> None:
-        """OpenCodeError should be catchable as Exception."""
+        """CodeForgeError should be catchable as Exception."""
         with pytest.raises(Exception):
-            raise OpenCodeError("test")
+            raise CodeForgeError("test")
 
     def test_error_with_cause(self) -> None:
-        """OpenCodeError should chain cause correctly."""
+        """CodeForgeError should chain cause correctly."""
         original = ValueError("original error")
-        error = OpenCodeError("wrapper error", cause=original)
+        error = CodeForgeError("wrapper error", cause=original)
         assert error.cause is original
         assert "caused by" in str(error)
         assert "original error" in str(error)
 
     def test_error_without_cause(self) -> None:
-        """OpenCodeError without cause should not show 'caused by'."""
-        error = OpenCodeError("simple error")
+        """CodeForgeError without cause should not show 'caused by'."""
+        error = CodeForgeError("simple error")
         assert error.cause is None
         assert "caused by" not in str(error)
 
@@ -45,9 +45,9 @@ class TestOpenCodeError:
 class TestConfigError:
     """Tests for ConfigError exception."""
 
-    def test_config_error_inherits_from_opencode_error(self) -> None:
-        """ConfigError should be catchable as OpenCodeError."""
-        with pytest.raises(OpenCodeError):
+    def test_config_error_inherits_from_forge_error(self) -> None:
+        """ConfigError should be catchable as CodeForgeError."""
+        with pytest.raises(CodeForgeError):
             raise ConfigError("config problem")
 
     def test_config_error_is_catchable_as_exception(self) -> None:
@@ -71,9 +71,9 @@ class TestToolError:
         assert "Tool 'Read'" in str(error)
         assert "file not found" in str(error)
 
-    def test_tool_error_is_catchable_as_opencode_error(self) -> None:
-        """ToolError should be catchable as OpenCodeError."""
-        with pytest.raises(OpenCodeError):
+    def test_tool_error_is_catchable_as_forge_error(self) -> None:
+        """ToolError should be catchable as CodeForgeError."""
+        with pytest.raises(CodeForgeError):
             raise ToolError("Write", "permission denied")
 
     def test_tool_error_with_cause(self) -> None:
@@ -94,9 +94,9 @@ class TestProviderError:
         assert "Provider 'openrouter'" in str(error)
         assert "rate limited" in str(error)
 
-    def test_provider_error_is_catchable_as_opencode_error(self) -> None:
-        """ProviderError should be catchable as OpenCodeError."""
-        with pytest.raises(OpenCodeError):
+    def test_provider_error_is_catchable_as_forge_error(self) -> None:
+        """ProviderError should be catchable as CodeForgeError."""
+        with pytest.raises(CodeForgeError):
             raise ProviderError("anthropic", "api error")
 
     def test_provider_error_with_cause(self) -> None:
@@ -117,9 +117,9 @@ class TestPermissionDeniedError:
         assert "file_write" in str(error)
         assert "denied by policy" in str(error)
 
-    def test_permission_error_is_catchable_as_opencode_error(self) -> None:
-        """PermissionDeniedError should be catchable as OpenCodeError."""
-        with pytest.raises(OpenCodeError):
+    def test_permission_error_is_catchable_as_forge_error(self) -> None:
+        """PermissionDeniedError should be catchable as CodeForgeError."""
+        with pytest.raises(CodeForgeError):
             raise PermissionDeniedError("execute", "not allowed")
 
     def test_permission_error_message_format(self) -> None:
@@ -131,9 +131,9 @@ class TestPermissionDeniedError:
 class TestSessionError:
     """Tests for SessionError exception."""
 
-    def test_session_error_inherits_from_opencode_error(self) -> None:
-        """SessionError should be catchable as OpenCodeError."""
-        with pytest.raises(OpenCodeError):
+    def test_session_error_inherits_from_forge_error(self) -> None:
+        """SessionError should be catchable as CodeForgeError."""
+        with pytest.raises(CodeForgeError):
             raise SessionError("session not found")
 
     def test_session_error_message(self) -> None:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from opencode.commands.base import (
+from code_forge.commands.base import (
     ArgumentType,
     Command,
     CommandArgument,
@@ -12,8 +12,8 @@ from opencode.commands.base import (
     CommandResult,
     SubcommandHandler,
 )
-from opencode.commands.executor import CommandContext
-from opencode.commands.parser import ParsedCommand
+from code_forge.commands.executor import CommandContext
+from code_forge.commands.parser import ParsedCommand
 
 
 class TestArgumentType:

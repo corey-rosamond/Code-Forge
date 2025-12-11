@@ -16,8 +16,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from opencode.sessions import SessionManager
-from opencode.tools import (
+from code_forge.sessions import SessionManager
+from code_forge.tools import (
     ExecutionContext,
     ToolExecutor,
     ToolRegistry,
@@ -160,10 +160,10 @@ class TestSessionRecovery:
     def test_resume_handles_corrupt_file_gracefully(
         self,
         session_manager: SessionManager,
-        opencode_data_dir: Path,
+        forge_data_dir: Path,
     ) -> None:
         """Test handling of corrupt session files."""
-        from opencode.sessions.storage import SessionCorruptedError
+        from code_forge.sessions.storage import SessionCorruptedError
 
         # Create a valid session first
         session = session_manager.create(title="Valid Session")
@@ -173,7 +173,7 @@ class TestSessionRecovery:
         session_manager.close()
 
         # Corrupt the session file
-        session_file = opencode_data_dir / "sessions" / f"{session_id}.json"
+        session_file = forge_data_dir / "sessions" / f"{session_id}.json"
         if session_file.exists():
             session_file.write_text("{ invalid json }")
 

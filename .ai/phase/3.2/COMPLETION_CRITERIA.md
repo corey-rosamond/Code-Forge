@@ -14,21 +14,21 @@ All of the following criteria must be met before Phase 3.2 is considered complet
 
 ## Checklist
 
-### Message Conversion (src/opencode/langchain/messages.py)
-- [ ] langchain_to_opencode() converts SystemMessage
-- [ ] langchain_to_opencode() converts HumanMessage
-- [ ] langchain_to_opencode() converts AIMessage
-- [ ] langchain_to_opencode() converts AIMessage with tool_calls
-- [ ] langchain_to_opencode() converts ToolMessage
-- [ ] opencode_to_langchain() converts SYSTEM role
-- [ ] opencode_to_langchain() converts USER role
-- [ ] opencode_to_langchain() converts ASSISTANT role
-- [ ] opencode_to_langchain() converts ASSISTANT with tool_calls
-- [ ] opencode_to_langchain() converts TOOL role
-- [ ] langchain_messages_to_opencode() batch conversion
-- [ ] opencode_messages_to_langchain() batch conversion
+### Message Conversion (src/forge/langchain/messages.py)
+- [ ] langchain_to_forge() converts SystemMessage
+- [ ] langchain_to_forge() converts HumanMessage
+- [ ] langchain_to_forge() converts AIMessage
+- [ ] langchain_to_forge() converts AIMessage with tool_calls
+- [ ] langchain_to_forge() converts ToolMessage
+- [ ] forge_to_langchain() converts SYSTEM role
+- [ ] forge_to_langchain() converts USER role
+- [ ] forge_to_langchain() converts ASSISTANT role
+- [ ] forge_to_langchain() converts ASSISTANT with tool_calls
+- [ ] forge_to_langchain() converts TOOL role
+- [ ] langchain_messages_to_forge() batch conversion
+- [ ] forge_messages_to_langchain() batch conversion
 
-### OpenRouterLLM (src/opencode/langchain/llm.py)
+### OpenRouterLLM (src/forge/langchain/llm.py)
 - [ ] OpenRouterLLM extends BaseChatModel
 - [ ] Constructor accepts client, model, temperature, max_tokens
 - [ ] _llm_type property returns "openrouter"
@@ -37,30 +37,30 @@ All of the following criteria must be met before Phase 3.2 is considered complet
 - [ ] _stream() synchronous streaming
 - [ ] _astream() async streaming
 - [ ] bind_tools() returns new instance with tools
-- [ ] bind_tools() converts OpenCode ToolDefinition
+- [ ] bind_tools() converts Code-Forge ToolDefinition
 - [ ] bind_tools() converts LangChain tools
 - [ ] with_structured_output() for function calling
 - [ ] _build_request() creates CompletionRequest correctly
 - [ ] Parameters pass through (temperature, max_tokens, etc.)
 - [ ] Stop sequences merged correctly
 
-### Tool Adapters (src/opencode/langchain/tools.py)
-- [ ] LangChainToolAdapter wraps OpenCode BaseTool
+### Tool Adapters (src/forge/langchain/tools.py)
+- [ ] LangChainToolAdapter wraps Code-Forge BaseTool
 - [ ] LangChainToolAdapter.name property
 - [ ] LangChainToolAdapter.description property
 - [ ] LangChainToolAdapter.args_schema generates Pydantic model
 - [ ] LangChainToolAdapter._run() synchronous execution
 - [ ] LangChainToolAdapter._arun() async execution
-- [ ] OpenCodeToolAdapter wraps LangChain tool
-- [ ] OpenCodeToolAdapter.name property
-- [ ] OpenCodeToolAdapter.description property
-- [ ] OpenCodeToolAdapter.parameters extracted from schema
-- [ ] OpenCodeToolAdapter.execute() async execution
-- [ ] OpenCodeToolAdapter.to_openai_schema() conversion
+- [ ] Code-ForgeToolAdapter wraps LangChain tool
+- [ ] Code-ForgeToolAdapter.name property
+- [ ] Code-ForgeToolAdapter.description property
+- [ ] Code-ForgeToolAdapter.parameters extracted from schema
+- [ ] Code-ForgeToolAdapter.execute() async execution
+- [ ] Code-ForgeToolAdapter.to_openai_schema() conversion
 - [ ] adapt_tools_for_langchain() batch conversion
-- [ ] adapt_tools_for_opencode() batch conversion
+- [ ] adapt_tools_for_forge() batch conversion
 
-### Conversation Memory (src/opencode/langchain/memory.py)
+### Conversation Memory (src/forge/langchain/memory.py)
 - [ ] ConversationMemory class implemented
 - [ ] add_message() adds to history
 - [ ] add_messages() batch add
@@ -79,8 +79,8 @@ All of the following criteria must be met before Phase 3.2 is considered complet
 - [ ] SummaryMemory implemented
 - [ ] SummaryMemory maybe_summarize() works
 
-### Callback Handlers (src/opencode/langchain/callbacks.py)
-- [ ] OpenCodeCallbackHandler base class
+### Callback Handlers (src/forge/langchain/callbacks.py)
+- [ ] Code-ForgeCallbackHandler base class
 - [ ] TokenTrackingCallback.on_llm_end() tracks usage
 - [ ] TokenTrackingCallback.get_usage() returns TokenUsage
 - [ ] TokenTrackingCallback.reset() clears counters
@@ -92,37 +92,37 @@ All of the following criteria must be met before Phase 3.2 is considered complet
 - [ ] StreamingCallback custom handlers work
 - [ ] CompositeCallback dispatches to all
 
-### Agent Executor (src/opencode/langchain/agent.py)
+### Agent Executor (src/forge/langchain/agent.py)
 - [ ] AgentEventType enum defined
 - [ ] AgentEvent dataclass defined
 - [ ] ToolCallRecord dataclass defined
 - [ ] AgentResult dataclass defined
-- [ ] OpenCodeAgent class implemented
-- [ ] OpenCodeAgent.run() executes to completion
-- [ ] OpenCodeAgent.run() handles tool calls
-- [ ] OpenCodeAgent.run() tracks iterations
-- [ ] OpenCodeAgent.run() respects max_iterations
-- [ ] OpenCodeAgent.run() respects timeout
-- [ ] OpenCodeAgent.stream() yields events
-- [ ] OpenCodeAgent.stream() LLM_START event
-- [ ] OpenCodeAgent.stream() LLM_CHUNK events
-- [ ] OpenCodeAgent.stream() LLM_END event
-- [ ] OpenCodeAgent.stream() TOOL_START events
-- [ ] OpenCodeAgent.stream() TOOL_END events
-- [ ] OpenCodeAgent.stream() AGENT_END event
-- [ ] OpenCodeAgent.reset() clears history
+- [ ] Code-ForgeAgent class implemented
+- [ ] Code-ForgeAgent.run() executes to completion
+- [ ] Code-ForgeAgent.run() handles tool calls
+- [ ] Code-ForgeAgent.run() tracks iterations
+- [ ] Code-ForgeAgent.run() respects max_iterations
+- [ ] Code-ForgeAgent.run() respects timeout
+- [ ] Code-ForgeAgent.stream() yields events
+- [ ] Code-ForgeAgent.stream() LLM_START event
+- [ ] Code-ForgeAgent.stream() LLM_CHUNK events
+- [ ] Code-ForgeAgent.stream() LLM_END event
+- [ ] Code-ForgeAgent.stream() TOOL_START events
+- [ ] Code-ForgeAgent.stream() TOOL_END events
+- [ ] Code-ForgeAgent.stream() AGENT_END event
+- [ ] Code-ForgeAgent.reset() clears history
 - [ ] Multiple tool calls handled in parallel
 - [ ] Error handling for tool failures
 - [ ] Error handling for unknown tools
 
 ### Package Structure
-- [ ] src/opencode/langchain/__init__.py exports all public classes
-- [ ] src/opencode/langchain/messages.py exists
-- [ ] src/opencode/langchain/llm.py exists
-- [ ] src/opencode/langchain/tools.py exists
-- [ ] src/opencode/langchain/memory.py exists
-- [ ] src/opencode/langchain/callbacks.py exists
-- [ ] src/opencode/langchain/agent.py exists
+- [ ] src/forge/langchain/__init__.py exports all public classes
+- [ ] src/forge/langchain/messages.py exists
+- [ ] src/forge/langchain/llm.py exists
+- [ ] src/forge/langchain/tools.py exists
+- [ ] src/forge/langchain/memory.py exists
+- [ ] src/forge/langchain/callbacks.py exists
+- [ ] src/forge/langchain/agent.py exists
 - [ ] All imports work correctly
 - [ ] No circular dependencies
 
@@ -130,7 +130,7 @@ All of the following criteria must be met before Phase 3.2 is considered complet
 - [ ] Unit tests for message conversion (both directions)
 - [ ] Unit tests for OpenRouterLLM (mocked client)
 - [ ] Unit tests for LangChainToolAdapter
-- [ ] Unit tests for OpenCodeToolAdapter
+- [ ] Unit tests for Code-ForgeToolAdapter
 - [ ] Unit tests for ConversationMemory
 - [ ] Unit tests for SlidingWindowMemory
 - [ ] Unit tests for callback handlers
@@ -147,21 +147,21 @@ All of the following criteria must be met before Phase 3.2 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/langchain/
+ls -la src/forge/langchain/
 # Expected: __init__.py, messages.py, llm.py, tools.py, memory.py, callbacks.py, agent.py
 
 # 2. Test imports
 python -c "
-from opencode.langchain import (
+from forge.langchain import (
     OpenRouterLLM,
     LangChainToolAdapter,
-    OpenCodeToolAdapter,
+    Code-ForgeToolAdapter,
     adapt_tools_for_langchain,
-    adapt_tools_for_opencode,
+    adapt_tools_for_forge,
     ConversationMemory,
     SlidingWindowMemory,
     SummaryMemory,
-    OpenCodeAgent,
+    Code-ForgeAgent,
     AgentEvent,
     AgentEventType,
     AgentResult,
@@ -170,8 +170,8 @@ from opencode.langchain import (
     LoggingCallback,
     StreamingCallback,
     CompositeCallback,
-    langchain_to_opencode,
-    opencode_to_langchain,
+    langchain_to_forge,
+    forge_to_langchain,
 )
 print('All LangChain imports successful')
 "
@@ -179,35 +179,35 @@ print('All LangChain imports successful')
 # 3. Test message conversion
 python -c "
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
-from opencode.langchain import langchain_to_opencode, opencode_to_langchain
-from opencode.llm import Message, MessageRole
+from forge.langchain import langchain_to_forge, forge_to_langchain
+from forge.llm import Message, MessageRole
 
-# LangChain to OpenCode
-sys_msg = langchain_to_opencode(SystemMessage(content='Be helpful'))
+# LangChain to Code-Forge
+sys_msg = langchain_to_forge(SystemMessage(content='Be helpful'))
 assert sys_msg.role == MessageRole.SYSTEM
 assert sys_msg.content == 'Be helpful'
 
-human_msg = langchain_to_opencode(HumanMessage(content='Hello'))
+human_msg = langchain_to_forge(HumanMessage(content='Hello'))
 assert human_msg.role == MessageRole.USER
 
-ai_msg = langchain_to_opencode(AIMessage(content='Hi there'))
+ai_msg = langchain_to_forge(AIMessage(content='Hi there'))
 assert ai_msg.role == MessageRole.ASSISTANT
 
-tool_msg = langchain_to_opencode(ToolMessage(content='result', tool_call_id='call_123'))
+tool_msg = langchain_to_forge(ToolMessage(content='result', tool_call_id='call_123'))
 assert tool_msg.role == MessageRole.TOOL
 assert tool_msg.tool_call_id == 'call_123'
 
-# OpenCode to LangChain
-lc_sys = opencode_to_langchain(Message.system('Be helpful'))
+# Code-Forge to LangChain
+lc_sys = forge_to_langchain(Message.system('Be helpful'))
 assert isinstance(lc_sys, SystemMessage)
 
-lc_human = opencode_to_langchain(Message.user('Hello'))
+lc_human = forge_to_langchain(Message.user('Hello'))
 assert isinstance(lc_human, HumanMessage)
 
-lc_ai = opencode_to_langchain(Message.assistant('Hi'))
+lc_ai = forge_to_langchain(Message.assistant('Hi'))
 assert isinstance(lc_ai, AIMessage)
 
-lc_tool = opencode_to_langchain(Message.tool_result('call_123', 'result'))
+lc_tool = forge_to_langchain(Message.tool_result('call_123', 'result'))
 assert isinstance(lc_tool, ToolMessage)
 
 print('Message conversion: OK')
@@ -215,8 +215,8 @@ print('Message conversion: OK')
 
 # 4. Test OpenRouterLLM initialization
 python -c "
-from opencode.llm import OpenRouterClient
-from opencode.langchain import OpenRouterLLM
+from forge.llm import OpenRouterClient
+from forge.langchain import OpenRouterLLM
 
 client = OpenRouterClient(api_key='test-key')
 llm = OpenRouterLLM(
@@ -236,11 +236,11 @@ print('OpenRouterLLM initialization: OK')
 
 # 5. Test tool adapter
 python -c "
-from opencode.tools import ReadTool
-from opencode.langchain import LangChainToolAdapter
+from forge.tools import ReadTool
+from forge.langchain import LangChainToolAdapter
 
 read_tool = ReadTool()
-adapter = LangChainToolAdapter(opencode_tool=read_tool)
+adapter = LangChainToolAdapter(forge_tool=read_tool)
 
 assert adapter.name == read_tool.name
 assert adapter.description == read_tool.description
@@ -255,8 +255,8 @@ print('Tool adapter: OK')
 
 # 6. Test ConversationMemory
 python -c "
-from opencode.langchain import ConversationMemory
-from opencode.llm import Message
+from forge.langchain import ConversationMemory
+from forge.llm import Message
 
 memory = ConversationMemory(max_messages=5)
 
@@ -291,8 +291,8 @@ print('ConversationMemory: OK')
 
 # 7. Test SlidingWindowMemory
 python -c "
-from opencode.langchain import SlidingWindowMemory
-from opencode.llm import Message
+from forge.langchain import SlidingWindowMemory
+from forge.llm import Message
 
 memory = SlidingWindowMemory(window_size=2)
 
@@ -310,7 +310,7 @@ print('SlidingWindowMemory: OK')
 
 # 8. Test TokenTrackingCallback
 python -c "
-from opencode.langchain import TokenTrackingCallback
+from forge.langchain import TokenTrackingCallback
 from langchain_core.outputs import LLMResult, Generation
 from uuid import uuid4
 
@@ -339,9 +339,9 @@ print('TokenTrackingCallback: OK')
 
 # 9. Test AgentResult structure
 python -c "
-from opencode.langchain import AgentResult, ToolCallRecord, AgentEvent, AgentEventType
-from opencode.llm import Message
-from opencode.llm.models import TokenUsage
+from forge.langchain import AgentResult, ToolCallRecord, AgentEvent, AgentEventType
+from forge.llm import Message
+from forge.llm.models import TokenUsage
 
 # Create tool call record
 record = ToolCallRecord(
@@ -377,8 +377,8 @@ print('Agent structures: OK')
 
 # 10. Test LangChain message conversion
 python -c "
-from opencode.langchain import ConversationMemory
-from opencode.llm import Message
+from forge.langchain import ConversationMemory
+from forge.llm import Message
 from langchain_core.messages import SystemMessage, HumanMessage
 
 memory = ConversationMemory()
@@ -396,16 +396,16 @@ print('LangChain conversion: OK')
 "
 
 # 11. Run all unit tests
-pytest tests/unit/langchain/ -v --cov=opencode.langchain --cov-report=term-missing
+pytest tests/unit/langchain/ -v --cov=forge.langchain --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 12. Type checking
-mypy src/opencode/langchain/ --strict
+mypy src/forge/langchain/ --strict
 # Expected: No errors
 
 # 13. Linting
-ruff check src/opencode/langchain/
+ruff check src/forge/langchain/
 # Expected: No errors
 
 # 14. Integration test with mock
@@ -416,8 +416,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from langchain_core.messages import HumanMessage, AIMessage
 
 async def test_llm_integration():
-    from opencode.langchain import OpenRouterLLM
-    from opencode.llm.models import CompletionResponse, CompletionChoice, TokenUsage, Message
+    from forge.langchain import OpenRouterLLM
+    from forge.llm.models import CompletionResponse, CompletionChoice, TokenUsage, Message
 
     # Mock client
     mock_client = MagicMock()
@@ -451,9 +451,9 @@ asyncio.run(test_llm_integration())
 
 # 15. Test bind_tools
 python -c "
-from opencode.langchain import OpenRouterLLM
-from opencode.llm import OpenRouterClient
-from opencode.llm.models import ToolDefinition
+from forge.langchain import OpenRouterLLM
+from forge.llm import OpenRouterClient
+from forge.llm.models import ToolDefinition
 
 client = OpenRouterClient(api_key='test')
 llm = OpenRouterLLM(client=client, model='test')
@@ -492,13 +492,13 @@ print('bind_tools: OK')
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/langchain/__init__.py` | Package exports |
-| `src/opencode/langchain/messages.py` | Message conversion utilities |
-| `src/opencode/langchain/llm.py` | OpenRouterLLM wrapper |
-| `src/opencode/langchain/tools.py` | Tool adapters |
-| `src/opencode/langchain/memory.py` | Conversation memory classes |
-| `src/opencode/langchain/callbacks.py` | Callback handlers |
-| `src/opencode/langchain/agent.py` | Agent executor |
+| `src/forge/langchain/__init__.py` | Package exports |
+| `src/forge/langchain/messages.py` | Message conversion utilities |
+| `src/forge/langchain/llm.py` | OpenRouterLLM wrapper |
+| `src/forge/langchain/tools.py` | Tool adapters |
+| `src/forge/langchain/memory.py` | Conversation memory classes |
+| `src/forge/langchain/callbacks.py` | Callback handlers |
+| `src/forge/langchain/agent.py` | Agent executor |
 | `tests/unit/langchain/__init__.py` | Test package |
 | `tests/unit/langchain/test_messages.py` | Message conversion tests |
 | `tests/unit/langchain/test_llm.py` | LLM wrapper tests |

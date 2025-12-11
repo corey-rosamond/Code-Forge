@@ -768,12 +768,12 @@ def get_default_search_paths() -> list[Path]:
     paths = []
 
     # User skills directory
-    user_dir = Path.home() / ".opencode" / "skills"
+    user_dir = Path.home() / ".forge" / "skills"
     if user_dir.exists():
         paths.append(user_dir)
 
     # Project skills directory
-    project_dir = Path.cwd() / ".opencode" / "skills"
+    project_dir = Path.cwd() / ".forge" / "skills"
     if project_dir.exists():
         paths.append(project_dir)
 
@@ -1100,7 +1100,7 @@ class SkillRegistry:
 
 ```python
 """
-Built-in skills bundled with OpenCode.
+Built-in skills bundled with Code-Forge.
 """
 
 from pathlib import Path
@@ -1132,7 +1132,7 @@ def create_builtin_skill(
         metadata=SkillMetadata(
             name=name,
             description=description,
-            author="OpenCode",
+            author="Code-Forge",
             version="1.0.0",
             tags=tags or [],
         ),

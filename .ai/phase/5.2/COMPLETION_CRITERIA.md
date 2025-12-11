@@ -14,7 +14,7 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 
 ## Checklist
 
-### Token Counting (src/opencode/context/tokens.py)
+### Token Counting (src/forge/context/tokens.py)
 - [ ] TokenCounter abstract base class defined
 - [ ] TokenCounter.count() abstract method
 - [ ] TokenCounter.count_messages() abstract method
@@ -31,7 +31,7 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 - [ ] get_counter() factory function
 - [ ] MODEL_ENCODINGS mapping defined
 
-### Context Limits (src/opencode/context/limits.py)
+### Context Limits (src/forge/context/limits.py)
 - [ ] ContextBudget dataclass defined
 - [ ] ContextBudget.available property
 - [ ] ContextBudget.conversation_budget property
@@ -53,7 +53,7 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 - [ ] ContextTracker.usage_percentage()
 - [ ] ContextTracker.reset()
 
-### Truncation Strategies (src/opencode/context/strategies.py)
+### Truncation Strategies (src/forge/context/strategies.py)
 - [ ] TruncationStrategy abstract base class
 - [ ] TruncationStrategy.truncate() abstract method
 - [ ] SlidingWindowStrategy implemented
@@ -72,7 +72,7 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 - [ ] CompositeStrategy implemented
 - [ ] CompositeStrategy chains strategies
 
-### Context Compaction (src/opencode/context/compaction.py)
+### Context Compaction (src/forge/context/compaction.py)
 - [ ] ContextCompactor class implemented
 - [ ] ContextCompactor.compact() async method
 - [ ] ContextCompactor.summarize_messages() async method
@@ -84,7 +84,7 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 - [ ] ToolResultCompactor.compact_message()
 - [ ] ToolResultCompactor adds truncation message
 
-### Context Manager (src/opencode/context/manager.py)
+### Context Manager (src/forge/context/manager.py)
 - [ ] TruncationMode enum defined
 - [ ] get_strategy() function for mode selection
 - [ ] ContextManager class implemented
@@ -105,7 +105,7 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 - [ ] ContextManager.get_stats()
 
 ### Package Structure
-- [ ] src/opencode/context/__init__.py exports all public classes
+- [ ] src/forge/context/__init__.py exports all public classes
 - [ ] All imports work correctly
 - [ ] No circular dependencies
 
@@ -133,12 +133,12 @@ All of the following criteria must be met before Phase 5.2 is considered complet
 
 ```bash
 # 1. Verify module structure
-ls -la src/opencode/context/
+ls -la src/forge/context/
 # Expected: __init__.py, tokens.py, limits.py, strategies.py, compaction.py, manager.py
 
 # 2. Test imports
 python -c "
-from opencode.context import (
+from forge.context import (
     TokenCounter,
     TiktokenCounter,
     ApproximateCounter,
@@ -163,7 +163,7 @@ print('All context imports successful')
 
 # 3. Test token counting
 python -c "
-from opencode.context import get_counter, ApproximateCounter
+from forge.context import get_counter, ApproximateCounter
 
 # Get counter
 counter = get_counter('claude-3-opus')
@@ -194,7 +194,7 @@ print('Token counting: OK')
 
 # 4. Test context limits
 python -c "
-from opencode.context import ContextLimits, ContextBudget
+from forge.context import ContextLimits, ContextBudget
 
 # Known model
 limits = ContextLimits.for_model('claude-3-opus')
@@ -217,7 +217,7 @@ print('Context limits: OK')
 
 # 5. Test context tracker
 python -c "
-from opencode.context import ContextTracker
+from forge.context import ContextTracker
 
 tracker = ContextTracker.for_model('claude-3-opus')
 
@@ -239,7 +239,7 @@ print('Context tracker: OK')
 
 # 6. Test sliding window strategy
 python -c "
-from opencode.context import SlidingWindowStrategy, get_counter
+from forge.context import SlidingWindowStrategy, get_counter
 
 counter = get_counter('claude-3-opus')
 strategy = SlidingWindowStrategy(window_size=5, preserve_system=True)
@@ -258,7 +258,7 @@ print('Sliding window strategy: OK')
 
 # 7. Test smart truncation strategy
 python -c "
-from opencode.context import SmartTruncationStrategy, get_counter
+from forge.context import SmartTruncationStrategy, get_counter
 
 counter = get_counter('claude-3-opus')
 strategy = SmartTruncationStrategy(
@@ -288,7 +288,7 @@ print('Smart truncation strategy: OK')
 
 # 8. Test token budget strategy
 python -c "
-from opencode.context import TokenBudgetStrategy, get_counter
+from forge.context import TokenBudgetStrategy, get_counter
 
 counter = get_counter('claude-3-opus')
 strategy = TokenBudgetStrategy(preserve_system=True)
@@ -307,7 +307,7 @@ print('Token budget strategy: OK')
 
 # 9. Test composite strategy
 python -c "
-from opencode.context import CompositeStrategy, SmartTruncationStrategy, TokenBudgetStrategy, get_counter
+from forge.context import CompositeStrategy, SmartTruncationStrategy, TokenBudgetStrategy, get_counter
 
 counter = get_counter('claude-3-opus')
 strategy = CompositeStrategy([
@@ -324,7 +324,7 @@ print('Composite strategy: OK')
 
 # 10. Test tool result compactor
 python -c "
-from opencode.context import ToolResultCompactor, get_counter
+from forge.context import ToolResultCompactor, get_counter
 
 counter = get_counter('claude-3-opus')
 compactor = ToolResultCompactor(max_result_tokens=100)
@@ -345,7 +345,7 @@ print('Tool result compactor: OK')
 
 # 11. Test context manager
 python -c "
-from opencode.context import ContextManager, TruncationMode
+from forge.context import ContextManager, TruncationMode
 
 manager = ContextManager(
     model='claude-3-opus',
@@ -387,7 +387,7 @@ print('Context manager: OK')
 
 # 12. Test auto-truncation
 python -c "
-from opencode.context import ContextManager, TruncationMode
+from forge.context import ContextManager, TruncationMode
 
 # Create manager with small limit for testing
 manager = ContextManager(
@@ -408,7 +408,7 @@ print('Auto-truncation: OK')
 
 # 13. Test usage percentage
 python -c "
-from opencode.context import ContextManager
+from forge.context import ContextManager
 
 manager = ContextManager(model='claude-3-opus')
 manager.set_system_prompt('System')
@@ -424,16 +424,16 @@ print('Usage percentage: OK')
 "
 
 # 14. Run all unit tests
-pytest tests/unit/context/ -v --cov=opencode.context --cov-report=term-missing
+pytest tests/unit/context/ -v --cov=forge.context --cov-report=term-missing
 
 # Expected: All tests pass, coverage ≥ 90%
 
 # 15. Type checking
-mypy src/opencode/context/ --strict
+mypy src/forge/context/ --strict
 # Expected: No errors
 
 # 16. Linting
-ruff check src/opencode/context/
+ruff check src/forge/context/
 # Expected: No errors
 ```
 
@@ -454,12 +454,12 @@ ruff check src/opencode/context/
 
 | File | Purpose |
 |------|---------|
-| `src/opencode/context/__init__.py` | Package exports |
-| `src/opencode/context/tokens.py` | Token counting |
-| `src/opencode/context/limits.py` | Context limits |
-| `src/opencode/context/strategies.py` | Truncation strategies |
-| `src/opencode/context/compaction.py` | Context compaction |
-| `src/opencode/context/manager.py` | Context manager |
+| `src/forge/context/__init__.py` | Package exports |
+| `src/forge/context/tokens.py` | Token counting |
+| `src/forge/context/limits.py` | Context limits |
+| `src/forge/context/strategies.py` | Truncation strategies |
+| `src/forge/context/compaction.py` | Context compaction |
+| `src/forge/context/manager.py` | Context manager |
 | `tests/unit/context/__init__.py` | Test package |
 | `tests/unit/context/test_tokens.py` | Token tests |
 | `tests/unit/context/test_limits.py` | Limits tests |

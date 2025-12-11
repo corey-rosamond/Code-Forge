@@ -431,7 +431,7 @@ Then I should get a RuleSet with the custom rules
 
 ### Scenario: Load project rules
 ```gherkin
-Given a project with .src/opencode/permissions.json
+Given a project with .src/forge/permissions.json
 When I call PermissionConfig.load_project(project_root)
 Then I should get a RuleSet with project-specific rules
 ```

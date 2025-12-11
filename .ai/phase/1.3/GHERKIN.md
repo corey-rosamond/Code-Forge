@@ -12,23 +12,23 @@
 Feature: REPL Startup
   As a user
   I want the REPL to start correctly
-  So that I can interact with OpenCode
+  So that I can interact with Code-Forge
 
   Background:
-    Given OpenCode is installed
+    Given Code-Forge is installed
     And configuration is valid
 
   @phase1.3 @repl @startup @smoke
   Scenario: Start REPL without arguments
-    When I run "opencode"
+    When I run "forge"
     Then the REPL should start
     And I should see the welcome message
     And I should see the input prompt
 
   @phase1.3 @repl @startup
   Scenario: Welcome message content
-    When I run "opencode"
-    Then I should see "OpenCode" in the output
+    When I run "forge"
+    Then I should see "Code-Forge" in the output
     And I should see the version number
     And I should see the current directory
     And I should see "/help for commands"
@@ -36,7 +36,7 @@ Feature: REPL Startup
   @phase1.3 @repl @startup
   Scenario: Status bar displays on startup
     Given display.status_line is true in config
-    When I run "opencode"
+    When I run "forge"
     Then the status bar should be visible
     And it should show the default model
     And it should show "Ready" status
@@ -44,7 +44,7 @@ Feature: REPL Startup
   @phase1.3 @repl @startup
   Scenario: Status bar hidden when disabled
     Given display.status_line is false in config
-    When I run "opencode"
+    When I run "forge"
     Then the status bar should not be visible
 ```
 
@@ -59,7 +59,7 @@ Feature: Input Handling
   So that I can interact with the assistant
 
   Background:
-    Given the OpenCode REPL is running
+    Given the Code-Forge REPL is running
 
   @phase1.3 @input @basic
   Scenario: Submit single-line input
@@ -111,7 +111,7 @@ Feature: Input History
   So that I can reuse previous commands
 
   Background:
-    Given the OpenCode REPL is running
+    Given the Code-Forge REPL is running
 
   @phase1.3 @history @navigate
   Scenario: Navigate history with Up arrow
@@ -142,14 +142,14 @@ Feature: Input History
   @phase1.3 @history @persist
   Scenario: History persists between sessions
     Given I have entered commands in a session
-    And I exit and restart OpenCode
+    And I exit and restart Code-Forge
     When I press the Up arrow
     Then I should see commands from the previous session
 
   @phase1.3 @history @file
   Scenario: History stored in correct location
     When I enter several commands
-    Then a history file should exist at "~/.src/opencode/history"
+    Then a history file should exist at "~/.src/forge/history"
 ```
 
 ---
@@ -163,7 +163,7 @@ Feature: Keyboard Shortcuts
   So that I can work efficiently
 
   Background:
-    Given the OpenCode REPL is running
+    Given the Code-Forge REPL is running
 
   @phase1.3 @shortcuts @escape
   Scenario: Escape cancels current input
@@ -228,7 +228,7 @@ Feature: Output Display
   So that responses are easy to read
 
   Background:
-    Given the OpenCode REPL is running
+    Given the Code-Forge REPL is running
 
   @phase1.3 @output @basic
   Scenario: Display plain text output
@@ -273,7 +273,7 @@ Feature: Status Bar
   So that I can see system state at a glance
 
   Background:
-    Given the OpenCode REPL is running
+    Given the Code-Forge REPL is running
     And the status bar is enabled
 
   @phase1.3 @status @model
@@ -375,7 +375,7 @@ Feature: Exit Handling
 - Whitespace: "   "
 
 ### History File
-- Location: ~/.src/opencode/history
+- Location: ~/.src/forge/history
 - Format: Plain text, one command per line
 
 ---

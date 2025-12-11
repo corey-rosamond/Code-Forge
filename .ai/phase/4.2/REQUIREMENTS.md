@@ -8,7 +8,7 @@
 
 ## Overview
 
-Phase 4.2 implements a hooks system that allows users to execute custom shell commands in response to various events in the OpenCode lifecycle. This enables automation, integration with external tools, and customization of behavior through shell scripts rather than code.
+Phase 4.2 implements a hooks system that allows users to execute custom shell commands in response to various events in the Code-Forge lifecycle. This enables automation, integration with external tools, and customization of behavior through shell scripts rather than code.
 
 ---
 
@@ -125,7 +125,7 @@ Phase 4.2 implements a hooks system that allows users to execute custom shell co
 
 **FR-5.1:** Configuration in settings files
 - Global hooks in user config
-- Project hooks in .src/opencode/hooks.json
+- Project hooks in .src/forge/hooks.json
 - Session-only hooks (programmatic)
 
 **FR-5.2:** Configuration format
@@ -150,22 +150,22 @@ Phase 4.2 implements a hooks system that allows users to execute custom shell co
 ### FR-6: Event Context
 
 **FR-6.1:** Standard environment variables for all events
-- `OPENCODE_EVENT` - Event type
-- `OPENCODE_SESSION_ID` - Current session ID
-- `OPENCODE_WORKING_DIR` - Working directory
+- `FORGE_EVENT` - Event type
+- `FORGE_SESSION_ID` - Current session ID
+- `FORGE_WORKING_DIR` - Working directory
 
 **FR-6.2:** Tool event variables
-- `OPENCODE_TOOL_NAME` - Tool being executed
-- `OPENCODE_TOOL_ARGS` - JSON of tool arguments
-- `OPENCODE_TOOL_RESULT` - JSON of result (post only)
+- `FORGE_TOOL_NAME` - Tool being executed
+- `FORGE_TOOL_ARGS` - JSON of tool arguments
+- `FORGE_TOOL_RESULT` - JSON of result (post only)
 
 **FR-6.3:** LLM event variables
-- `OPENCODE_LLM_MODEL` - Model being used
-- `OPENCODE_LLM_TOKENS` - Token count (post only)
+- `FORGE_LLM_MODEL` - Model being used
+- `FORGE_LLM_TOKENS` - Token count (post only)
 
 **FR-6.4:** Permission event variables
-- `OPENCODE_PERM_LEVEL` - Permission level
-- `OPENCODE_PERM_RULE` - Matching rule (if any)
+- `FORGE_PERM_LEVEL` - Permission level
+- `FORGE_PERM_RULE` - Matching rule (if any)
 
 ---
 
@@ -200,7 +200,7 @@ Phase 4.2 implements a hooks system that allows users to execute custom shell co
 ### Package Structure
 
 ```
-src/opencode/hooks/
+src/forge/hooks/
 ├── __init__.py           # Package exports
 ├── events.py             # Event types and data
 ├── registry.py           # Hook registration
@@ -358,32 +358,32 @@ All hooks receive these environment variables:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `OPENCODE_EVENT` | Event type | `tool:pre_execute` |
-| `OPENCODE_SESSION_ID` | Session identifier | `sess_abc123` |
-| `OPENCODE_WORKING_DIR` | Working directory | `/home/user/project` |
-| `OPENCODE_TOOL_NAME` | Tool name (tool events) | `bash` |
-| `OPENCODE_TOOL_ARGS` | Tool arguments as JSON | `{"command": "ls"}` |
-| `OPENCODE_TOOL_RESULT` | Tool result as JSON | `{"success": true}` |
-| `OPENCODE_LLM_MODEL` | LLM model (LLM events) | `anthropic/claude-3` |
-| `OPENCODE_LLM_TOKENS` | Token count | `1500` |
-| `OPENCODE_PERM_LEVEL` | Permission level | `ask` |
+| `FORGE_EVENT` | Event type | `tool:pre_execute` |
+| `FORGE_SESSION_ID` | Session identifier | `sess_abc123` |
+| `FORGE_WORKING_DIR` | Working directory | `/home/user/project` |
+| `FORGE_TOOL_NAME` | Tool name (tool events) | `bash` |
+| `FORGE_TOOL_ARGS` | Tool arguments as JSON | `{"command": "ls"}` |
+| `FORGE_TOOL_RESULT` | Tool result as JSON | `{"success": true}` |
+| `FORGE_LLM_MODEL` | LLM model (LLM events) | `anthropic/claude-3` |
+| `FORGE_LLM_TOKENS` | Token count | `1500` |
+| `FORGE_PERM_LEVEL` | Permission level | `ask` |
 
 ---
 
 ## Hook Configuration Format
 
-### Global Config (~/.config/src/opencode/hooks.json)
+### Global Config (~/.config/src/forge/hooks.json)
 ```json
 {
   "hooks": [
     {
       "event": "session:start",
-      "command": "notify-send 'OpenCode' 'Session started'",
+      "command": "notify-send 'Code-Forge' 'Session started'",
       "description": "Desktop notification on session start"
     },
     {
       "event": "tool:post_execute:write",
-      "command": "git add -A && git diff --cached --quiet || git commit -m 'Auto-save: $OPENCODE_TOOL_ARGS'",
+      "command": "git add -A && git diff --cached --quiet || git commit -m 'Auto-save: $FORGE_TOOL_ARGS'",
       "timeout": 30.0,
       "description": "Auto-commit on file writes"
     }
@@ -391,7 +391,7 @@ All hooks receive these environment variables:
 }
 ```
 
-### Project Config (.src/opencode/hooks.json)
+### Project Config (.src/forge/hooks.json)
 ```json
 {
   "hooks": [
@@ -443,7 +443,7 @@ Pre-execution hooks can block the operation:
 # Hook: tool:pre_execute:bash
 # Exit 0 to allow, non-zero to block
 
-COMMAND="$OPENCODE_TOOL_ARGS"
+COMMAND="$FORGE_TOOL_ARGS"
 
 # Block certain commands
 if echo "$COMMAND" | grep -q "sudo"; then

@@ -241,7 +241,7 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    subgraph CommandsPkg["src/opencode/commands/"]
+    subgraph CommandsPkg["src/forge/commands/"]
         INIT["__init__.py"]
         PARSER["parser.py<br/>CommandParser, ParsedCommand"]
         BASE["base.py<br/>Command, CommandResult"]
@@ -258,11 +258,11 @@ flowchart TB
         end
     end
 
-    subgraph REPLPkg["src/opencode/repl/"]
+    subgraph REPLPkg["src/forge/repl/"]
         REPL["repl.py"]
     end
 
-    subgraph SessionsPkg["src/opencode/sessions/"]
+    subgraph SessionsPkg["src/forge/sessions/"]
         SESSION_MGR["manager.py"]
     end
 
