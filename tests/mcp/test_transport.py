@@ -148,17 +148,22 @@ class TestStdioTransport:
     @pytest.mark.asyncio
     async def test_process_closes_stdout(self) -> None:
         """Test handling when process closes stdout."""
-        # Use echo which outputs once and exits
-        transport = StdioTransport(command="echo", args=["{}"])
+        # Use python to print JSON, wait briefly (so connect() passes), then exit
+        # The tiny sleep ensures the process is still "running" when connect() checks
+        script = 'import sys, time; print("{}"); sys.stdout.flush(); time.sleep(0.1)'
+        transport = StdioTransport(
+            command="python3",
+            args=["-u", "-c", script]  # -u for unbuffered output
+        )
 
         await transport.connect()
 
         try:
-            # First receive gets the echo output
+            # First receive gets the output
             result = await transport.receive()
             assert result == {}
 
-            # Second receive should fail (process exited)
+            # Second receive should fail (process exited after sleep)
             with pytest.raises(ConnectionError):
                 await transport.receive()
         finally:
@@ -167,8 +172,12 @@ class TestStdioTransport:
     @pytest.mark.asyncio
     async def test_invalid_json_from_process(self) -> None:
         """Test handling invalid JSON from process."""
-        # Use echo to send invalid JSON
-        transport = StdioTransport(command="echo", args=["not valid json"])
+        # Use python to send invalid JSON with delay (so connect() passes)
+        script = 'import sys, time; print("not valid json"); sys.stdout.flush(); time.sleep(0.1)'
+        transport = StdioTransport(
+            command="python3",
+            args=["-u", "-c", script]
+        )
 
         await transport.connect()
 

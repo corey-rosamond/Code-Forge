@@ -296,6 +296,73 @@ class CodeForgeAgent:
             stopped_reason=stopped_reason,
         )
 
+    def _assemble_tool_calls(self, chunks: list[dict]) -> list[dict]:
+        """Assemble complete tool calls from streamed chunks.
+
+        Tool call chunks arrive with an index indicating which tool call they belong to.
+        Each chunk may contain partial name and/or args that need to be concatenated.
+
+        Args:
+            chunks: List of tool call chunks from streaming
+
+        Returns:
+            List of complete tool calls with name, args, and id
+        """
+        import json
+        import uuid
+
+        if not chunks:
+            return []
+
+        # Group chunks by index
+        by_index: dict[int, list[dict]] = {}
+        for chunk in chunks:
+            idx = chunk.get("index", 0)
+            if idx not in by_index:
+                by_index[idx] = []
+            by_index[idx].append(chunk)
+
+        # Assemble each tool call
+        tool_calls = []
+        for idx in sorted(by_index.keys()):
+            tool_chunks = by_index[idx]
+
+            name = ""
+            args_str = ""
+            tool_id = None
+
+            for chunk in tool_chunks:
+                # Tool name comes as a single value, not streamed in pieces
+                # Use first non-empty name found (don't concatenate)
+                if chunk.get("name") and not name:
+                    raw_name = chunk["name"]
+                    # Sanitize: some models return malformed names with extra text
+                    # e.g., 'Bash" description="...' - extract just the tool name
+                    if '"' in raw_name:
+                        raw_name = raw_name.split('"')[0]
+                    name = raw_name.strip()
+                # Args are streamed as JSON string pieces, need concatenation
+                if chunk.get("args"):
+                    args_str += chunk["args"]
+                # ID comes as single value
+                if chunk.get("id") and not tool_id:
+                    tool_id = chunk["id"]
+
+            # Parse args JSON
+            try:
+                args = json.loads(args_str) if args_str else {}
+            except json.JSONDecodeError:
+                args = {"raw": args_str}
+
+            if name:
+                tool_calls.append({
+                    "name": name,
+                    "args": args,
+                    "id": tool_id or f"call_{uuid.uuid4().hex[:8]}",
+                })
+
+        return tool_calls
+
     async def stream(
         self,
         input: str,
@@ -374,17 +441,16 @@ class CodeForgeAgent:
                     data={"content": accumulated_content},
                 )
 
-                # Check for tool calls - use non-streaming call to get complete tool call info
-                # This is necessary because streaming tool calls come in chunks that need assembly
-                response = await self._bound_llm.ainvoke(messages)
+                # Assemble tool calls from streamed chunks (avoids duplicate API call)
+                assembled_tool_calls = self._assemble_tool_calls(tool_call_chunks)
 
-                # Track token usage from response metadata
-                if hasattr(response, "response_metadata"):
-                    usage_data = response.response_metadata.get("usage", {})
-                    total_prompt_tokens += usage_data.get("prompt_tokens", 0)
-                    total_completion_tokens += usage_data.get("completion_tokens", 0)
+                # Build response message from streamed content
+                response = AIMessage(
+                    content=accumulated_content,
+                    tool_calls=assembled_tool_calls,
+                )
 
-                if isinstance(response, AIMessage) and response.tool_calls:
+                if assembled_tool_calls:
                     from code_forge.langchain.messages import langchain_to_forge
 
                     self.memory.add_message(langchain_to_forge(response))

@@ -4,13 +4,15 @@ import os
 from dataclasses import dataclass, field
 from typing import Any
 
+from pydantic import SecretStr
+
 
 @dataclass
 class SearchProviderConfig:
     """Configuration for a search provider."""
 
     name: str
-    api_key: str | None = None
+    api_key: SecretStr | None = None
     endpoint: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
@@ -65,7 +67,8 @@ class WebConfig:
         providers: dict[str, SearchProviderConfig] = {}
         for name, pdata in search_data.get("providers", {}).items():
             api_key_raw = pdata.get("api_key", "")
-            api_key = os.path.expandvars(api_key_raw) if api_key_raw else None
+            api_key_str = os.path.expandvars(api_key_raw) if api_key_raw else None
+            api_key = SecretStr(api_key_str) if api_key_str else None
             providers[name] = SearchProviderConfig(
                 name=name,
                 api_key=api_key,
@@ -104,11 +107,14 @@ class WebConfig:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
+        """Convert to dictionary.
+
+        Note: API keys are masked in output for security.
+        """
         providers_dict: dict[str, dict[str, Any]] = {}
         for name, provider in self.search.providers.items():
             providers_dict[name] = {
-                "api_key": provider.api_key,
+                "api_key": "***" if provider.api_key else None,
                 "endpoint": provider.endpoint,
                 **provider.extra,
             }

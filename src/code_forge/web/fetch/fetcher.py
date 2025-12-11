@@ -1,14 +1,66 @@
 """URL fetcher implementation."""
 
 import asyncio
+import ipaddress
 import logging
+import socket
 import time
+from urllib.parse import urlparse
 
 import aiohttp
 
 from ..types import FetchOptions, FetchResponse
 
 logger = logging.getLogger(__name__)
+
+# Private/internal IP ranges that should be blocked to prevent SSRF
+BLOCKED_IP_RANGES = [
+    ipaddress.ip_network("127.0.0.0/8"),      # Loopback
+    ipaddress.ip_network("10.0.0.0/8"),       # Private Class A
+    ipaddress.ip_network("172.16.0.0/12"),    # Private Class B
+    ipaddress.ip_network("192.168.0.0/16"),   # Private Class C
+    ipaddress.ip_network("169.254.0.0/16"),   # Link-local (AWS metadata)
+    ipaddress.ip_network("::1/128"),          # IPv6 loopback
+    ipaddress.ip_network("fc00::/7"),         # IPv6 private
+    ipaddress.ip_network("fe80::/10"),        # IPv6 link-local
+]
+
+
+def is_private_ip(ip_str: str) -> bool:
+    """Check if an IP address is in a private/internal range."""
+    try:
+        ip = ipaddress.ip_address(ip_str)
+        return any(ip in network for network in BLOCKED_IP_RANGES)
+    except ValueError:
+        return False
+
+
+def validate_url_host(url: str) -> None:
+    """Validate that URL doesn't point to internal/private IPs.
+
+    Args:
+        url: URL to validate
+
+    Raises:
+        FetchError: If URL points to a private/internal IP
+    """
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+
+    if not hostname:
+        raise FetchError("Invalid URL: no hostname")
+
+    # Resolve hostname to IP addresses
+    try:
+        addr_info = socket.getaddrinfo(hostname, None, socket.AF_UNSPEC)
+        for family, _, _, _, sockaddr in addr_info:
+            ip_str = sockaddr[0]
+            if is_private_ip(ip_str):
+                raise FetchError(
+                    f"Access to internal/private IP addresses is not allowed: {hostname} resolves to {ip_str}"
+                )
+    except socket.gaierror as e:
+        raise FetchError(f"Failed to resolve hostname {hostname}: {e}")
 
 
 class FetchError(Exception):
@@ -48,6 +100,9 @@ class URLFetcher:
         # Upgrade HTTP to HTTPS
         if url.startswith("http://"):
             url = "https://" + url[7:]
+
+        # SSRF protection: validate URL doesn't point to internal IPs
+        validate_url_host(url)
 
         headers = {
             "User-Agent": opts.user_agent,

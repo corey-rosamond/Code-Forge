@@ -156,7 +156,7 @@ Usage:
 
                 # Stop after limit
                 if line_count >= limit:
-                    continue
+                    break
 
                 # Truncate long lines
                 clean_line = line.rstrip("\n\r")

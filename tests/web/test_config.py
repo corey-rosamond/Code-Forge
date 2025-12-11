@@ -4,6 +4,7 @@ import os
 from unittest.mock import patch
 
 import pytest
+from pydantic import SecretStr
 
 from code_forge.web.config import (
     CacheConfig,
@@ -29,12 +30,12 @@ class TestSearchProviderConfig:
         """Test creating with all fields."""
         config = SearchProviderConfig(
             name="google",
-            api_key="test-key",
+            api_key=SecretStr("test-key"),
             endpoint="https://api.example.com",
             extra={"cx": "search-engine-id"},
         )
         assert config.name == "google"
-        assert config.api_key == "test-key"
+        assert config.api_key.get_secret_value() == "test-key"
         assert config.endpoint == "https://api.example.com"
         assert config.extra["cx"] == "search-engine-id"
 
@@ -52,7 +53,7 @@ class TestSearchConfig:
 
     def test_custom_values(self) -> None:
         """Test custom values."""
-        providers = {"google": SearchProviderConfig(name="google", api_key="key")}
+        providers = {"google": SearchProviderConfig(name="google", api_key=SecretStr("key"))}
         config = SearchConfig(
             default_provider="google",
             default_results=5,
@@ -165,7 +166,7 @@ class TestWebConfig:
         assert config.search.default_provider == "google"
         assert config.search.default_results == 5
         assert "google" in config.search.providers
-        assert config.search.providers["google"].api_key == "test-key"
+        assert config.search.providers["google"].api_key.get_secret_value() == "test-key"
         assert config.search.providers["google"].extra["cx"] == "search-id"
 
         assert config.fetch.timeout == 60
@@ -189,7 +190,7 @@ class TestWebConfig:
                 },
             }
             config = WebConfig.from_dict(data)
-            assert config.search.providers["google"].api_key == "secret-key"
+            assert config.search.providers["google"].api_key.get_secret_value() == "secret-key"
 
     def test_from_dict_empty_api_key(self) -> None:
         """Test empty api_key becomes None."""
@@ -218,11 +219,11 @@ class TestWebConfig:
         assert d["cache"]["enabled"] is True
 
     def test_to_dict_with_providers(self) -> None:
-        """Test to_dict includes provider config."""
+        """Test to_dict includes provider config with masked API keys."""
         providers = {
             "google": SearchProviderConfig(
                 name="google",
-                api_key="key",
+                api_key=SecretStr("key"),
                 endpoint="https://api.example.com",
                 extra={"cx": "search-id"},
             ),
@@ -233,5 +234,6 @@ class TestWebConfig:
         d = config.to_dict()
 
         assert "google" in d["search"]["providers"]
-        assert d["search"]["providers"]["google"]["api_key"] == "key"
+        # API keys are masked in to_dict() output for security
+        assert d["search"]["providers"]["google"]["api_key"] == "***"
         assert d["search"]["providers"]["google"]["cx"] == "search-id"

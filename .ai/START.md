@@ -1,233 +1,85 @@
-# Code-Forge AI Entry Point
+# Code-Forge AI Development Guide
 
-**STOP. Read this entire file before doing anything else.**
+**Read this file first when starting any development session.**
 
 ---
 
-## Project Context
+## Quick Start
 
-**Code-Forge** is a Claude Code alternative that provides:
+1. **Read governance docs** (if unfamiliar):
+   - `PERSONA.md` - Working style and principles
+   - `GUARDRAILS.md` - Code quality standards with examples
+
+2. **Understand the system** (if unfamiliar):
+   - `ARCHITECTURE.md` - System design and components
+   - `MAP.md` - Where to find things in the codebase
+
+3. **Before making changes**:
+   - `PATTERNS.md` - How to extend tools, commands, agents, etc.
+   - `CONVENTIONS.md` - Naming, testing, and style conventions
+
+4. **Track work**:
+   - `UNDONE.md` - Current tasks and future work
+
+---
+
+## Project Overview
+
+**Code-Forge** is a Claude Code alternative providing:
 - Access to 400+ AI models via OpenRouter API
-- LangChain 1.0 integration for agent orchestration
-- Full CLI experience with tools, permissions, sessions, and extensibility
+- LangChain integration for agent orchestration
+- Full CLI with tools, permissions, sessions, and extensibility
 
-The project has 22 phases with complete planning documentation. Phases 1.1-1.3, 2.1-2.3, 3.1-3.2, 4.1-4.2, 5.1-5.2, 6.1-6.2, 7.1-7.2, 8.1-8.2, 9.1-9.2, 10.1 are complete.
-
----
-
-## Current Phase
-
-```
-CURRENT_PHASE: 10.2
-```
-
-**Phase Name:** Polish and Integration Testing
-
-**Phase Directory:** `.ai/phase/10.2/`
+**Version:** 1.1.0
+**Status:** Production/Stable
+**Tests:** 3400+ (90%+ coverage)
 
 ---
 
-## Startup Sequence
+## Key Directories
 
-Execute these steps in order every time you begin work on this project:
-
-### Step 1: Read Governance Documents
-
-1. Read `.ai/PERSONA.md` - Understand your working style and principles
-2. Read `.ai/GUARDRAILS.md` - Understand what to do and what not to do
-
-### Step 2: Read Current Phase Documentation
-
-Read all files in the current phase directory (`.ai/phase/10.2/`):
-
-1. `PLAN.md` - Architectural design and implementation details
-2. `COMPLETION_CRITERIA.md` - What "done" means for this phase
-3. `REQUIREMENTS.md` - Functional/non-functional requirements and dependencies
-4. `GHERKIN.md` - Behavior specifications in Given/When/Then format
-5. `UML.md` - Class diagrams, sequence diagrams, and architecture visuals
-6. `WIREFRAMES.md` - UI/UX specifications (where applicable)
-
-### Step 3: Check Project Status
-
-1. Read `.ai/UNDONE.md` - Current project roadmap and phase status
-2. Verify dependencies are actually implemented (not just planned)
-3. Check what was last worked on if resuming a session
-
-### Step 4: Verify Before Starting
-
-Before writing any code:
-
-- [ ] Planning documents exist and have been read
-- [ ] Dependencies are implemented and tested (not just planned)
-- [ ] Completion criteria are understood
-- [ ] You can explain what you're about to build and why
+| Directory | Purpose |
+|-----------|---------|
+| `src/code_forge/` | All implementation code |
+| `tests/` | Test suite (mirrors src structure) |
+| `docs/` | User and developer documentation |
 
 ---
 
-## Directories
+## Verification Before Claiming Done
 
-| Directory | Purpose | Access |
-|-----------|---------|--------|
-| `.ai/phase/[X.X]/` | Phase planning documentation | Read before implementing that phase |
-| `.ai/phase/reference/` | Reference materials only | **IGNORE unless explicitly told to read** |
-| `src/forge/` | Implementation source code | Create/modify during implementation |
-| `tests/` | Test code | Create/modify during implementation |
-
----
-
-## Verification Requirements
-
-**Never assume. Always verify.**
-
-Before claiming something exists:
 ```bash
-ls path/to/directory
-```
-
-Before claiming code works:
-```bash
-python -c "from module import thing; print(thing)"
-```
-
-Before claiming tests pass:
-```bash
+# Run tests
 pytest tests/ -v
+
+# Type checking
+mypy src/code_forge/
+
+# Linting
+ruff check src/code_forge/
+
+# All must pass before any PR
 ```
-
-Before claiming a phase is complete:
-- [ ] All code implemented per PLAN.md
-- [ ] All tests written per COMPLETION_CRITERIA.md test requirements
-- [ ] All tests pass
-- [ ] All completion criteria met per COMPLETION_CRITERIA.md
-- [ ] All quality gates passed (mypy, ruff, coverage)
-
----
-
-## What "Complete" Means
-
-A phase is **NOT** complete when:
-- Planning documents are written
-- Code examples exist in PLAN.md
-- You think it should work
-
-A phase **IS** complete when:
-- Implementation code exists in `src/forge/`
-- Tests exist in `tests/`
-- All tests pass
-- All COMPLETION_CRITERIA.md items are verified
-- All quality gates passed (mypy strict, ruff, coverage ≥90%)
-
----
-
-## Dependency Rules
-
-**Before starting any phase:**
-
-1. Check REQUIREMENTS.md for that phase (dependencies listed there)
-2. Verify each dependency is actually implemented:
-   - Source files exist in `src/forge/`
-   - Tests exist in `tests/`
-   - Tests pass
-   - UNDONE.md shows Implementation as "Done"
-
-**Do not start a phase if its dependencies are not complete.**
-
----
-
-## Session Continuity
-
-When resuming work:
-
-1. Read this file (START.md)
-2. Check `.ai/UNDONE.md` for current status
-3. Verify the last claimed state is accurate:
-   - Do the files that should exist actually exist?
-   - Do the tests that should pass actually pass?
-4. Continue from verified state, not assumed state
-
----
-
-## Red Flags - Stop Immediately If:
-
-- No planning documents exist for the current phase
-- Requirements are unclear or ambiguous
-- You're tempted to skip testing
-- You're about to claim something is "done" without verification
-- You're copying code without understanding it
-- You're fixing symptoms instead of root causes
-- Dependencies are not actually implemented
-- You're being asked to read from `.ai/phase/reference/` without explicit instruction
-
-**When in doubt, stop and ask.**
-
----
-
-## Updating Project State
-
-### When a Task is Completed
-
-Update `.ai/UNDONE.md`:
-- Mark the specific task as complete
-- Only mark as complete after verification
-
-### When a Phase is Completed
-
-**CRITICAL: Do this IMMEDIATELY after all tests pass and quality gates are verified. Do NOT wait to be asked. This is a mandatory part of phase completion.**
-
-Perform these updates in order:
-
-1. **Update `.ai/UNDONE.md`:**
-   - Mark Implementation as "Done" in the phase table
-   - Mark Testing as "Done" in the phase table
-   - Add implementation details to "What Exists" section
-   - Update test count
-   - Update "Next Steps" to point to the next phase
-   - Add entry to "Version History" table
-
-2. **Update this file (`.ai/START.md`):**
-   - Change `CURRENT_PHASE` to the next phase number
-   - Update "Phase Name" to the next phase name
-   - Update "Phase Directory" to `.ai/phase/[next]/`
-   - Update the completed phases list in "Project Context"
-   - Update the phase directory reference in "Step 2"
-
-3. **Update project `README.md`:**
-   - Update feature descriptions if applicable
-   - Update project structure if new packages added
-   - Update test count
-   - Add documentation section for new functionality
-   - Update roadmap table to show phase as Complete
-
-**A phase is NOT complete until all three files are updated.**
-
-### Phase Progression
-
-```
-1.1 -> 1.2 -> 1.3 -> 2.1 -> 2.2 -> 2.3 -> 3.1 -> 3.2 ->
-4.1 -> 4.2 -> 5.1 -> 5.2 -> 6.1 -> 6.2 -> 7.1 -> 7.2 ->
-8.1 -> 8.2 -> 9.1 -> 9.2 -> 10.1 -> 10.2
-```
-
-Note: Some phases can be parallelized. See `.ai/UNDONE.md` for the dependency tree.
-
----
-
-## Quick Reference
-
-| Document | Location | Purpose |
-|----------|----------|---------|
-| This file | `.ai/START.md` | Entry point, current phase |
-| Persona | `.ai/PERSONA.md` | Working style and principles |
-| Guardrails | `.ai/GUARDRAILS.md` | Do's and don'ts with examples |
-| Roadmap | `.ai/UNDONE.md` | Project status and tracking |
-| Phase Docs | `.ai/phase/[X.X]/` | Planning for each phase |
 
 ---
 
 ## Remember
 
-> "Weeks of coding can save hours of planning."
+> "The code is the source of truth. Read it before changing it."
 
-> "Hope is not a strategy. Test."
+> "Tests prove it works. No tests = not done."
 
-> "A phase is not complete until you can prove it is complete."
+---
+
+## Document Reference
+
+| File | Size | Purpose |
+|------|------|---------|
+| `START.md` | - | This file - entry point |
+| `PERSONA.md` | 6KB | Developer mindset, principles, BDD approach |
+| `GUARDRAILS.md` | 13KB | Code quality do's/don'ts with examples |
+| `ARCHITECTURE.md` | 5KB | System design, components, data flow |
+| `MAP.md` | 9KB | Complete source tree, "where is X?" |
+| `PATTERNS.md` | 8KB | How to add tools, commands, agents, skills |
+| `CONVENTIONS.md` | 6KB | Naming, types, testing, style rules |
+| `UNDONE.md` | 1KB | Current tasks, backlog, milestones |

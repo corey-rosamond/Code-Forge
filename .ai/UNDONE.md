@@ -1,690 +1,316 @@
-# Code-Forge Project Roadmap
+# Code-Forge: Current Work
 
-**Project:** Code-Forge - Claude Code Alternative
-**Target:** Production-ready CLI using OpenRouter API and LangChain 1.0
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-12
 
 ---
 
-## Phase Overview
+## Active Tasks
 
-| Phase | Name | Planning | Implementation | Testing |
-|-------|------|----------|----------------|---------|
-| 1.1 | Core Foundation | ✅ Done | ✅ Done | ✅ Done |
-| 1.2 | Configuration System | ✅ Done | ✅ Done | ✅ Done |
-| 1.3 | Basic REPL Shell | ✅ Done | ✅ Done | ✅ Done |
-| 2.1 | Tool System Foundation | ✅ Done | ✅ Done | ✅ Done |
-| 2.2 | File Tools | ✅ Done | ✅ Done | ✅ Done |
-| 2.3 | Execution Tools | ✅ Done | ✅ Done | ✅ Done |
-| 3.1 | OpenRouter Client | ✅ Done | ✅ Done | ✅ Done |
-| 3.2 | LangChain Integration | ✅ Done | ✅ Done | ✅ Done |
-| 4.1 | Permission System | ✅ Done | ✅ Done | ✅ Done |
-| 4.2 | Hooks System | ✅ Done | ✅ Done | ✅ Done |
-| 5.1 | Session Management | ✅ Done | ✅ Done | ✅ Done |
-| 5.2 | Context Management | ✅ Done | ✅ Done | ✅ Done |
-| 6.1 | Slash Commands | ✅ Done | ✅ Done | ✅ Done |
-| 6.2 | Operating Modes | ✅ Done | ✅ Done | ✅ Done |
-| 7.1 | Subagents System | ✅ Done | ✅ Done | ✅ Done |
-| 7.2 | Skills System | ✅ Done | ✅ Done | ✅ Done |
-| 8.1 | MCP Protocol Support | ✅ Done | ✅ Done | ✅ Done |
-| 8.2 | Web Tools | ✅ Done | ✅ Done | ✅ Done |
-| 9.1 | Git Integration | ✅ Done | ✅ Done | ✅ Done |
-| 9.2 | GitHub Integration | ✅ Done | ✅ Done | ✅ Done |
-| 10.1 | Plugin System | ✅ Done | ✅ Done | ✅ Done |
-| 10.2 | Polish and Integration Testing | ✅ Done | ✅ Done | ✅ Done |
+_No active tasks._
 
 ---
 
-## What Exists
+## Recently Completed (P0)
 
-### Planning Documents (Complete)
+#### BUG-001: ReadTool Line Limit Broken
+**Status:** ✅ Fixed (2025-12-12)
+**File:** `src/code_forge/tools/file/read.py:158`
+**Fix:** Changed `continue` to `break` to stop reading after limit reached
 
-All 22 phases have planning documents in `.ai/phase/[phase]/`:
+#### SEC-001: No SSRF Protection in URL Fetcher
+**Status:** ✅ Fixed (2025-12-12)
+**File:** `src/code_forge/web/fetch/fetcher.py`
+**Fix:** Added `validate_url_host()` with private IP range detection (127.x, 10.x, 172.16.x, 192.168.x, 169.254.x, IPv6 private)
 
-- `PLAN.md` - Architectural design with code examples
-- `COMPLETION_CRITERIA.md` - Acceptance criteria checklists
-- `GHERKIN.md` - Behavior specifications
-- `DEPENDENCIES.md` - Phase dependencies
-- `TESTS.md` - Test strategies
-- `REVIEW.md` - Review checklists
+#### SEC-002: API Keys Exposed in Logs/Repr
+**Status:** ✅ Fixed (2025-12-12)
+**Files:** `src/code_forge/github/auth.py`, `src/code_forge/web/config.py`
+**Fix:** Wrapped token fields with `pydantic.SecretStr`, masked in `to_dict()` output
 
-**Code quality review has been applied to all PLAN.md files** (~50+ fixes for thread safety, security, resource management, etc.)
+#### PERF-001: Agent Makes Double API Calls
+**Status:** ✅ Fixed (2025-12-12)
+**File:** `src/code_forge/langchain/agent.py`
+**Fix:** Added `_assemble_tool_calls()` method to build tool calls from streamed chunks instead of re-calling API
 
-### Implementation Code
-
-Phase 1.1 implementation complete in `src/forge/`:
-- Core interfaces (`core/interfaces.py`)
-- Value objects (`core/types.py`)
-- Exception hierarchy (`core/errors.py`)
-- Logging infrastructure (`core/logging.py`)
-- Result type (`utils/result.py`)
-- CLI entry point (`cli/main.py`)
-
-Phase 1.2 implementation complete in `src/forge/config/`:
-- Configuration models (`config/models.py`)
-- Configuration sources (`config/sources.py`)
-- Configuration loader (`config/loader.py`)
-
-Phase 1.3 implementation complete in `src/forge/cli/`:
-- Theme definitions (`cli/themes.py`)
-- Status bar (`cli/status.py`)
-- REPL core (`cli/repl.py`)
-- CLI main updated to start REPL
-
-Phase 2.1 implementation complete in `src/forge/tools/`:
-- Tool models and BaseTool ABC (`tools/base.py`)
-- Thread-safe ToolRegistry singleton (`tools/registry.py`)
-- ToolExecutor with tracking (`tools/executor.py`)
-- Public exports (`tools/__init__.py`)
-
-Phase 2.2 implementation complete in `src/forge/tools/file/`:
-- ReadTool - Read files with offset/limit, images, PDFs, notebooks (`tools/file/read.py`)
-- WriteTool - Write files with directory creation (`tools/file/write.py`)
-- EditTool - Find/replace with replace_all option (`tools/file/edit.py`)
-- GlobTool - File pattern matching with excludes (`tools/file/glob.py`)
-- GrepTool - Content search with regex, context lines (`tools/file/grep.py`)
-- Security utilities - Path traversal prevention (`tools/file/utils.py`)
-
-Phase 2.3 implementation complete in `src/forge/tools/execution/`:
-- ShellManager - Singleton for managing background shell processes (`tools/execution/shell_manager.py`)
-- ShellProcess - Dataclass for tracking shell state and output (`tools/execution/shell_manager.py`)
-- ShellStatus - Enum for process states (pending, running, completed, failed, killed, timeout)
-- BashTool - Execute commands with timeout, background mode (`tools/execution/bash.py`)
-- BashOutputTool - Retrieve output from background shells (`tools/execution/bash_output.py`)
-- KillShellTool - Terminate background processes (`tools/execution/kill_shell.py`)
-- Security patterns block dangerous commands (rm -rf /, mkfs, dd, fork bombs)
-
-Phase 3.1 implementation complete in `src/forge/llm/`:
-- Message, ToolCall, ToolDefinition models (`llm/models.py`)
-- CompletionRequest/Response models (`llm/models.py`)
-- StreamChunk, StreamDelta for streaming (`llm/models.py`)
-- LLMError hierarchy - Auth, RateLimit, ModelNotFound, etc. (`llm/errors.py`)
-- RouteVariant enum and model alias resolution (`llm/routing.py`)
-- OpenRouterClient with retry logic, streaming, usage tracking (`llm/client.py`)
-- StreamCollector for assembling streamed responses (`llm/streaming.py`)
-
-Phase 3.2 implementation complete in `src/forge/langchain/`:
-- OpenRouterLLM wrapper - BaseChatModel implementation (`langchain/llm.py`)
-- Bidirectional message conversion - LangChain <-> Code-Forge (`langchain/messages.py`)
-- Tool adapters - LangChainToolAdapter, Code-ForgeToolAdapter (`langchain/tools.py`)
-- ConversationMemory, SlidingWindowMemory, SummaryMemory (`langchain/memory.py`)
-- Callback handlers - TokenTracking, Logging, Streaming, Composite (`langchain/callbacks.py`)
-- Code-ForgeAgent - ReAct-style agent executor with tool loop (`langchain/agent.py`)
-
-Phase 4.1 implementation complete in `src/forge/permissions/`:
-- Permission models - PermissionLevel, PermissionCategory, PermissionRule, PermissionResult (`permissions/models.py`)
-- Pattern matching - PatternMatcher with glob, regex, tool/arg/category patterns (`permissions/rules.py`)
-- RuleSet - Collection with priority/specificity-based evaluation (`permissions/rules.py`)
-- PermissionChecker - Multi-source rule hierarchy (session > project > global) (`permissions/checker.py`)
-- User confirmation - ConfirmationChoice, ConfirmationRequest, PermissionPrompt (`permissions/prompt.py`)
-- Configuration - PermissionConfig, DEFAULT_RULES (14 rules) (`permissions/config.py`)
-
-Phase 4.2 implementation complete in `src/forge/hooks/`:
-- Event types - EventType enum with 16 event types (tool, LLM, session, permission, user) (`hooks/events.py`)
-- HookEvent - Event data with factory methods and serialization (`hooks/events.py`)
-- Hook dataclass - Pattern matching (exact, glob, tool-specific, comma-separated) (`hooks/registry.py`)
-- HookRegistry - Thread-safe singleton for hook management (`hooks/registry.py`)
-- HookResult - Execution results with success/should_continue properties (`hooks/executor.py`)
-- HookExecutor - Async shell command execution with timeout handling (`hooks/executor.py`)
-- HookBlockedError - Exception for blocking pre-execution hooks (`hooks/executor.py`)
-- fire_event() - Convenience function for firing events (`hooks/executor.py`)
-- HookConfig - Configuration loading/saving (global + project) (`hooks/config.py`)
-- HOOK_TEMPLATES - Example hooks (log_all, notify_session_start, git_auto_commit, block_sudo) (`hooks/config.py`)
-
-Phase 5.1 implementation complete in `src/forge/sessions/`:
-- Session data models (`sessions/models.py`)
-  - Session dataclass - Core session with messages, tool history, tokens, metadata
-  - SessionMessage - Messages with to_llm_message()/from_llm_message() conversion
-  - ToolInvocation - Tool call records with timing and success status
-- Session storage (`sessions/storage.py`)
-  - SessionStorage - File-based JSON persistence with atomic writes
-  - Backup creation before overwrite, recovery support
-  - XDG Base Directory compliance (~/.local/share/forge/sessions/)
-  - Automatic backup rotation (max 100, 7 days age limit)
-- Session index (`sessions/index.py`)
-  - SessionIndex - Fast session listing without loading full files
-  - SessionSummary - Lightweight session metadata for listings
-  - In-memory index backed by index.json with auto-rebuild on corruption
-- Session manager (`sessions/manager.py`)
-  - SessionManager - Singleton with thread-safe instance management
-  - create(), resume(), save(), close(), delete() lifecycle methods
-  - Auto-save with configurable interval (asyncio task)
-  - Hook system integration (session:start, session:end, session:message, session:save)
-
-Phase 5.2 implementation complete in `src/forge/context/`:
-- Token counting (`context/tokens.py`)
-  - TokenCounter - Abstract base class for token counting
-  - TiktokenCounter - tiktoken-based accurate counting with fallback
-  - ApproximateCounter - Word-based approximation for unknown models
-  - CachingCounter - LRU cache wrapper for performance
-  - get_counter() - Factory function for model-appropriate counters
-- Context limits (`context/limits.py`)
-  - ContextBudget - Token allocation (system, conversation, tools, response)
-  - ContextLimits - Model-specific context window limits
-  - ContextTracker - Current usage monitoring and overflow detection
-  - MODEL_LIMITS - Known limits for Claude, GPT, Llama, Mistral models
-- Truncation strategies (`context/strategies.py`)
-  - TruncationStrategy - Abstract base for truncation strategies
-  - SlidingWindowStrategy - Keep N most recent messages
-  - TokenBudgetStrategy - Remove oldest to fit token budget
-  - SmartTruncationStrategy - Preserve first and last, add marker
-  - SelectiveTruncationStrategy - Filter by role or marked messages
-  - CompositeStrategy - Chain multiple strategies
-- Context compaction (`context/compaction.py`)
-  - ContextCompactor - LLM-based summarization of old messages
-  - ToolResultCompactor - Truncate large tool outputs
-- Context manager (`context/manager.py`)
-  - TruncationMode - Enum for truncation mode selection
-  - ContextManager - Central coordinator for context management
-  - Auto-truncation, compact_if_needed(), get_stats()
-
-Phase 6.1 implementation complete in `src/forge/commands/`:
-- Command parsing (`commands/parser.py`)
-  - ParsedCommand - Dataclass for parsed command with args, kwargs, flags
-  - CommandParser - Parses /command input, handles quoted strings
-  - Levenshtein distance for command suggestions
-- Command base (`commands/base.py`)
-  - ArgumentType - Enum for argument types (string, integer, boolean, choice, path)
-  - CommandArgument - Argument definition with validation
-  - CommandResult - Execution result with success, output, error, data
-  - CommandCategory - Enum for command categories
-  - Command - ABC for command implementations with execute(), validate(), get_help()
-  - SubcommandHandler - Base for commands with subcommands
-- Command registry (`commands/registry.py`)
-  - CommandRegistry - Thread-safe singleton for command registration
-  - register(), unregister(), resolve() by name or alias
-  - search(), list_commands(), get_categories()
-- Command executor (`commands/executor.py`)
-  - CommandContext - Execution context with session_manager, context_manager, config, etc.
-  - CommandExecutor - Parses, validates, executes commands
-  - register_builtin_commands() - Registers all built-in commands
-- Built-in commands (`commands/builtin/`):
-  - help_commands.py: /help, /commands (list and search commands)
-  - session_commands.py: /session with subcommands (list, new, resume, delete, title, tag, untag)
-  - context_commands.py: /context with subcommands (compact, reset, mode)
-  - control_commands.py: /clear, /exit, /reset, /stop
-  - config_commands.py: /config with subcommands (get, set), /model
-  - debug_commands.py: /debug, /tokens, /history, /tools
-
-Phase 6.2 implementation complete in `src/forge/modes/`:
-- Mode base classes (`modes/base.py`)
-  - Mode - Abstract base class with activate/deactivate lifecycle
-  - ModeConfig - Mode configuration with system prompt additions
-  - ModeContext - Context for mode operations (session, config, output handler)
-  - ModeState - Persistent mode state with serialization
-  - NormalMode - Default mode with no modifications
-  - ModeName - Enum for available modes (NORMAL, PLAN, THINKING, HEADLESS)
-- Mode prompts (`modes/prompts.py`)
-  - PLAN_MODE_PROMPT - System prompt for planning mode
-  - THINKING_MODE_PROMPT - System prompt for thinking mode
-  - THINKING_MODE_DEEP_PROMPT - Enhanced prompt for deep thinking
-  - HEADLESS_MODE_PROMPT - System prompt for headless mode
-  - get_mode_prompt() - Factory function for mode prompts
-- Mode manager (`modes/manager.py`)
-  - ModeManager - Thread-safe singleton for mode management
-  - switch_mode() - Switch between modes with push/pop support
-  - Mode stacking for temporary mode changes
-  - Auto-activation via pattern matching
-  - State save/restore for persistence
-- Plan mode (`modes/plan.py`)
-  - PlanMode - Mode for structured planning with task breakdown
-  - Plan - Structured plan with steps, considerations, success criteria
-  - PlanStep - Individual step with substeps, dependencies, files, complexity
-  - PLANNING_PATTERNS - Regex patterns for auto-activation
-  - Plan to markdown conversion for display
-  - Plan to todos conversion for execution
-- Thinking mode (`modes/thinking.py`)
-  - ThinkingMode - Extended reasoning with visible thinking process
-  - ThinkingConfig - Configuration (max tokens, show thinking, deep mode)
-  - ThinkingResult - Separated thinking and response with metrics
-  - THINKING_PATTERN - Regex for extracting <thinking>/<response> sections
-  - should_suggest_thinking() - Pattern detection for complex problems
-- Headless mode (`modes/headless.py`)
-  - HeadlessMode - Non-interactive mode for automation/CI/CD
-  - HeadlessConfig - File I/O, output format, timeout, auto-approve settings
-  - HeadlessResult - Structured output with success, message, exit code
-  - OutputFormat - Enum for TEXT/JSON output
-  - create_headless_config_from_args() - Factory from CLI arguments
-- Package exports (`modes/__init__.py`)
-  - setup_modes() - Register all default modes with manager
-
-Phase 7.1 implementation complete in `src/forge/agents/`:
-- Agent base classes (`agents/base.py`)
-  - AgentState - Enum for lifecycle states (PENDING, RUNNING, COMPLETED, FAILED, CANCELLED)
-  - ResourceLimits - Token, time, tool call, iteration limits
-  - ResourceUsage - Usage tracking with exceeds() check
-  - AgentConfig - Agent configuration with type, prompt, tools, limits
-  - AgentContext - Execution context with parent messages, working dir, metadata
-  - Agent - Abstract base class for all agents
-- Agent results (`agents/result.py`)
-  - AgentResult - Success/failure result with factory methods (ok, fail, cancelled, timeout)
-  - AggregatedResult - Combine results from parallel agents
-- Agent types (`agents/types.py`)
-  - AgentTypeDefinition - Type definitions with prompts, tools, limits
-  - AgentTypeRegistry - Thread-safe singleton for type management
-  - Built-in types: EXPLORE_AGENT, PLAN_AGENT, CODE_REVIEW_AGENT, GENERAL_AGENT
-- Agent executor (`agents/executor.py`)
-  - AgentExecutor - LLM interaction loop with tool execution
-  - Resource limit checking during execution
-  - LangChain message conversion
-- Agent manager (`agents/manager.py`)
-  - AgentManager - Singleton for agent lifecycle
-  - spawn(), spawn_parallel() with semaphore-based concurrency
-  - wait(), wait_all(), cancel(), cancel_all()
-  - Stats tracking and cleanup
-- Built-in agents (`agents/builtin/`)
-  - ExploreAgent - Codebase exploration and search
-  - PlanAgent - Implementation planning
-  - CodeReviewAgent - Code review and suggestions
-  - GeneralAgent - General purpose tasks
-  - Factory function create_agent() and registry
-
-Phase 7.2 implementation complete in `src/forge/skills/`:
-- Skill base classes (`skills/base.py`)
-  - SkillConfig - Configuration option with type validation (string, int, bool, choice)
-  - SkillMetadata - Name, description, author, version, tags, aliases, examples
-  - SkillDefinition - Complete skill definition with prompt, tools, config
-  - Skill - Runtime skill with activation/deactivation, variable substitution
-- Skill parser (`skills/parser.py`)
-  - SkillParser - Parse YAML and Markdown skill files
-  - ParseResult - Result with definition, errors, warnings
-  - YAML frontmatter extraction for Markdown files
-  - Validation for required fields, config types
-- Skill loader (`skills/loader.py`)
-  - SkillLoader - File-based skill discovery
-  - Search paths for user (~/.forge/skills/) and project (.forge/skills/)
-  - Hot reload support
-  - Error callbacks for load failures
-- Skill registry (`skills/registry.py`)
-  - SkillRegistry - Thread-safe singleton for skill management
-  - register(), unregister(), get() by name or alias
-  - list_skills(), search(), get_tags()
-  - activate(), deactivate() with config validation
-  - on_activate(), on_deactivate() callbacks
-  - load_skills(), reload_skill(), reload_all()
-- Built-in skills (`skills/builtin/`)
-  - PDF skill - PDF document analysis
-  - Excel skill - Spreadsheet and CSV handling (aliases: xlsx, csv)
-  - Database skill - SQL and database operations (alias: db)
-  - API skill - REST/GraphQL API testing
-  - Testing skill - Unit/integration test writing (alias: test)
-  - get_builtin_skills(), register_builtin_skills()
-- Skill commands (`skills/commands.py`)
-  - SkillCommand - /skill command with subcommands
-  - /skill list [--tag <tag>] - List available skills
-  - /skill <name> - Activate skill
-  - /skill off - Deactivate skill
-  - /skill info <name> - Show skill details
-  - /skill search <query> - Search skills
-  - /skill reload - Reload all skills
-
-Phase 8.1 implementation complete in `src/forge/mcp/`:
-- MCP protocol types (`mcp/protocol.py`)
-  - MCPRequest, MCPResponse, MCPNotification - JSON-RPC 2.0 messages
-  - MCPError - Error with code, message, data
-  - MCPTool, MCPResource, MCPPrompt - MCP capability types
-  - MCPCapabilities, MCPServerInfo - Server metadata
-  - MCPResourceTemplate, MCPPromptArgument, MCPPromptMessage
-  - parse_message() - Factory for parsing incoming messages
-- Transport abstraction (`mcp/transport/base.py`)
-  - MCPTransport - Abstract base class for transports
-  - connect(), disconnect(), send(), receive(), is_connected
-- Stdio transport (`mcp/transport/stdio.py`)
-  - StdioTransport - Subprocess-based transport for local MCP servers
-  - Spawns process with command/args/env/cwd
-  - Line-buffered JSON-RPC over stdin/stdout
-- HTTP/SSE transport (`mcp/transport/http.py`)
-  - HTTPTransport - HTTP transport for remote MCP servers
-  - POST for requests, Server-Sent Events for notifications
-  - aiohttp-based async implementation
-- MCP client (`mcp/client.py`)
-  - MCPClient - Full MCP protocol client
-  - connect() with initialization handshake
-  - list_tools(), call_tool() - Tool operations
-  - list_resources(), read_resource() - Resource operations
-  - list_prompts(), get_prompt() - Prompt operations
-  - MCPClientError - Client error with JSON-RPC code
-- Tool integration (`mcp/tools.py`)
-  - MCPToolAdapter - Adapts MCP tools to Code-Forge tool system
-  - MCPToolRegistry - Registry for MCP tools with namespacing
-  - Tool names: mcp__{server}__{tool} format
-- Configuration (`mcp/config.py`)
-  - MCPServerConfig - Server configuration (transport, command/url, env)
-  - MCPSettings - Global MCP settings (timeout, auto_connect)
-  - MCPConfig - Full configuration with servers and settings
-  - MCPConfigLoader - Load from ~/.forge/mcp.yaml and .forge/mcp.yaml
-- Connection manager (`mcp/manager.py`)
-  - MCPManager - Singleton for managing MCP connections
-  - connect(), disconnect(), reconnect() - Connection lifecycle
-  - connect_all() - Auto-connect enabled servers
-  - get_all_tools(), get_all_resources(), get_all_prompts()
-  - reload_config() - Hot reload configuration
-
-Phase 8.2 implementation complete in `src/forge/web/`:
-- Web types (`web/types.py`)
-  - SearchResult - Individual search result with title, url, snippet, date, metadata
-  - SearchResponse - Search results with query, provider, total_results, search_time
-  - FetchResponse - URL fetch result with content, headers, status, encoding
-  - FetchOptions - Fetch configuration (timeout, max_size, user_agent, etc.)
-  - ParsedContent - Parsed HTML with title, text, links, images, metadata
-- Web configuration (`web/config.py`)
-  - SearchProviderConfig - Provider config with name, API key
-  - SearchConfig - Default provider, cache settings
-  - FetchConfig - Timeout, max_size, user_agent defaults
-  - CacheConfig - TTL, max_size, persist options
-  - WebConfig - Combined config with from_dict() factory
-- Search providers (`web/search/`)
-  - SearchProvider - Abstract base class for search providers
-  - SearchError - Exception for search failures
-  - filter_results() - Domain allow/block list filtering
-  - DuckDuckGoProvider - No API key required, uses duckduckgo-search
-  - GoogleSearchProvider - Google Custom Search API with API key
-  - BraveSearchProvider - Brave Search API with API key
-- URL fetching (`web/fetch/`)
-  - URLFetcher - Async URL fetcher with aiohttp
-  - FetchError - Exception for fetch failures
-  - HTTP to HTTPS upgrade, content size limits, timeout handling
-  - fetch_multiple() - Concurrent fetching with semaphore
-  - HTMLParser - BeautifulSoup-based HTML parsing
-  - parse() - Extract title, text, links, images, metadata
-  - to_text() - Convert HTML to plain text (removes scripts, nav, footer)
-  - to_markdown() - Convert HTML to Markdown with html2text
-  - extract_main_content() - Extract main/article content
-- Web caching (`web/cache.py`)
-  - WebCache - Thread-safe LRU cache for fetch responses
-  - TTL-based expiration, max size eviction
-  - generate_key() - SHA256-based cache keys
-  - Optional file persistence with pickle serialization
-- Web tools (`web/tools.py`)
-  - WebSearchTool - Search tool with provider selection, domain filtering
-  - WebFetchTool - Fetch tool with caching, format options (markdown, text, raw)
-  - Content truncation for large responses
-
-Phase 9.1 implementation complete in `src/forge/git/`:
-- Repository interface (`git/repository.py`)
-  - GitRepository - Core repository interface with path detection
-  - GitRemote - Remote repository information (name, url, fetch/push URLs)
-  - GitBranch - Branch information (name, current, tracking, ahead/behind, commit)
-  - GitCommit - Commit information (hash, author, date, message, parent_hashes)
-  - RepositoryInfo - Combined repository state
-  - GitError - Exception with returncode and stderr
-  - Async run_git() and sync _run_git_sync() for property access
-  - Caching for is_git_repo, current_branch, is_dirty with invalidate_cache()
-- Status operations (`git/status.py`)
-  - FileStatus - Single file status (path, status code, staged, original_path)
-  - GitStatus - Complete status (branch, tracking, ahead/behind, staged/unstaged/untracked/conflicts)
-  - GitStatusTool - Parse git status --porcelain=v2 output
-  - Support for type 1 (changed) and type 2 (rename/copy) entries
-  - to_string() for human-readable output
-- History operations (`git/history.py`)
-  - LogEntry - Extended commit info with files changed, stats
-  - GitHistory - Log, search, and commit details
-  - get_log() - Paginated log with author/date/path filters
-  - get_commit() - Single commit details
-  - search_commits() - Search by message, author, content
-  - get_file_history() - History for specific file
-- Diff operations (`git/diff.py`)
-  - DiffFile - Single file diff (path, status, additions, deletions, content)
-  - GitDiff - Complete diff result with files and stats
-  - GitDiffTool - Diff working tree, commits, branches
-  - get_stat(), get_name_only(), get_name_status() helpers
-  - _parse_stat(), _parse_diff_content() parsers
-- Safety guards (`git/safety.py`)
-  - SafetyCheck - Result with safe, reason, warnings
-  - GitSafety - Safety checks for dangerous operations
-  - check_amend() - Verify HEAD not pushed
-  - check_force_push() - Block force push to protected branches
-  - check_branch_delete() - Prevent deleting current/protected branches
-  - check_hard_reset() - Warn about uncommitted changes
-  - check_checkout() - Detect conflicting changes
-  - check_rebase(), check_merge() - Pre-operation validation
-  - validate_commit_message() - Format validation
-  - PROTECTED_BRANCHES - main, master, develop, production, release
-- Git operations (`git/operations.py`)
-  - GitOperations - High-level git operations with safety
-  - UnsafeOperationError - Exception for blocked operations
-  - stage(), unstage(), commit(), amend() - Staging and commits
-  - create_branch(), checkout(), delete_branch() - Branch management
-  - merge(), rebase(), cherry_pick() - Merge operations
-  - stash_push(), stash_pop(), stash_list() - Stash management
-  - create_tag(), delete_tag(), list_tags() - Tag operations
-  - reset_soft(), reset_hard() - Reset operations
-  - clean() - Remove untracked files
-  - All operations integrate with GitSafety checks
-- LLM context (`git/context.py`)
-  - GitContext - Context provider for LLM system prompts
-  - get_context_summary() - Brief repository state
-  - get_detailed_context() - Full repository info with status
-  - get_status_summary() - Short status line
-  - format_for_commit() - Staged changes for commit message generation
-  - format_for_review() - Repository state for code review
-  - get_branch_for_prompt() - Branch info for prompts
-- Package exports (`git/__init__.py`)
-  - All public classes exported with sorted __all__
-
-Phase 9.2 implementation complete in `src/forge/github/`:
-- Authentication (`github/auth.py`)
-  - GitHubAuth - Authentication data (token, username, scopes, rate limits)
-  - GitHubAuthenticator - Token validation, env var support (GITHUB_TOKEN, GH_TOKEN)
-  - GitHubAuthError - Authentication error exception
-  - Rate limit tracking with reset time
-- GitHub API client (`github/client.py`)
-  - GitHubClient - Async HTTP client with aiohttp
-  - GET, POST, PATCH, PUT, DELETE methods
-  - Pagination support with configurable per_page and max_pages
-  - Rate limit handling with exponential backoff
-  - Error hierarchy: GitHubAPIError, GitHubRateLimitError, GitHubNotFoundError
-  - Automatic retry with jitter for transient failures
-- Repository operations (`github/repository.py`)
-  - GitHubRepository - Repository info (owner, name, description, stats)
-  - GitHubBranch - Branch info (name, commit_sha, protected)
-  - GitHubTag - Tag info with zipball/tarball URLs
-  - RepositoryService - Get repo, list/get branches, list tags
-  - get_readme(), get_content() - File content retrieval
-  - parse_remote_url() - Parse HTTPS/SSH GitHub URLs
-- Issue operations (`github/issues.py`)
-  - GitHubUser - User info (login, id, avatar, type)
-  - GitHubLabel - Label with name, color, description
-  - GitHubMilestone - Milestone with state, due date
-  - GitHubIssue - Full issue with author, assignees, labels
-  - GitHubComment - Issue/PR comments
-  - IssueService - CRUD operations, comments, labels
-  - List with filters (state, labels, assignee, milestone)
-- Pull request operations (`github/pull_requests.py`)
-  - GitHubPullRequest - PR with head/base refs, merge status, stats
-  - GitHubReview - Review with state (APPROVED, CHANGES_REQUESTED)
-  - GitHubReviewComment - Review comments with diff context
-  - GitHubCheckRun - CI check status
-  - GitHubPRFile - Changed file with patch content
-  - PullRequestService - Full PR workflow
-  - Create, update, merge (merge/squash/rebase)
-  - Reviews, review comments, requested reviewers
-  - Diff, files, commits, checks, combined status
-- GitHub Actions (`github/actions.py`)
-  - Workflow - Workflow definition (id, name, path, state)
-  - WorkflowRun - Run with status, conclusion, timing
-  - WorkflowJob - Job with steps and status
-  - ActionsService - List workflows, runs, jobs
-  - Get run logs, rerun, rerun failed, cancel
-- LLM context (`github/context.py`)
-  - GitHubContext - Context for LLM prompts
-  - get_context_summary() - Repository summary
-  - format_issue() - Issue details for LLM
-  - format_pr() - PR details for LLM
-  - format_issue_list(), format_pr_list() - List formatting
-- Package exports (`github/__init__.py`)
-  - All public classes exported
-
-Phase 10.1 implementation complete in `src/forge/plugins/`:
-- Plugin exceptions (`plugins/exceptions.py`)
-  - PluginError - Base exception with plugin_id attribute
-  - PluginNotFoundError, PluginLoadError, PluginManifestError
-  - PluginDependencyError, PluginConfigError, PluginLifecycleError
-- Plugin base classes (`plugins/base.py`)
-  - PluginMetadata - Name, version, description, author, keywords, etc.
-  - PluginCapabilities - Tools, commands, hooks, subagents, skills, system_access
-  - PluginContext - Plugin runtime context with data_dir, config, logger
-  - Plugin - Abstract base class with lifecycle hooks and registration methods
-- Plugin manifest parsing (`plugins/manifest.py`)
-  - PluginManifest - Full plugin manifest with from_yaml(), from_pyproject()
-  - ManifestParser - Find, parse, validate plugin manifests
-  - Support for plugin.yaml, plugin.yml, pyproject.toml
-  - Semver version validation, entry point format validation
-- Plugin discovery (`plugins/discovery.py`)
-  - DiscoveredPlugin - Discovered plugin with path, manifest, source
-  - PluginDiscovery - Discover from user/project/extra/package sources
-  - Entry point support for package-based plugins
-- Plugin configuration (`plugins/config.py`)
-  - PluginConfig - Plugin system configuration (enabled, dirs, disabled list)
-  - PluginConfigManager - Per-plugin config, data dirs, JSON schema validation
-- Plugin loader (`plugins/loader.py`)
-  - LoadedPlugin - Loaded plugin with instance, manifest, context, state
-  - PluginLoader - Load plugins, create contexts, unload with cleanup
-  - sys.path management for plugin imports
-- Plugin registry (`plugins/registry.py`)
-  - PluginRegistry - Thread-safe registry for plugin contributions
-  - Namespaced registration (tools: plugin_id__tool, commands: plugin_id:command)
-  - Priority-sorted hooks, unregister_plugin() cleanup
-- Plugin manager (`plugins/manager.py`)
-  - PluginManager - Lifecycle management coordinator
-  - discover_and_load() - Auto-discover and load all plugins
-  - enable(), disable(), reload() - Runtime plugin control
-  - Thread-safe with RLock, circular reload detection
-- Plugin commands (`plugins/commands.py`)
-  - PluginListCommand - /plugins list - List all plugins
-  - PluginInfoCommand - /plugins info <name> - Show plugin details
-  - PluginEnableCommand - /plugins enable <name> - Enable plugin
-  - PluginDisableCommand - /plugins disable <name> - Disable plugin
-  - PluginReloadCommand - /plugins reload <name> - Reload plugin
-  - PluginsCommand - SubcommandHandler for /plugins command
-
-### Tests
-
-Phase 1.1 through 10.2 tests complete in `tests/`:
-- 3405 tests passing (3344 previous + 61 new integration tests)
-- 90%+ code coverage (90% required)
-- mypy strict mode passing
-- ruff linting passing
+#### PERF-002: Unbounded Shell Output Buffers
+**Status:** ✅ Fixed (2025-12-12)
+**File:** `src/code_forge/tools/execution/shell_manager.py`
+**Fix:** Added `MAX_BUFFER_SIZE` (10MB) and `_append_to_buffer()` with circular buffer behavior
 
 ---
 
-## Project Status
+## Backlog
 
-### ALL PHASES COMPLETE ✅
+### High Priority (P1)
 
-Code-Forge v1.0.0 is ready for release!
+#### ARCH-001: Duplicate Type Definitions
+**Status:** Pending
+**Files:** `src/code_forge/core/types.py` vs `src/code_forge/tools/base.py`
+**Issue:** `ToolParameter` and `ToolResult` defined twice with different features
+**Impact:** Maintenance burden, potential import confusion, DRY violation
+**Fix:** Consolidate into core/types.py, import in tools/base.py
 
-All implementation phases complete:
-1. [x] Phase 1.1 complete (Core Foundation)
-2. [x] Phase 1.2 complete (Configuration System)
-3. [x] Phase 1.3 complete (Basic REPL Shell)
-4. [x] Phase 2.1 complete (Tool System Foundation)
-5. [x] Phase 2.2 complete (File Tools)
-6. [x] Phase 2.3 complete (Execution Tools)
-7. [x] Phase 3.1 complete (OpenRouter Client)
-8. [x] Phase 3.2 complete (LangChain Integration)
-9. [x] Phase 4.1 complete (Permission System)
-10. [x] Phase 4.2 complete (Hooks System)
-11. [x] Phase 5.1 complete (Session Management)
-12. [x] Phase 5.2 complete (Context Management)
-13. [x] Phase 6.1 complete (Slash Commands)
-14. [x] Phase 6.2 complete (Operating Modes)
-15. [x] Phase 7.1 complete (Subagents System)
-16. [x] Phase 7.2 complete (Skills System)
-17. [x] Phase 8.1 complete (MCP Protocol Support)
-18. [x] Phase 8.2 complete (Web Tools)
-19. [x] Phase 9.1 complete (Git Integration)
-20. [x] Phase 9.2 complete (GitHub Integration)
-21. [x] Phase 10.1 complete (Plugin System)
-22. [x] Phase 10.2 complete (Polish and Integration Testing)
+#### ARCH-002: Core Interfaces Not Implemented
+**Status:** Pending
+**File:** `src/code_forge/core/interfaces.py`
+**Issue:** `ITool`, `IModelProvider`, `ISessionRepository` defined but never used
+**Impact:** Abstractions are theoretical, not enforced
+**Fix:** Make concrete classes implement interfaces or remove unused interfaces
 
-Phase 10.2 deliverables:
-- [x] Integration tests (tool execution, agent workflows, error recovery)
-- [x] Documentation (user guide, developer docs, architecture)
-- [x] Release preparation (pyproject.toml v1.0.0, CHANGELOG.md, README.md)
+#### ARCH-003: Tight Coupling in CLI Entry Point
+**Status:** Pending
+**File:** `src/code_forge/cli/main.py`
+**Issue:** Direct instantiation of ConfigLoader, OpenRouterClient, etc.
+**Impact:** Hard to test, difficult to swap implementations
+**Fix:** Implement dependency injection pattern
 
-### Implementation Order
+#### ARCH-004: Configuration System Fragmentation
+**Status:** Pending
+**Files:** `config/`, `mcp/config.py`, `hooks/config.py`, `permissions/config.py`, `web/config.py`
+**Issue:** 6+ modules use different config patterns (Pydantic vs dataclass vs custom)
+**Impact:** Inconsistent API, hard to compose/test configurations
+**Fix:** Standardize on Pydantic models with common base class
 
-Phases must be implemented in dependency order:
+#### TOOL-001: Timeout Units Inconsistent
+**Status:** Pending
+**Files:** `src/code_forge/tools/execution/bash.py`, `src/code_forge/tools/base.py`
+**Issue:** BashTool uses milliseconds, ExecutionContext uses seconds
+**Impact:** Developer confusion, potential timeout bugs
+**Fix:** Standardize on seconds throughout, update documentation
 
+#### TOOL-002: Missing JSON Error Handling in Notebook Read
+**Status:** Pending
+**File:** `src/code_forge/tools/file/read.py:253-254`
+**Issue:** `_read_notebook` has no try-except for `json.JSONDecodeError`
+**Impact:** Malformed .ipynb files cause unhandled exceptions
+**Fix:** Add proper exception handling with user-friendly error message
+
+#### TOOL-003: Glob Pattern Can Escape Working Directory
+**Status:** Pending
+**File:** `src/code_forge/tools/file/glob.py:112-115`
+**Issue:** Absolute patterns like `/etc/*` can enumerate any directory
+**Impact:** Information disclosure outside intended scope
+**Fix:** Validate patterns stay within base_path
+
+#### TOOL-004: Symlink Parameter Creates Escape Route
+**Status:** Pending
+**File:** `src/code_forge/tools/file/utils.py:47`
+**Issue:** `allow_symlinks=True` parameter enables path traversal via symlinks
+**Impact:** Potential security bypass (currently all callers use safe default)
+**Fix:** Remove parameter entirely or deprecate it
+
+#### LLM-001: Streaming Errors Silently Skipped
+**Status:** Pending
+**File:** `src/code_forge/llm/client.py:211-212`
+**Issue:** JSON parse failures during streaming just logged as warning
+**Impact:** Data loss, incomplete responses without notification
+**Fix:** Propagate errors or provide mechanism to detect incomplete streams
+
+#### LLM-002: Thread Cleanup Timeout Too Short
+**Status:** Pending
+**File:** `src/code_forge/langchain/llm.py:260`
+**Issue:** 1-second timeout for producer thread join may orphan threads
+**Impact:** Resource leaks, orphaned background threads
+**Fix:** Increase timeout or implement proper cancellation
+
+#### LLM-003: Token Counter Race Condition
+**Status:** Pending
+**File:** `src/code_forge/llm/client.py:204-208`
+**Issue:** Concurrent streams update token counts without locking
+**Impact:** Inaccurate token/cost tracking
+**Fix:** Add threading lock around counter updates
+
+#### LLM-004: Tool Execution Has No Timeout
+**Status:** Pending
+**File:** `src/code_forge/langchain/agent.py:216-249`
+**Issue:** LLM calls have iteration_timeout, but tool execution can hang forever
+**Impact:** Agent can hang indefinitely on slow tools
+**Fix:** Apply timeout to tool execution within agent loop
+
+---
+
+### Medium Priority (P2)
+
+#### CLI-001: No Stdin/Batch Input Support
+**Status:** Pending
+**File:** `src/code_forge/cli/main.py`
+**Issue:** No support for `echo "fix bug" | forge` or `forge < script.txt`
+**Impact:** Can't use in automation pipelines
+**Fix:** Add stdin detection and batch mode
+
+#### CLI-002: No Output Format Options
+**Status:** Pending
+**File:** `src/code_forge/cli/repl.py`
+**Issue:** No `--json`, `--no-color`, `-q` quiet mode options
+**Impact:** Hard to integrate with other tools
+**Fix:** Add output format flags to CLI
+
+#### CLI-003: Generic Error Messages
+**Status:** Pending
+**Files:** `src/code_forge/cli/main.py:54-60`, `src/code_forge/commands/parser.py`
+**Issue:** Errors don't explain what went wrong or how to fix
+**Impact:** Poor user experience
+**Fix:** Add context-specific error messages with suggestions
+
+#### CLI-004: No Command Timeout Handling
+**Status:** Pending
+**File:** `src/code_forge/cli/main.py:197-230`
+**Issue:** Commands can hang indefinitely with no interrupt mechanism
+**Impact:** Unresponsive CLI
+**Fix:** Add timeout wrapper around command execution
+
+#### CLI-005: Missing UTF-8 Input Validation
+**Status:** Pending
+**File:** `src/code_forge/cli/repl.py:503-505`
+**Issue:** No validation that input is valid UTF-8
+**Impact:** Binary/invalid encoding could crash parser
+**Fix:** Add encoding validation on input
+
+#### CLI-006: Quote Parsing Falls Back Poorly
+**Status:** Pending
+**File:** `src/code_forge/commands/parser.py:145-150`
+**Issue:** Unbalanced quotes fall back to `.split()` losing quoted strings
+**Impact:** `/session title "My Title"` fails with unbalanced quotes
+**Fix:** Better error handling or robust quote parsing
+
+#### SEC-003: Dangerous Command Regex Bypassable
+**Status:** Pending
+**File:** `src/code_forge/tools/execution/bash.py:31-42`
+**Issue:** Patterns like `rm -rf /` won't catch `rm -rf / | something`
+**Impact:** Dangerous commands can slip through
+**Fix:** Improve pattern matching or use allowlist approach
+
+#### SEC-004: Domain Filter Uses Substring Match
+**Status:** Pending
+**File:** `src/code_forge/web/search/base.py:76`
+**Issue:** `"github.com" in domain` matches `github.com.attacker.com`
+**Impact:** Domain filtering can be bypassed
+**Fix:** Use proper suffix matching for domains
+
+#### SEC-005: HTML Parser Doesn't Remove Event Handlers
+**Status:** Pending
+**File:** `src/code_forge/web/fetch/parser.py:138-166`
+**Issue:** Removes `<script>` but not `onerror=`, `onclick=` handlers
+**Impact:** XSS if content rendered as HTML
+**Fix:** Use proper HTML sanitizer (nh3, bleach)
+
+#### SEC-006: Permission Pattern Regex DoS Risk
+**Status:** Pending
+**File:** `src/code_forge/permissions/rules.py:149-172`
+**Issue:** User-supplied patterns compiled as regex without complexity limits
+**Impact:** Malicious regex can cause ReDoS
+**Fix:** Add regex complexity limits or use simplified pattern language
+
+#### MEM-001: Conversation Memory Trim is O(n²)
+**Status:** Pending
+**File:** `src/code_forge/langchain/memory.py:155-186`
+**Issue:** Recalculates total tokens for ALL messages every iteration
+**Impact:** Poor performance with large conversation histories
+**Fix:** Track running total, update incrementally
+
+#### MEM-002: Summary Memory Keeps Last 10 Hardcoded
+**Status:** Pending
+**File:** `src/code_forge/langchain/memory.py:295-319`
+**Issue:** Always keeps last 10 messages regardless of conversation structure
+**Impact:** May drop important context
+**Fix:** Make configurable or use smarter heuristics
+
+---
+
+### Low Priority (P3)
+
+#### TEST-001: 555 Weak Assertions
+**Status:** Pending
+**Location:** Throughout test suite
+**Issue:** Heavy use of `assert is not None` instead of specific value checks
+**Impact:** Tests may pass when they shouldn't
+**Fix:** Replace with specific assertions
+
+#### TEST-002: Only 1 Parametrized Test
+**Status:** Pending
+**Location:** Tests throughout
+**Issue:** Could benefit from `@pytest.mark.parametrize` for variations
+**Impact:** Missing edge case coverage
+**Fix:** Add parametrization for HTTP codes, error scenarios, file formats
+
+#### TEST-003: No Concurrent/Race Condition Tests
+**Status:** Pending
+**Location:** Test suite
+**Issue:** No tests for simultaneous operations or race conditions
+**Impact:** Concurrency bugs may exist
+**Fix:** Add tests for parallel tool execution, concurrent sessions
+
+#### TEST-004: providers/ Module Has No Tests
+**Status:** Pending
+**Location:** `src/code_forge/providers/`
+**Issue:** Module exists but has no corresponding tests
+**Impact:** Untested code
+**Fix:** Add tests or remove placeholder module
+
+#### DOC-001: Fixture Dependency Chains Not Documented
+**Status:** Pending
+**File:** `tests/conftest.py`
+**Issue:** Complex fixture relationships not documented
+**Impact:** Hard to understand test setup
+**Fix:** Add documentation comments
+
+#### TOOL-005: Remaining Lines Calculation Off-by-One
+**Status:** Pending
+**File:** `src/code_forge/tools/file/read.py:180-182`
+**Issue:** `offset + limit - 1` should be `offset + limit`
+**Impact:** Slightly incorrect metadata
+**Fix:** Correct the calculation
+
+#### TOOL-006: Dry Run Doesn't Validate Paths
+**Status:** Pending
+**File:** `src/code_forge/tools/file/write.py:80-88`
+**Issue:** Dry run returns success without validating path would work
+**Impact:** False positive on invalid paths
+**Fix:** Perform validation even in dry run
+
+#### TOOL-007: GrepTool head_limit=0 Treated as Default
+**Status:** Pending
+**File:** `src/code_forge/tools/file/grep.py:169`
+**Issue:** `head_limit=0` falls back to DEFAULT instead of unlimited
+**Impact:** Can't explicitly request unlimited results
+**Fix:** Use `if head_limit is None:` check
+
+---
+
+## Completed Milestones
+
+| Version | Date | Summary |
+|---------|------|---------|
+| 1.1.0 | 2025-12-09 | All 22 phases complete, production ready |
+| 1.0.0 | 2025-12-09 | Initial release |
+
+---
+
+## Issue Counts
+
+| Priority | Count | Description |
+|----------|-------|-------------|
+| P0 Critical | 0 | ✅ All resolved |
+| P1 High | 12 | Architecture and significant functional issues |
+| P2 Medium | 12 | Quality improvements and UX enhancements |
+| P3 Low | 7 | Minor issues and nice-to-haves |
+| **Total** | **31** | (5 P0 issues fixed 2025-12-12) |
+
+---
+
+## How to Use This File
+
+When starting new work:
+1. Pick an item from the backlog (start with P0/P1)
+2. Move to "Active Tasks" with your progress
+3. Update status as work progresses
+4. Move to "Completed Milestones" when released
+
+Format for active tasks:
 ```
-Phase 1.1 (Core Foundation)
-    ├── Phase 1.2 (Configuration)
-    │   └── Phase 1.3 (REPL Shell)
-    │       └── Phase 6.1 (Slash Commands)
-    │           └── Phase 6.2 (Operating Modes)
-    ├── Phase 2.1 (Tool System)
-    │   ├── Phase 2.2 (File Tools)
-    │   ├── Phase 2.3 (Execution Tools)
-    │   │   └── Phase 9.1 (Git Integration)
-    │   │       └── Phase 9.2 (GitHub Integration)
-    │   ├── Phase 4.1 (Permission System)
-    │   │   └── Phase 4.2 (Hooks System)
-    │   ├── Phase 8.1 (MCP Protocol)
-    │   └── Phase 8.2 (Web Tools)
-    ├── Phase 3.1 (OpenRouter Client)
-    │   └── Phase 3.2 (LangChain Integration)
-    │       ├── Phase 5.2 (Context Management)
-    │       └── Phase 7.1 (Subagents System)
-    │           └── Phase 7.2 (Skills System)
-    └── Phase 5.1 (Session Management)
-
-Phase 10.1 (Plugin System) - Requires all above
-Phase 10.2 (Polish & Testing) - Requires all above
+### ISSUE-ID: Title
+**Status:** In Progress | Blocked | Done
+**Assignee:** (if applicable)
+**Branch:** (if applicable)
+**Notes:** Progress updates
 ```
-
----
-
-## Status Definitions
-
-| Status | Meaning |
-|--------|---------|
-| ⬜ Not Started | No work has begun |
-| 🔄 In Progress | Active development, not complete |
-| ✅ Done | Implemented, tested, reviewed, merged |
-
-**Important:** A phase is only "Done" when:
-- All code is implemented per PLAN.md
-- All tests pass per TESTS.md
-- All completion criteria met per COMPLETION_CRITERIA.md
-- Code review completed per REVIEW.md
-
----
-
-## Version History
-
-| Date | Changes |
-|------|---------|
-| 2025-12-09 | Phase 10.2 implementation complete - ALL PHASES DONE (3405 tests) |
-| 2025-12-09 | Phase 10.1 implementation complete (3344 tests) |
-| 2025-12-09 | Phase 9.2 implementation complete (3164 tests) |
-| 2025-12-08 | Phase 9.1 implementation complete (3013 tests) |
-| 2025-12-06 | Phase 8.2 implementation complete (2789 tests) |
-| 2025-12-06 | Phase 8.1 implementation complete (2673 tests) |
-| 2025-12-06 | Phase 7.2 implementation complete (2393 tests) |
-| 2025-12-05 | Phase 7.1 implementation complete (2206 tests) |
-| 2025-12-05 | Phase 6.2 implementation complete (2035 tests) |
-| 2025-12-05 | Phase 6.1 implementation complete (1795 tests) |
-| 2025-12-04 | Phase 5.2 implementation complete (1584 tests) |
-| 2025-12-04 | Phase 5.1 implementation complete (1433 tests) |
-| 2025-12-03 | Phase 4.2 implementation complete (1247 tests) |
-| 2025-12-03 | Phase 4.1 implementation complete (1112 tests) |
-| 2025-12-03 | Phase 3.2 implementation complete (941 tests) |
-| 2025-12-03 | Phase 3.1 implementation complete (784 tests) |
-| 2025-12-03 | Phase 2.3 implementation complete (652 tests) |
-| 2025-12-03 | Phase 2.2 implementation complete (539 tests) |
-| 2025-12-03 | Phase 2.1 implementation complete (431 tests) |
-| 2025-12-03 | Phase 1.3 implementation complete |
-| 2025-12-03 | Phase 1.2 implementation complete |
-| 2025-12-03 | Phase 1.1 implementation complete |
-| 2025-12-02 | Initial roadmap created with accurate status |
-
----
-
-## Notes
-
-- Planning is complete for all phases
-- Phase 1.1 implementation complete (2025-12-03)
-- Do not mark anything as complete without verified evidence
-- Each phase requires planning docs to be read before implementation starts
-- Source code is in `src/forge/` (standard Python src layout)

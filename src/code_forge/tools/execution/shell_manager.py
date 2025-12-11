@@ -33,6 +33,9 @@ class ShellProcess:
     methods for reading output and controlling the process.
     """
 
+    # Maximum buffer size (10MB) to prevent memory exhaustion
+    MAX_BUFFER_SIZE: ClassVar[int] = 10 * 1024 * 1024
+
     id: str
     command: str
     working_dir: str
@@ -41,11 +44,41 @@ class ShellProcess:
     exit_code: int | None = None
     stdout_buffer: str = ""
     stderr_buffer: str = ""
+    stdout_truncated: bool = False
+    stderr_truncated: bool = False
     last_read_stdout: int = 0
     last_read_stderr: int = 0
     created_at: float = field(default_factory=time.time)
     started_at: float | None = None
     completed_at: float | None = None
+
+    def _append_to_buffer(self, buffer_name: str, data: str) -> None:
+        """Append data to buffer with size limit.
+
+        Uses a circular buffer approach: when max size is reached,
+        removes oldest data to make room for new data.
+
+        Args:
+            buffer_name: 'stdout' or 'stderr'
+            data: Data to append
+        """
+        if buffer_name == "stdout":
+            new_size = len(self.stdout_buffer) + len(data)
+            if new_size > self.MAX_BUFFER_SIZE:
+                # Truncate from beginning to stay within limit
+                overflow = new_size - self.MAX_BUFFER_SIZE
+                self.stdout_buffer = self.stdout_buffer[overflow:] + data
+                self.stdout_truncated = True
+            else:
+                self.stdout_buffer += data
+        else:
+            new_size = len(self.stderr_buffer) + len(data)
+            if new_size > self.MAX_BUFFER_SIZE:
+                overflow = new_size - self.MAX_BUFFER_SIZE
+                self.stderr_buffer = self.stderr_buffer[overflow:] + data
+                self.stderr_truncated = True
+            else:
+                self.stderr_buffer += data
 
     def get_new_output(self, include_stderr: bool = True) -> str:
         """Get output since last read.
@@ -95,7 +128,7 @@ class ShellProcess:
                         self.process.stdout.read(4096), timeout=0.05
                     )
                     if data:
-                        self.stdout_buffer += data.decode("utf-8", errors="replace")
+                        self._append_to_buffer("stdout", data.decode("utf-8", errors="replace"))
                         read_any = True
                     else:
                         # Empty data means EOF
@@ -114,7 +147,7 @@ class ShellProcess:
                         self.process.stderr.read(4096), timeout=0.05
                     )
                     if data:
-                        self.stderr_buffer += data.decode("utf-8", errors="replace")
+                        self._append_to_buffer("stderr", data.decode("utf-8", errors="replace"))
                         read_any = True
                     else:
                         # Empty data means EOF

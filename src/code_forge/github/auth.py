@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 import aiohttp
+from pydantic import SecretStr
 
 
 class GitHubAuthError(Exception):
@@ -18,7 +19,7 @@ class GitHubAuthError(Exception):
 class GitHubAuth:
     """GitHub authentication information."""
 
-    token: str
+    token: SecretStr
     username: str
     scopes: list[str] = field(default_factory=list)
     rate_limit: int = 5000
@@ -42,7 +43,7 @@ class GitHubAuthenticator:
     ENV_TOKEN_KEY = "GITHUB_TOKEN"
     ENV_TOKEN_ALT = "GH_TOKEN"
 
-    def __init__(self, token: str | None = None):
+    def __init__(self, token: str | SecretStr | None = None):
         """
         Initialize with token or from environment.
 
@@ -50,7 +51,13 @@ class GitHubAuthenticator:
             token: GitHub personal access token.
                    If None, reads from GITHUB_TOKEN or GH_TOKEN env var.
         """
-        self._token = token or self._get_token_from_env()
+        raw_token = token or self._get_token_from_env()
+        if isinstance(raw_token, SecretStr):
+            self._token = raw_token
+        elif raw_token:
+            self._token = SecretStr(raw_token)
+        else:
+            self._token = None
         self._auth_info: GitHubAuth | None = None
         self._validated = False
 
@@ -77,7 +84,7 @@ class GitHubAuthenticator:
             "X-GitHub-Api-Version": "2022-11-28",
         }
         if self._token:
-            headers["Authorization"] = f"Bearer {self._token}"
+            headers["Authorization"] = f"Bearer {self._token.get_secret_value()}"
         return headers
 
     async def validate(self) -> GitHubAuth:

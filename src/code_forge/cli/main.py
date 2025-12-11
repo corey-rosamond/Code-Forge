@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
 import sys
 from typing import TYPE_CHECKING
 
@@ -16,6 +17,29 @@ if TYPE_CHECKING:
     from code_forge.config import CodeForgeConfig
 
 logger = get_logger("cli")
+
+# Pattern to match keyboard escape sequences that may bleed into output
+# during streaming (e.g., ^[[6~ for Page Down, ^[[5~ for Page Up, etc.)
+KEYBOARD_ESCAPE_PATTERN = re.compile(
+    r'\x1b\['           # ESC [
+    r'[0-9;]*'          # Optional numeric parameters
+    r'[~A-Za-z]'        # Terminator character
+)
+
+
+def strip_keyboard_escapes(text: str) -> str:
+    """Remove keyboard escape sequences from text.
+
+    During streaming output, keyboard input can sometimes bleed into
+    the output stream. This strips those escape sequences.
+
+    Args:
+        text: Text that may contain escape sequences
+
+    Returns:
+        Text with keyboard escape sequences removed
+    """
+    return KEYBOARD_ESCAPE_PATTERN.sub('', text)
 
 
 def main() -> int:
@@ -241,12 +265,15 @@ async def run_with_agent(repl: CodeForgeREPL, config: CodeForgeConfig, api_key: 
                         # Stream text output in real-time
                         chunk = event.data.get("content", "")
                         if chunk:
-                            # Stop spinner on first content
-                            if not first_content_received:
-                                spinner.stop()
-                                first_content_received = True
-                            repl._console.print(chunk, end="")
-                            accumulated_output += chunk
+                            # Filter out keyboard escape sequences that may bleed in
+                            chunk = strip_keyboard_escapes(chunk)
+                            if chunk:  # Only proceed if content remains after filtering
+                                # Stop spinner on first content
+                                if not first_content_received:
+                                    spinner.stop()
+                                    first_content_received = True
+                                repl._console.print(chunk, end="")
+                                accumulated_output += chunk
 
                     elif event.type == AgentEventType.LLM_END:
                         pass  # Content already streamed
