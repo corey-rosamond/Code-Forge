@@ -427,7 +427,7 @@ Options:
   --resume          Select session to resume
   -p, --print       Run in headless mode with prompt
 
-For more information, visit: https://github.com/opencode
+For more information, visit: https://github.com/corey-rosamond/Code-Forge
 """
     print(help_text.strip())
 
